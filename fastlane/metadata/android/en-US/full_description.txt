@@ -1,0 +1,9 @@
+Whisper is an input method editor (IME) with voice recognition based on Whisper
+
+It can work as standalone app and also offers an IME which can e.g. be activated
+via the microphone button in HeliBoard.
+
+At first start it needs to download the Whisper models from Hugging Face.
+This is the only use of the internet permission.
+
+Voice recognition works completely offline.

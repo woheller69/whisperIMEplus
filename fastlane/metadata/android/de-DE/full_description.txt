@@ -1,0 +1,9 @@
+Whisper ist ein Eingabemethodeneditor (IME) mit Spracherkennung basierend auf Whisper
+
+Es kann als eigenständige App verwendet werden und bietet auch einen IME, der z. B. über die Mikrofontaste in HeliBoard aktiviert werden kann.
+
+Beim ersten Start müssen die Whisper-Modelle von Hugging Face heruntergeladen werden.
+
+Dies ist die einzige Verwendung der Internetberechtigung.
+
+Die Spracherkennung erfolgt vollständig offline.
