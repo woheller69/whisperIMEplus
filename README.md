@@ -22,7 +22,7 @@ Select the model you want to use in the app. It will then also be applied when u
 # License
 This work is licensed under MIT license, © woheller69
 
-- This app is built on the [Whisper-Android project](https://github.com/vilassn/whisper_android), published under MIT license
+- This app is built on the [Whisper-Android project](https://github.com/vilassn/whisper_android), and [OpenAI Whisper](https://github.com/openai/whisper) published under MIT license
 - At first start it downloads the Whisper TFLite models from [Hugging Face](https://huggingface.co/DocWolle/whisper_tflite_models), which is published under MIT license
 
 # OTHER APPS
