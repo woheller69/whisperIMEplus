@@ -39,7 +39,6 @@ public class Whisper {
 
     private final WhisperEngine mWhisperEngine;
     private Action mAction;
-    private String mWavFilePath;
     private WhisperListener mUpdateListener;
 
     private final Lock taskLock = new ReentrantLock();
@@ -48,10 +47,9 @@ public class Whisper {
 
     public Whisper(Context context) {
         this.mWhisperEngine = new WhisperEngineJava(context);
-//        this.mWhisperEngine = new WhisperEngineNative(context);
 
-        // Start thread for file transcription for file transcription
-        Thread threadTranscbFile = new Thread(this::transcribeFileLoop);
+        // Start thread for RecordBuffer transcription
+        Thread threadTranscbFile = new Thread(this::transcribeRecordBufferLoop);
         threadTranscbFile.start();
 
         // Start thread for buffer transcription for live mic feed transcription
@@ -84,10 +82,6 @@ public class Whisper {
         this.mAction = action;
     }
 
-    public void setFilePath(String wavFile) {
-        this.mWavFilePath = wavFile;
-    }
-
     public void start() {
         if (!mInProgress.compareAndSet(false, true)) {
             Log.d(TAG, "Execution is already in progress...");
@@ -110,14 +104,14 @@ public class Whisper {
         return mInProgress.get();
     }
 
-    private void transcribeFileLoop() {
+    private void transcribeRecordBufferLoop() {
         while (!Thread.currentThread().isInterrupted()) {
             taskLock.lock();
             try {
                 while (!taskAvailable) {
                     hasTask.await();
                 }
-                transcribeFile();
+                transcribeRecordBuffer();
                 taskAvailable = false;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -127,31 +121,25 @@ public class Whisper {
         }
     }
 
-    private void transcribeFile() {
+    private void transcribeRecordBuffer() {
         try {
-            if (mWhisperEngine.isInitialized() && mWavFilePath != null) {
-                File waveFile = new File(mWavFilePath);
-                if (waveFile.exists()) {
-                    long startTime = System.currentTimeMillis();
-                    sendUpdate(MSG_PROCESSING);
+            if (mWhisperEngine.isInitialized() && RecordBuffer.getOutputBuffer() != null) {
+                long startTime = System.currentTimeMillis();
+                sendUpdate(MSG_PROCESSING);
 
-                    String result = null;
-                    synchronized (mWhisperEngine) {
-                        if (mAction == Action.TRANSCRIBE) {
-                            result = mWhisperEngine.transcribeFile(mWavFilePath);
-                        } else {
-//                            result = mWhisperEngine.getTranslation(mWavFilePath);
-                            Log.d(TAG, "TRANSLATE feature is not implemented");
-                        }
+                String result = null;
+                synchronized (mWhisperEngine) {
+                    if (mAction == Action.TRANSCRIBE) {
+                        result = mWhisperEngine.transcribeRecordBuffer();
+                    } else {
+                        Log.d(TAG, "TRANSLATE feature is not implemented");
                     }
-                    sendResult(result);
-
-                    long timeTaken = System.currentTimeMillis() - startTime;
-                    Log.d(TAG, "Time Taken for transcription: " + timeTaken + "ms");
-                    sendUpdate(MSG_PROCESSING_DONE);
-                } else {
-                    sendUpdate(MSG_FILE_NOT_FOUND);
                 }
+                sendResult(result);
+
+                long timeTaken = System.currentTimeMillis() - startTime;
+                Log.d(TAG, "Time Taken for transcription: " + timeTaken + "ms");
+                sendUpdate(MSG_PROCESSING_DONE);
             } else {
                 sendUpdate("Engine not initialized or file path not set");
             }

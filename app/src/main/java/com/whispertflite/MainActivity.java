@@ -34,7 +34,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.whispertflite.utils.WaveUtil;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 
@@ -122,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        selectedWaveFile = new File(sdcardDataFolder+"/"+WaveUtil.RECORDING_FILE);
 
         // Implementation of record button functionality
         btnRecord = findViewById(R.id.btnRecord);
@@ -145,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (!mWhisper.isInProgress()) {
                         Log.d(TAG, "Start transcription...");
-                        startTranscription(selectedWaveFile.getAbsolutePath());
+                        startTranscription();
                     } else {
                         Log.d(TAG, "Whisper is already in progress...!");
                         stopTranscription();
@@ -311,9 +309,6 @@ public class MainActivity extends AppCompatActivity {
     // Recording calls
     private void startRecording() {
         checkRecordPermission();
-
-        File waveFile= new File(sdcardDataFolder, WaveUtil.RECORDING_FILE);
-        mRecorder.setFilePath(waveFile.getAbsolutePath());
         mRecorder.start();
     }
 
@@ -322,8 +317,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Transcription calls
-    private void startTranscription(String waveFilePath) {
-        mWhisper.setFilePath(waveFilePath);
+    private void startTranscription() {
         mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
         mWhisper.start();
         processingBar.setIndeterminate(true);

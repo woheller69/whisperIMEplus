@@ -6,6 +6,6 @@ public interface WhisperEngine {
     boolean isInitialized();
     boolean initialize(String modelPath, String vocabPath, boolean multilingual) throws IOException;
     void deinitialize();
-    String transcribeFile(String wavePath);
+    String transcribeRecordBuffer();
     String transcribeBuffer(float[] samples);
 }

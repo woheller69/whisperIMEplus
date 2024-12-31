@@ -23,7 +23,6 @@ import androidx.core.content.ContextCompat;
 
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
-import com.whispertflite.utils.WaveUtil;
 
 import java.io.File;
 
@@ -35,7 +34,6 @@ public class WhisperInputMethodService extends InputMethodService {
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
     private File sdcardDataFolder = null;
-    private File recWavFile = null;
     private File selectedTfliteFile = null;
     private ProgressBar processingBar = null;
     private SharedPreferences sp = null;
@@ -66,7 +64,6 @@ public class WhisperInputMethodService extends InputMethodService {
         multiLingual = sp.getBoolean("multiLingual",true);
 
         selectedTfliteFile = new File(sdcardDataFolder, multiLingual ? MULTI_LINGUAL_MODEL : ENGLISH_ONLY_MODEL);
-        recWavFile = new File(sdcardDataFolder+"/"+ WaveUtil.RECORDING_FILE);
 
         checkRecordPermission();
 
@@ -101,7 +98,7 @@ public class WhisperInputMethodService extends InputMethodService {
                     if (mWhisper == null)
                         initModel(selectedTfliteFile);
                     if (!mWhisper.isInProgress()) {
-                        startTranscription(recWavFile.getAbsolutePath());
+                        startTranscription();
                     } else {
                         stopTranscription();
                     }
@@ -124,7 +121,6 @@ public class WhisperInputMethodService extends InputMethodService {
     }
 
     private void startRecording() {
-        mRecorder.setFilePath(recWavFile.getAbsolutePath());
         mRecorder.start();
     }
 
@@ -149,8 +145,7 @@ public class WhisperInputMethodService extends InputMethodService {
         });
     }
 
-    private void startTranscription(String waveFilePath) {
-        mWhisper.setFilePath(waveFilePath);
+    private void startTranscription() {
         mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
         mWhisper.start();
         processingBar.setIndeterminate(true);

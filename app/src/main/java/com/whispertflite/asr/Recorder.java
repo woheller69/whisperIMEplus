@@ -6,19 +6,14 @@ import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
 import com.whispertflite.R;
-import com.whispertflite.utils.WaveUtil;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,7 +38,6 @@ public class Recorder {
     private final Context mContext;
     private final AtomicBoolean mInProgress = new AtomicBoolean(false);
 
-    private String mWavFilePath;
     private RecorderListener mListener;
     private final Lock lock = new ReentrantLock();
     private final Condition hasTask = lock.newCondition();
@@ -65,9 +59,6 @@ public class Recorder {
         this.mListener = listener;
     }
 
-    public void setFilePath(String wavFile) {
-        this.mWavFilePath = wavFile;
-    }
 
     public void start() {
         if (!mInProgress.compareAndSet(false, true)) {
@@ -189,8 +180,8 @@ public class Recorder {
         audioRecord.stop();
         audioRecord.release();
 
-        // Save recorded audio data to file (up to 30 seconds)
-        WaveUtil.createWaveFile(mWavFilePath, outputBuffer.toByteArray(), sampleRateInHz, channels, bytesPerSample);
+        // Save recorded audio data to BufferStore (up to 30 seconds)
+        RecordBuffer.setOutputBuffer(outputBuffer.toByteArray());
         sendUpdate(MSG_RECORDING_DONE);
 
         // Notify the waiting thread that recording is complete
@@ -198,7 +189,6 @@ public class Recorder {
             fileSavedLock.notify(); // Notify that recording is finished
         }
 
-//        moveFileToSdcard(mWavFilePath);
     }
 
     private float[] convertToFloatArray(ByteBuffer buffer) {
@@ -210,29 +200,4 @@ public class Recorder {
         return samples;
     }
 
-    // Move file from /data/user/0/com.whispertflite/files/MicInput.wav to
-    // sdcard path /storage/emulated/0/Android/data/com.whispertflite/files/MicInput.wav
-    // Copy and delete the original file
-    private void moveFileToSdcard(String waveFilePath) {
-        File sourceFile = new File(waveFilePath);
-        File destinationFile = new File(this.mContext.getExternalFilesDir(null), sourceFile.getName());
-        try (FileInputStream inputStream = new FileInputStream(sourceFile);
-             FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
-
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
-            }
-
-            if (sourceFile.delete()) {
-                Log.d("FileMove", "File moved successfully to " + destinationFile.getAbsolutePath());
-            } else {
-                Log.e("FileMove", "Failed to delete the original file.");
-            }
-
-        } catch (IOException e) {
-            Log.e("FileMove", "File move failed", e);
-        }
-    }
 }

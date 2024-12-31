@@ -3,10 +3,7 @@ package com.whispertflite.engine;
 import android.content.Context;
 import android.util.Log;
 
-//import com.google.android.gms.tflite.client.TfLiteInitializationOptions;
-//import com.google.android.gms.tflite.gpu.support.TfLiteGpu;
-//import com.google.android.gms.tflite.java.TfLite;
-import com.whispertflite.utils.WaveUtil;
+import com.whispertflite.asr.RecordBuffer;
 import com.whispertflite.utils.WhisperUtil;
 
 import org.tensorflow.lite.DataType;
@@ -70,10 +67,10 @@ public class WhisperEngineJava implements WhisperEngine {
     }
 
     @Override
-    public String transcribeFile(String wavePath) {
+    public String transcribeRecordBuffer() {
         // Calculate Mel spectrogram
         Log.d(TAG, "Calculating Mel spectrogram...");
-        float[] melSpectrogram = getMelSpectrogram(wavePath);
+        float[] melSpectrogram = getMelSpectrogram();
         Log.d(TAG, "Mel spectrogram is calculated...!");
 
         // Perform inference
@@ -99,52 +96,13 @@ public class WhisperEngineJava implements WhisperEngine {
         // Set the number of threads for inference
         Interpreter.Options options = new Interpreter.Options();
         options.setNumThreads(Runtime.getRuntime().availableProcessors());
-//        options.setUseXNNPACK(true);
-
-//        boolean isNNAPI = true;
-//        if (isNNAPI) {
-//            // Initialize interpreter with NNAPI delegate for Android Pie or above
-//            NnApiDelegate nnapiDelegate = new NnApiDelegate();
-//            options.addDelegate(nnapiDelegate);
-////                    options.setUseNNAPI(false);
-//                    options.setAllowFp16PrecisionForFp32(true);
-//                    options.setAllowBufferHandleOutput(true);
-//            options.setUseNNAPI(true);
-//        }
-
-        // Check if GPU delegate is available asynchronously
-//        TfLiteGpu.isGpuDelegateAvailable(mContext).addOnCompleteListener(task -> {
-//            if (task.isSuccessful() && task.getResult()) {
-//                // GPU is available; initialize the interpreter with GPU delegate
-////                    GpuDelegate gpuDelegate = new GpuDelegate();
-////                    Interpreter.Options options = new Interpreter.Options().addDelegate(gpuDelegate);
-////                    tflite = new Interpreter(loadModelFile(), options);
-//                TfLite.initialize(mContext, TfLiteInitializationOptions.builder().setEnableGpuDelegateSupport(true).build());
-//                Log.d(TAG, "GPU is available; initialize the interpreter with GPU delegate........................");
-//            } else {
-//                // GPU is not available; fallback to CPU
-////                    tflite = new Interpreter(loadModelFile());
-////                    System.out.println("Initialized with CPU.");
-//                Log.d(TAG, "GPU is not available; fallback to CPU........................");
-//            }
-//        });
-        
-//        boolean isGPU = true;
-//        if (isGPU) {
-//            gpuDelegate = new GpuDelegate();
-//            options.setPrecisionLossAllowed(true); // It seems that the default is true
-//            options.setInferencePreference(GpuDelegate.Options.INFERENCE_PREFERENCE_SUSTAINED_SPEED);
-//             .setPrecisionLossAllowed(true) // Allow FP16 precision for faster performance
-//                    .setInferencePreference(GpuDelegate.Options.INFERENCE_PREFERENCE_FAST_SINGLE_ANSWER);
-//            options.addDelegate(gpuDelegate);
-//        }
 
         mInterpreter = new Interpreter(tfliteModel, options);
     }
 
-    private float[] getMelSpectrogram(String wavePath) {
+    private float[] getMelSpectrogram() {
         // Get samples in PCM_FLOAT format
-        float[] samples = WaveUtil.getSamples(wavePath);
+        float[] samples = RecordBuffer.getSamples();
 
         int fixedInputSize = WhisperUtil.WHISPER_SAMPLE_RATE * WhisperUtil.WHISPER_CHUNK_SIZE;
         float[] inputSamples = new float[fixedInputSize];
@@ -159,12 +117,10 @@ public class WhisperEngineJava implements WhisperEngine {
         // Create input tensor
         Tensor inputTensor = mInterpreter.getInputTensor(0);
         TensorBuffer inputBuffer = TensorBuffer.createFixedSize(inputTensor.shape(), inputTensor.dataType());
-//        printTensorDump("Input Tensor Dump ===>", inputTensor);
 
         // Create output tensor
         Tensor outputTensor = mInterpreter.getOutputTensor(0);
         TensorBuffer outputBuffer = TensorBuffer.createFixedSize(outputTensor.shape(), DataType.FLOAT32);
-//        printTensorDump("Output Tensor Dump ===>", outputTensor);
 
         // Load input data
         int inputSize = inputTensor.shape()[0] * inputTensor.shape()[1] * inputTensor.shape()[2] * Float.BYTES;
@@ -174,20 +130,10 @@ public class WhisperEngineJava implements WhisperEngine {
             inputBuf.putFloat(input);
         }
 
-        // To test mel data as a input directly
-//        try {
-//            byte[] bytes = Files.readAllBytes(Paths.get("/data/user/0/com.example.tfliteaudio/files/mel_spectrogram.bin"));
-//            inputBuf = ByteBuffer.wrap(bytes);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
         inputBuffer.loadBuffer(inputBuf);
 
-//        Log.d(TAG, "Before inference...");
         // Run inference
         mInterpreter.run(inputBuffer.getBuffer(), outputBuffer.getBuffer());
-//        Log.d(TAG, "After inference...");
 
         // Retrieve the results
         int outputLen = outputBuffer.getIntArray().length;
@@ -218,20 +164,4 @@ public class WhisperEngineJava implements WhisperEngine {
         return result.toString();
     }
 
-    private void printTensorDump(String message, Tensor tensor) {
-        Log.d(TAG,"Output Tensor Dump ===>");
-        Log.d(TAG, "  shape.length: " + tensor.shape().length);
-        for (int i = 0; i < tensor.shape().length; i++)
-            Log.d(TAG, "    shape[" + i + "]: " + tensor.shape()[i]);
-        Log.d(TAG, "  dataType: " + tensor.dataType());
-        Log.d(TAG, "  name: " + tensor.name());
-        Log.d(TAG, "  numBytes: " + tensor.numBytes());
-        Log.d(TAG, "  index: " + tensor.index());
-        Log.d(TAG, "  numDimensions: " + tensor.numDimensions());
-        Log.d(TAG, "  numElements: " + tensor.numElements());
-        Log.d(TAG, "  shapeSignature.length: " + tensor.shapeSignature().length);
-        Log.d(TAG, "  quantizationParams.getScale: " + tensor.quantizationParams().getScale());
-        Log.d(TAG, "  quantizationParams.getZeroPoint: " + tensor.quantizationParams().getZeroPoint());
-        Log.d(TAG, "==================================================================");
-    }
 }
