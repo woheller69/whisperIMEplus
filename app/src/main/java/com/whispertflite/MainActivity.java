@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 startRecording();
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
+                btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
                 if (mRecorder != null && mRecorder.isInProgress()) {
                     Log.d(TAG, "Recording is in progress... stopping...");
                     stopRecording();

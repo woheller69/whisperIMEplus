@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    android:background="@drawable/rounded_button_background_pressed"
+                    android:background="@drawable/rounded_background"
                     android:backgroundTint="@color/lightGrey"
                     android:src="@drawable/ic_download_48dp"
                     android:onClick="download"

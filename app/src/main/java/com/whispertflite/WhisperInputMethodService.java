@@ -95,6 +95,7 @@ public class WhisperInputMethodService extends InputMethodService {
                 startRecording();
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
+                btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
                 if (mRecorder != null && mRecorder.isInProgress()) {
                     mRecorder.stop();
                     if (mWhisper == null)
