@@ -25,8 +25,6 @@ public class Recorder {
 
     public interface RecorderListener {
         void onUpdateReceived(String message);
-
-        void onDataReceived(float[] samples);
     }
 
     private static final String TAG = "Recorder";
@@ -96,10 +94,6 @@ public class Recorder {
             mListener.onUpdateReceived(message);
     }
 
-    private void sendData(float[] samples) {
-        if (mListener != null)
-            mListener.onDataReceived(samples);
-    }
 
     private void recordLoop() {
         while (true) {
@@ -150,10 +144,8 @@ public class Recorder {
 
         // Calculate maximum byte counts for 30 seconds (for saving)
         int bytesForThirtySeconds = sampleRateInHz * bytesPerSample * channels * 30;
-        int bytesForThreeSeconds = sampleRateInHz * bytesPerSample * channels * 3;
 
-        ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream(); // Buffer for saving data in wave file
-        ByteArrayOutputStream realtimeBuffer = new ByteArrayOutputStream(); // Buffer for real-time processing
+        ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream(); // Buffer for saving data RecordBuffer
 
         byte[] audioData = new byte[bufferSize];
         int totalBytesRead = 0;
@@ -162,15 +154,8 @@ public class Recorder {
             int bytesRead = audioRecord.read(audioData, 0, bufferSize);
             if (bytesRead > 0) {
                 outputBuffer.write(audioData, 0, bytesRead);  // Save all bytes read up to 30 seconds
-                realtimeBuffer.write(audioData, 0, bytesRead); // Accumulate real-time audio data
                 totalBytesRead += bytesRead;
 
-                // Check if realtimeBuffer has more than 3 seconds of data
-                if (realtimeBuffer.size() >= bytesForThreeSeconds) {
-                    float[] samples = convertToFloatArray(ByteBuffer.wrap(realtimeBuffer.toByteArray()));
-                    realtimeBuffer.reset(); // Clear the buffer for the next accumulation
-                    sendData(samples); // Send real-time data for processing
-                }
             } else {
                 Log.d(TAG, "AudioRecord error, bytes read: " + bytesRead);
                 break;
@@ -189,15 +174,6 @@ public class Recorder {
             fileSavedLock.notify(); // Notify that recording is finished
         }
 
-    }
-
-    private float[] convertToFloatArray(ByteBuffer buffer) {
-        buffer.order(ByteOrder.nativeOrder());
-        float[] samples = new float[buffer.remaining() / 2];
-        for (int i = 0; i < samples.length; i++) {
-            samples[i] = buffer.getShort() / 32768.0f;
-        }
-        return samples;
     }
 
 }

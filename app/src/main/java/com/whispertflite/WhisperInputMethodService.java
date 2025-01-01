@@ -95,10 +95,6 @@ public class WhisperInputMethodService extends InputMethodService {
                 }
             }
 
-            @Override
-            public void onDataReceived(float[] samples) {
-
-            }
         });
 
         btnRecord.setOnTouchListener((v, event) -> {

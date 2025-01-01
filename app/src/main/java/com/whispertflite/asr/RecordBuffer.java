@@ -25,8 +25,21 @@ public class RecordBuffer {
 
         // Convert audio data to PCM_FLOAT format
         float[] samples = new float[numSamples];
+        float maxAbsValue = 0.0f;
+
         for (int i = 0; i < numSamples; i++) {
             samples[i] = (float) (byteBuffer.getShort() / 32768.0);
+            // Track the maximum absolute value
+            if (Math.abs(samples[i]) > maxAbsValue) {
+                maxAbsValue = Math.abs(samples[i]);
+            }
+        }
+
+        // Normalize the samples
+        if (maxAbsValue > 0.0f) {
+            for (int i = 0; i < numSamples; i++) {
+                samples[i] /= maxAbsValue;
+            }
         }
 
         return samples;

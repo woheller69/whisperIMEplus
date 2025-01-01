@@ -182,10 +182,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            @Override
-            public void onDataReceived(float[] samples) {
-
-            }
         });
 
         // Assume this Activity is the current activity, check record permission
