@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.whispertflite.asr.RecordBuffer;
+import com.whispertflite.utils.InputLang;
 import com.whispertflite.utils.WhisperUtil;
 
 import org.tensorflow.lite.DataType;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
 public class WhisperEngineJava implements WhisperEngine {
     private final String TAG = "WhisperEngineJava";
@@ -128,6 +130,7 @@ public class WhisperEngineJava implements WhisperEngine {
         mInterpreter.run(inputBuffer.getBuffer(), outputBuffer.getBuffer());
 
         // Retrieve the results
+        ArrayList<InputLang> inputLangList = InputLang.getLangList();
         int outputLen = outputBuffer.getIntArray().length;
         Log.d(TAG, "output_len: " + outputLen);
         StringBuilder result = new StringBuilder();
@@ -148,6 +151,9 @@ public class WhisperEngineJava implements WhisperEngine {
                 if (token == mWhisperUtil.getTokenTranslate())
                     Log.d(TAG, "It is Translation...");
 
+                if (token >= 50259 && token <= 50357){
+                    Log.d(TAG, "Detected language code: "+ InputLang.getLanguageCodeById(inputLangList,token));
+                }
                 String word = mWhisperUtil.getWordFromToken(token);
                 Log.d(TAG, "Skipping token: " + token + ", word: " + word);
             }

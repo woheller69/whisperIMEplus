@@ -25,7 +25,6 @@ public class WhisperUtil {
     public static final int WHISPER_N_MEL = 80;
     public static final int WHISPER_HOP_LENGTH = 160;
     public static final int WHISPER_CHUNK_SIZE = 30;
-    public static final int WHISPER_MEL_LEN = 3000;
 
     private final WhisperVocab vocab = new WhisperVocab();
     private final WhisperFilter filters = new WhisperFilter();
@@ -168,7 +167,6 @@ public class WhisperUtil {
 
         int nFft = 1 + fftSize / 2;
 
-/////////////// UNCOMMENT below block to use multithreaded mel calculation /////////////////////////
         // Calculate mel values using multiple threads
         List<Thread> workers = new ArrayList<>();
         for (int iw = 0; iw < nThreads; iw++) {
@@ -182,54 +180,44 @@ public class WhisperUtil {
                 float[] fftOut = new float[fftSize * 2];
 
                 for (int i = ith; i < mel.nLen; i += nThreads) {
-/////////////// END of Block ///////////////////////////////////////////////////////////////////////
 
-/////////////// COMMENT below block to use multithreaded mel calculation ///////////////////////////
-//        float[] fftIn = new float[fftSize];
-//        Arrays.fill(fftIn, 0.0f);
-//        float[] fftOut = new float[fftSize * 2];
-//
-//        for (int i = 0; i < mel.nLen; i++) {
-/////////////// END of Block ///////////////////////////////////////////////////////////////////////
+                    int offset = i * fftStep;
 
-            int offset = i * fftStep;
+                    // apply Hanning window
+                    for (int j = 0; j < fftSize; j++) {
+                        if (offset + j < nSamples) {
+                            fftIn[j] = hann[j] * samples[offset + j];
+                        } else {
+                            fftIn[j] = 0.0f;
+                        }
+                    }
 
-            // apply Hanning window
-            for (int j = 0; j < fftSize; j++) {
-                if (offset + j < nSamples) {
-                    fftIn[j] = hann[j] * samples[offset + j];
-                } else {
-                    fftIn[j] = 0.0f;
-                }
-            }
+                    // FFT -> mag^2
+                    fft(fftIn, fftOut);
+                    for (int j = 0; j < fftSize; j++) {
+                        fftOut[j] = fftOut[2 * j] * fftOut[2 * j] + fftOut[2 * j + 1] * fftOut[2 * j + 1];
+                    }
 
-            // FFT -> mag^2
-            fft(fftIn, fftOut);
-            for (int j = 0; j < fftSize; j++) {
-                fftOut[j] = fftOut[2 * j] * fftOut[2 * j] + fftOut[2 * j + 1] * fftOut[2 * j + 1];
-            }
+                    for (int j = 1; j < fftSize / 2; j++) {
+                        fftOut[j] += fftOut[fftSize - j];
+                    }
 
-            for (int j = 1; j < fftSize / 2; j++) {
-                fftOut[j] += fftOut[fftSize - j];
-            }
+                    // mel spectrogram
+                    for (int j = 0; j < mel.nMel; j++) {
+                        double sum = 0.0;
+                        for (int k = 0; k < nFft; k++) {
+                            sum += (fftOut[k] * filters.data[j * nFft + k]);
+                        }
 
-            // mel spectrogram
-            for (int j = 0; j < mel.nMel; j++) {
-                double sum = 0.0;
-                for (int k = 0; k < nFft; k++) {
-                    sum += (fftOut[k] * filters.data[j * nFft + k]);
-                }
+                        if (sum < 1e-10) {
+                            sum = 1e-10;
+                        }
 
-                if (sum < 1e-10) {
-                    sum = 1e-10;
+                        sum = log10(sum);
+                        mel.data[j * mel.nLen + i] = (float) sum;
+                    }
                 }
 
-                sum = log10(sum);
-                mel.data[j * mel.nLen + i] = (float) sum;
-            }
-        }
-
-/////////////// UNCOMMENT below block to use multithreaded mel calculation /////////////////////////
             });
             workers.add(thread);
             thread.start();
@@ -243,7 +231,6 @@ public class WhisperUtil {
                 e.printStackTrace();
             }
         }
-/////////////// END of Block ///////////////////////////////////////////////////////////////////////
 
         // clamping and normalization
         double mmax = -1e20;
@@ -362,25 +349,4 @@ public class WhisperUtil {
         float[] data;
     }
 
-    private static class InputLang {
-        String name;
-        String code;
-        long id;
-
-        private InputLang(String name, String code, long id) {
-            this.name = name;
-            this.code = code;
-            this.id = id;
-        }
-
-        // Initialize the list of input language objects
-        private ArrayList<InputLang> getLangList() {
-            ArrayList<InputLang> inputLangList = new ArrayList<>();
-            inputLangList.add(new InputLang("English", "en", 50259));
-            inputLangList.add(new InputLang("Spanish", "es", 50262));
-            inputLangList.add(new InputLang("Hindi", "hi", 50276));
-            inputLangList.add(new InputLang("Telugu", "te", 50299));
-            return inputLangList;
-        }
-    }
 }
