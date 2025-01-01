@@ -29,6 +29,7 @@ public class Whisper {
 
     public static final Action ACTION_TRANSCRIBE = Action.TRANSCRIBE;
     public static final Action ACTION_TRANSLATE = Action.TRANSLATE;
+    private String currentModelPath = "";
 
     private enum Action {
         TRANSLATE, TRANSCRIBE
@@ -63,6 +64,7 @@ public class Whisper {
 
     public void loadModel(File modelPath, File vocabPath, boolean isMultilingual) {
         loadModel(modelPath.getAbsolutePath(), vocabPath.getAbsolutePath(), isMultilingual);
+        currentModelPath = modelPath.getAbsolutePath();
     }
 
     public void loadModel(String modelPath, String vocabPath, boolean isMultilingual) {
@@ -74,8 +76,13 @@ public class Whisper {
         }
     }
 
+    public String getCurrentModelPath(){
+        return currentModelPath;
+    }
+
     public void unloadModel() {
         mWhisperEngine.deinitialize();
+        currentModelPath = "";
     }
 
     public void setAction(Action action) {

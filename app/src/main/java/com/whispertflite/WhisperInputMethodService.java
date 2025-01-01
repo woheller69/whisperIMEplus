@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -50,6 +51,25 @@ public class WhisperInputMethodService extends InputMethodService {
 
     }
 
+
+    @Override
+    public void onStartInputView(EditorInfo attribute, boolean restarting){
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        multiLingual = sp.getBoolean("multiLingual",true);
+        selectedTfliteFile = new File(sdcardDataFolder, multiLingual ? MULTI_LINGUAL_MODEL : ENGLISH_ONLY_MODEL);
+
+        if (mWhisper == null)
+            initModel(selectedTfliteFile);
+        else {
+            if (!mWhisper.getCurrentModelPath().equals(selectedTfliteFile.getAbsolutePath())){
+                mWhisper.unloadModel();
+                mWhisper = null;
+                initModel(selectedTfliteFile);
+            }
+        }
+    }
+
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateInputView() {
@@ -60,10 +80,6 @@ public class WhisperInputMethodService extends InputMethodService {
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
         sdcardDataFolder = this.getExternalFilesDir(null);
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
-        multiLingual = sp.getBoolean("multiLingual",true);
-
-        selectedTfliteFile = new File(sdcardDataFolder, multiLingual ? MULTI_LINGUAL_MODEL : ENGLISH_ONLY_MODEL);
 
         checkRecordPermission();
 
@@ -95,8 +111,6 @@ public class WhisperInputMethodService extends InputMethodService {
                 btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
                 if (mRecorder != null && mRecorder.isInProgress()) {
                     mRecorder.stop();
-                    if (mWhisper == null)
-                        initModel(selectedTfliteFile);
                     if (!mWhisper.isInProgress()) {
                         startTranscription();
                     } else {

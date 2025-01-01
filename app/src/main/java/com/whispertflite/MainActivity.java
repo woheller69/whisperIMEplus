@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     private Whisper mWhisper = null;
 
     private File sdcardDataFolder = null;
-    private File selectedWaveFile = null;
     private File selectedTfliteFile = null;
     private SharedPreferences sp = null;
 
