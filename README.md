@@ -6,18 +6,31 @@ woheller69@t-online.de
 
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="150"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="150"/>
 
-Whisper is an input method editor (IME) with voice recognition based on Whisper
+Whisper is an method editor (IME) that leverages voice recognition technology based on the Whisper engine. 
+It offers a seamless user experience, functioning both as a standalone application and an integrated IME that can be activated e.g. via the microphone button in HeliBoard.
 
-It can work as standalone app and also offers an IME which can e.g. be activated
-via the microphone button in HeliBoard.
+## Initial Setup
 
-At first start it needs to download the Whisper models from Hugging Face.
-This is the only use of the internet permission.
+Upon launching Whisper for the first time, the app will download the necessary Whisper models from Hugging Face. 
+Please note that this is the only instance where internet permission is required. 
+Once the models are downloaded, voice recognition works entirely offline, ensuring your privacy and convenience.
 
-Voice recognition works completely offline.
+## Model Selection
 
-There are two models. One English-only model which is small and fast and a multi-lingual model which works slower.
-Select the model you want to use in the app. It will then also be applied when used as IME.
+Whisper offers two models to choose from: a compact English-only model that prioritizes speed and a more comprehensive multi-lingual model that, while much slower, 
+supports a broader range of languages. Select your preferred model within the app, and it will be applied consistently across all uses, including when used as an IME.
+
+## Using Whisper
+
+To get the most out of Whisper, follow these simple tips:
+
+- Press and hold the button while speaking. 
+- Pause briefly before starting to speak. 
+- Speak clearly, loudly, and at a moderate pace.
+
+By following these guidelines, you'll be able to enjoy accurate and efficient voice recognition with Whisper.
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75">](https://f-droid.org/de/packages/org.woheller69.whisper/)
 
 # License
 This work is licensed under MIT license, © woheller69

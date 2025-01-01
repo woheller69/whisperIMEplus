@@ -7,3 +7,8 @@ Beim ersten Start müssen die Whisper-Modelle von Hugging Face heruntergeladen w
 Dies ist die einzige Verwendung der Internetberechtigung.
 
 Die Spracherkennung erfolgt vollständig offline.
+
+So holen Sie das Beste aus Whisper heraus:
+- Halten Sie die Taste gedrückt, während Sie sprechen.
+- Machen Sie eine kurze Pause, bevor Sie mit dem Sprechen beginnen.
+- Sprechen Sie deutlich, laut und in moderatem Tempo.

@@ -9,9 +9,6 @@ import com.whispertflite.utils.WhisperUtil;
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.Tensor;
-//import org.tensorflow.lite.gpu.CompatibilityList;
-//import org.tensorflow.lite.gpu.GpuDelegate;
-//import org.tensorflow.lite.nnapi.NnApiDelegate;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.FileInputStream;
@@ -27,7 +24,6 @@ public class WhisperEngineJava implements WhisperEngine {
     private final Context mContext;
     private boolean mIsInitialized = false;
     private Interpreter mInterpreter = null;
-//    private GpuDelegate gpuDelegate;
 
     public WhisperEngineJava(Context context) {
         mContext = context;
@@ -80,10 +76,6 @@ public class WhisperEngineJava implements WhisperEngine {
         return result;
     }
 
-    @Override
-    public String transcribeBuffer(float[] samples) {
-        return null;
-    }
 
     // Load TFLite model
     private void loadModel(String modelPath) throws IOException {

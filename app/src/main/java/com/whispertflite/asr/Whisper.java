@@ -53,9 +53,6 @@ public class Whisper {
         Thread threadTranscbFile = new Thread(this::transcribeRecordBufferLoop);
         threadTranscbFile.start();
 
-        // Start thread for buffer transcription for live mic feed transcription
-        Thread threadTranscbBuffer = new Thread(this::transcribeBufferLoop);
-        threadTranscbBuffer.start();
     }
 
     public void setListener(WhisperListener listener) {
@@ -170,37 +167,4 @@ public class Whisper {
         }
     }
 
-    /////////////////////// Live MIC feed transcription calls /////////////////////////////////
-    private void transcribeBufferLoop() {
-        while (!Thread.currentThread().isInterrupted()) {
-            float[] samples = readBuffer();
-            if (samples != null) {
-                synchronized (mWhisperEngine) {
-                    String result = mWhisperEngine.transcribeBuffer(samples);
-                    sendResult(result);
-                }
-            }
-        }
-    }
-
-    public void writeBuffer(float[] samples) {
-        synchronized (audioBufferQueue) {
-            audioBufferQueue.add(samples);
-            audioBufferQueue.notify();
-        }
-    }
-
-    private float[] readBuffer() {
-        synchronized (audioBufferQueue) {
-            while (audioBufferQueue.isEmpty()) {
-                try {
-                    audioBufferQueue.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return null;
-                }
-            }
-            return audioBufferQueue.poll();
-        }
-    }
 }
