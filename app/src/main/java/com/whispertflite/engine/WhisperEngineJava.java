@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.whispertflite.asr.RecordBuffer;
+import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.InputLang;
 import com.whispertflite.utils.WhisperUtil;
@@ -133,6 +134,7 @@ public class WhisperEngineJava implements WhisperEngine {
         // Retrieve the results
         ArrayList<InputLang> inputLangList = InputLang.getLangList();
         String language = "";
+        Whisper.Action task = null;
         int outputLen = outputBuffer.getIntArray().length;
         Log.d(TAG, "output_len: " + outputLen);
         StringBuilder result = new StringBuilder();
@@ -147,11 +149,15 @@ public class WhisperEngineJava implements WhisperEngine {
                 //Log.d(TAG, "Adding token: " + token + ", word: " + word);
                 result.append(word);
             } else {
-                if (token == mWhisperUtil.getTokenTranscribe())
+                if (token == mWhisperUtil.getTokenTranscribe()){
                     Log.d(TAG, "It is Transcription...");
+                    task = Whisper.Action.TRANSCRIBE;
+                }
 
-                if (token == mWhisperUtil.getTokenTranslate())
+                if (token == mWhisperUtil.getTokenTranslate()){
                     Log.d(TAG, "It is Translation...");
+                    task = Whisper.Action.TRANSLATE;
+                }
 
                 if (token >= 50259 && token <= 50357){
                     language = InputLang.getLanguageCodeById(inputLangList,token);
@@ -162,7 +168,7 @@ public class WhisperEngineJava implements WhisperEngine {
             }
         }
 
-        WhisperResult whisperResult = new WhisperResult(result.toString(),language);
+        WhisperResult whisperResult = new WhisperResult(result.toString(),language, task);
         return whisperResult;
     }
 

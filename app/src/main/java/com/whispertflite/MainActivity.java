@@ -236,9 +236,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 long timeTaken = System.currentTimeMillis() - startTime;
-                handler.post(() -> tvStatus.setText("Processing done in " + timeTaken + "ms" + "\nLanguage: "+ whisperResult.getLanguage()));
+                handler.post(() -> tvStatus.setText("Processing done in " + timeTaken + "ms" + "\nLanguage: "+ whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating")));
                 handler.post(() -> processingBar.setIndeterminate(false));
-                Log.d(TAG, "Result: " + whisperResult.getResult()+" "+whisperResult.getLanguage());
+                Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
                 handler.post(() -> tvResult.append(whisperResult.getResult()));
             }
         });

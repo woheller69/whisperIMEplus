@@ -31,7 +31,7 @@ public class Whisper {
     public static final Action ACTION_TRANSLATE = Action.TRANSLATE;
     private String currentModelPath = "";
 
-    private enum Action {
+    public enum Action {
         TRANSLATE, TRANSCRIBE
     }
 
