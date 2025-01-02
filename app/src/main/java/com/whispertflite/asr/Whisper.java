@@ -19,7 +19,7 @@ public class Whisper {
 
     public interface WhisperListener {
         void onUpdateReceived(String message);
-        void onResultReceived(String result);
+        void onResultReceived(WhisperResult result);
     }
 
     private static final String TAG = "Whisper";
@@ -131,15 +131,15 @@ public class Whisper {
                 long startTime = System.currentTimeMillis();
                 sendUpdate(MSG_PROCESSING);
 
-                String result = null;
+                WhisperResult whisperResult = null;
                 synchronized (mWhisperEngine) {
                     if (mAction == Action.TRANSCRIBE) {
-                        result = mWhisperEngine.transcribeRecordBuffer();
+                        whisperResult = mWhisperEngine.transcribeRecordBuffer();
                     } else {
                         Log.d(TAG, "TRANSLATE feature is not implemented");
                     }
                 }
-                sendResult(result);
+                sendResult(whisperResult);
 
                 long timeTaken = System.currentTimeMillis() - startTime;
                 Log.d(TAG, "Time Taken for transcription: " + timeTaken + "ms");
@@ -161,9 +161,9 @@ public class Whisper {
         }
     }
 
-    private void sendResult(String message) {
+    private void sendResult(WhisperResult whisperResult) {
         if (mUpdateListener != null) {
-            mUpdateListener.onResultReceived(message);
+            mUpdateListener.onResultReceived(whisperResult);
         }
     }
 

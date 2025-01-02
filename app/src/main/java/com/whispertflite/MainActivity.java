@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
+import com.whispertflite.asr.WhisperResult;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -233,12 +234,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResultReceived(String result) {
+            public void onResultReceived(WhisperResult whisperResult) {
                 long timeTaken = System.currentTimeMillis() - startTime;
-                handler.post(() -> tvStatus.setText("Processing done in " + timeTaken + "ms"));
+                handler.post(() -> tvStatus.setText("Processing done in " + timeTaken + "ms" + "\nLanguage: "+ whisperResult.getLanguage()));
                 handler.post(() -> processingBar.setIndeterminate(false));
-                Log.d(TAG, "Result: " + result);
-                handler.post(() -> tvResult.append(result));
+                Log.d(TAG, "Result: " + whisperResult.getResult()+" "+whisperResult.getLanguage());
+                handler.post(() -> tvResult.append(whisperResult.getResult()));
             }
         });
     }

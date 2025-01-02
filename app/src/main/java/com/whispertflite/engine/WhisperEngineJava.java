@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.whispertflite.asr.RecordBuffer;
+import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.InputLang;
 import com.whispertflite.utils.WhisperUtil;
 
@@ -65,17 +66,17 @@ public class WhisperEngineJava implements WhisperEngine {
     }
 
     @Override
-    public String transcribeRecordBuffer() {
+    public WhisperResult transcribeRecordBuffer() {
         // Calculate Mel spectrogram
         Log.d(TAG, "Calculating Mel spectrogram...");
         float[] melSpectrogram = getMelSpectrogram();
         Log.d(TAG, "Mel spectrogram is calculated...!");
 
         // Perform inference
-        String result = runInference(melSpectrogram);
+        WhisperResult whisperResult = runInference(melSpectrogram);
         Log.d(TAG, "Inference is executed...!");
 
-        return result;
+        return whisperResult;
     }
 
 
@@ -107,7 +108,7 @@ public class WhisperEngineJava implements WhisperEngine {
         return mWhisperUtil.getMelSpectrogram(inputSamples, inputSamples.length, cores);
     }
 
-    private String runInference(float[] inputData) {
+    private WhisperResult runInference(float[] inputData) {
         // Create input tensor
         Tensor inputTensor = mInterpreter.getInputTensor(0);
         TensorBuffer inputBuffer = TensorBuffer.createFixedSize(inputTensor.shape(), inputTensor.dataType());
@@ -131,6 +132,7 @@ public class WhisperEngineJava implements WhisperEngine {
 
         // Retrieve the results
         ArrayList<InputLang> inputLangList = InputLang.getLangList();
+        String language = "";
         int outputLen = outputBuffer.getIntArray().length;
         Log.d(TAG, "output_len: " + outputLen);
         StringBuilder result = new StringBuilder();
@@ -152,14 +154,16 @@ public class WhisperEngineJava implements WhisperEngine {
                     Log.d(TAG, "It is Translation...");
 
                 if (token >= 50259 && token <= 50357){
-                    Log.d(TAG, "Detected language code: "+ InputLang.getLanguageCodeById(inputLangList,token));
+                    language = InputLang.getLanguageCodeById(inputLangList,token);
+                    Log.d(TAG, "Detected language code: "+ language);
                 }
                 String word = mWhisperUtil.getWordFromToken(token);
                 Log.d(TAG, "Skipping token: " + token + ", word: " + word);
             }
         }
 
-        return result.toString();
+        WhisperResult whisperResult = new WhisperResult(result.toString(),language);
+        return whisperResult;
     }
 
 }

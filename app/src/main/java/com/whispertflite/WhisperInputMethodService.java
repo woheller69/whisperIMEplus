@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
+import com.whispertflite.asr.WhisperResult;
 
 import java.io.File;
 
@@ -148,9 +149,9 @@ public class WhisperInputMethodService extends InputMethodService {
             }
 
             @Override
-            public void onResultReceived(String result) {
+            public void onResultReceived(WhisperResult whisperResult) {
                 processingBar.setIndeterminate(false);
-                if (result.trim().length() > 0) getCurrentInputConnection().commitText(result.trim()+" ",1);
+                if (whisperResult.getResult().trim().length() > 0) getCurrentInputConnection().commitText(whisperResult.getResult().trim()+" ",1);
             }
         });
     }
