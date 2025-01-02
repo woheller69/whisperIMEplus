@@ -48,10 +48,9 @@ public class WhisperInputMethodService extends InputMethodService {
 
     @Override
     public void onDestroy() {
+        deinitModel();
         super.onDestroy();
-
     }
-
 
     @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting){
@@ -63,8 +62,7 @@ public class WhisperInputMethodService extends InputMethodService {
             initModel(selectedTfliteFile);
         else {
             if (!mWhisper.getCurrentModelPath().equals(selectedTfliteFile.getAbsolutePath())){
-                mWhisper.unloadModel();
-                mWhisper = null;
+                deinitModel();
                 initModel(selectedTfliteFile);
             }
         }
@@ -172,6 +170,13 @@ public class WhisperInputMethodService extends InputMethodService {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             tvStatus.setVisibility(View.VISIBLE);
             tvStatus.setText(getString(R.string.need_record_audio_permission));
+        }
+    }
+
+    private void deinitModel() {
+        if (mWhisper != null) {
+            mWhisper.unloadModel();
+            mWhisper = null;
         }
     }
 }
