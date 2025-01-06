@@ -8,6 +8,7 @@ woheller69@t-online.de
 
 Whisper is an method editor (IME) that leverages voice recognition technology based on the Whisper engine. 
 It offers a seamless user experience, functioning both as a standalone application and an integrated IME that can be activated e.g. via the microphone button in HeliBoard.
+As a standalone app Whisper can also translate any supported language to English.
 
 ## Initial Setup
 

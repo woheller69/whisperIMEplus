@@ -8,6 +8,8 @@ Dies ist die einzige Verwendung der Internetberechtigung.
 
 Die Spracherkennung erfolgt vollständig offline.
 
+In der App kann Whisper auch alle unterstützen Sprachen in English übersetzen.
+
 So holen Sie das Beste aus Whisper heraus:
 - Halten Sie die Taste gedrückt, während Sie sprechen.
 - Machen Sie eine kurze Pause, bevor Sie mit dem Sprechen beginnen.
