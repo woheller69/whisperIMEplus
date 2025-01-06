@@ -1,18 +1,18 @@
 <resources>
     <string name="app_name">Whisper</string>
-    <string name="transcribe">Transcribe</string>
-    <string name="translate">Translate</string>
-    <string name="record">Record</string>
-    <string name="play">Play</string>
-    <string name="processing">Processing…</string>
-    <string name="stop">Stop</string>
+
     <string name="need_record_audio_permission">"RECORD_AUDIO permission is not granted"</string>
     <string name="error_download">Download error</string>
     <string name="download_model">Download Model</string>
-    <string name="download_model_text">\nDownload Whisper models from Hugging Face (~400 MB)</string>
+    <string name="download_model_text">\nDownload Whisper models from Hugging Face (~350 MB)</string>
     <string name="select_model">Select model:</string>
     <string name="status">Status:</string>
     <string name="append">Append:</string>
+    <string name="translate">Translate:</string>
     <string name="copy">Copy</string>
+    <string name="processing">Processing…</string>
     <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="dialog_StarOnGitHub">Do you like this app? Please give a star on GitHub or buy the developer a coffee via PayPal.</string>
+    <string name="dialog_Later_button">Maybe later</string>
 </resources>

@@ -133,11 +133,7 @@ public class Whisper {
 
                 WhisperResult whisperResult = null;
                 synchronized (mWhisperEngine) {
-                    if (mAction == Action.TRANSCRIBE) {
-                        whisperResult = mWhisperEngine.transcribeRecordBuffer();
-                    } else {
-                        Log.d(TAG, "TRANSLATE feature is not implemented");
-                    }
+                    whisperResult = mWhisperEngine.processRecordBuffer(mAction);
                 }
                 sendResult(whisperResult);
 

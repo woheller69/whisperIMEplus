@@ -1,9 +1,8 @@
 package com.whispertflite;
 
-import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_VOCAB_FILE;
 import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTI_LINGUAL_MODEL;
+import static com.whispertflite.MainActivity.MULTI_LINGUAL_MODEL_SLOW;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
 
 import android.annotation.SuppressLint;
@@ -39,7 +38,6 @@ public class WhisperInputMethodService extends InputMethodService {
     private File selectedTfliteFile = null;
     private ProgressBar processingBar = null;
     private SharedPreferences sp = null;
-    private boolean multiLingual;
 
     @Override
     public void onCreate() {
@@ -55,8 +53,7 @@ public class WhisperInputMethodService extends InputMethodService {
     @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting){
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        multiLingual = sp.getBoolean("multiLingual",true);
-        selectedTfliteFile = new File(sdcardDataFolder, multiLingual ? MULTI_LINGUAL_MODEL : ENGLISH_ONLY_MODEL);
+        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
 
         if (mWhisper == null)
             initModel(selectedTfliteFile);

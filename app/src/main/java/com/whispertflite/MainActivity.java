@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     // whisper-small.tflite works well for multi-lingual
-    public static final String MULTI_LINGUAL_MODEL = "whisper-small.tflite";
+    public static final String MULTI_LINGUAL_MODEL_FAST = "whisper-base.tflite";
+    public static final String MULTI_LINGUAL_MODEL_SLOW = "whisper-small.tflite";
     public static final String ENGLISH_ONLY_MODEL = "whisper-tiny.en.tflite";
     // English only model ends with extension ".en.tflite"
     public static final String ENGLISH_ONLY_MODEL_EXTENSION = ".en.tflite";
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabCopy;
     private ImageButton btnRecord;
     private CheckBox append;
-    private boolean multiLingual;
+    private CheckBox translate;
     private ProgressBar processingBar;
 
     private Recorder mRecorder = null;
@@ -92,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
         checkInputMethodEnabled();
         processingBar = findViewById(R.id.processing_bar);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        multiLingual = sp.getBoolean("multiLingual",true);
         append = findViewById(R.id.mode_append);
+        translate = findViewById(R.id.mode_translate);
         // Call the method to copy specific file types from assets to data folder
         sdcardDataFolder = this.getExternalFilesDir(null);
         copyAssetsToSdcard(this, sdcardDataFolder, EXTENSIONS_TO_COPY);
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<File> tfliteFiles = getFilesWithExtension(sdcardDataFolder, ".tflite");
 
         // Initialize default model to use
-        selectedTfliteFile = new File(sdcardDataFolder, multiLingual? MULTI_LINGUAL_MODEL : ENGLISH_ONLY_MODEL);
+        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
 
         // Sort the list to ensure MULTI_LINGUAL_MODEL is at the top (Default)
         if (tfliteFiles.contains(selectedTfliteFile)) {
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 deinitModel();
                 selectedTfliteFile = (File) parent.getItemAtPosition(position);
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putBoolean("multiLingual", selectedTfliteFile.getName().equals(MULTI_LINGUAL_MODEL));
+                editor.putString("modelName",selectedTfliteFile.getName());
                 editor.apply();
             }
 
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // Pressed
                 Log.d(TAG, "Start recording...");
-                if (mWhisper != null) stopTranscription();
+                if (mWhisper != null) stopProcessing();
                 startRecording();
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
@@ -149,10 +150,11 @@ public class MainActivity extends AppCompatActivity {
 
                     if (!mWhisper.isInProgress()) {
                         Log.d(TAG, "Start transcription...");
-                        startTranscription();
+                        if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);
+                        else startProcessing(Whisper.ACTION_TRANSCRIBE);
                     } else {
                         Log.d(TAG, "Whisper is already in progress...!");
-                        stopTranscription();
+                        stopProcessing();
                     }
 
                 }
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this, "https://github.com/woheller69/whisperIME");
         // Assume this Activity is the current activity, check record permission
         checkRecordPermission();
 
@@ -263,10 +266,14 @@ public class MainActivity extends AppCompatActivity {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView textView = view.findViewById(android.R.id.text1);
-                if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL))
+                if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_SLOW))
                     textView.setText("Multi-lingual, slow");
-                else
+                else if ((getItem(position).getName()).equals(ENGLISH_ONLY_MODEL))
                     textView.setText("English only, fast");
+                else if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_FAST))
+                    textView.setText("Multi-lingual, fast");
+                else
+                    textView.setText(getItem(position).getName().substring(0, getItem(position).getName().length() - ".tflite".length()));
 
                 return view;
             }
@@ -275,10 +282,14 @@ public class MainActivity extends AppCompatActivity {
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView textView = view.findViewById(android.R.id.text1);
-                if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL))
+                if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_SLOW))
                     textView.setText("Multi-lingual, slow");
-                else
+                else if ((getItem(position).getName()).equals(ENGLISH_ONLY_MODEL))
                     textView.setText("English only, fast");
+                else if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_FAST))
+                    textView.setText("Multi-lingual, fast");
+                else
+                textView.setText(getItem(position).getName().substring(0, getItem(position).getName().length() - ".tflite".length()));
 
                 return view;
             }
@@ -319,13 +330,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Transcription calls
-    private void startTranscription() {
-        mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+    private void startProcessing(Whisper.Action action) {
+        mWhisper.setAction(action);
         mWhisper.start();
         processingBar.setIndeterminate(true);
     }
 
-    private void stopTranscription() {
+    private void stopProcessing() {
         processingBar.setIndeterminate(false);
         mWhisper.stop();
     }

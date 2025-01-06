@@ -20,6 +20,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WhisperEngineJava implements WhisperEngine {
     private final String TAG = "WhisperEngineJava";
@@ -67,14 +70,14 @@ public class WhisperEngineJava implements WhisperEngine {
     }
 
     @Override
-    public WhisperResult transcribeRecordBuffer() {
+    public WhisperResult processRecordBuffer(Whisper.Action mAction) {
         // Calculate Mel spectrogram
         Log.d(TAG, "Calculating Mel spectrogram...");
         float[] melSpectrogram = getMelSpectrogram();
         Log.d(TAG, "Mel spectrogram is calculated...!");
 
         // Perform inference
-        WhisperResult whisperResult = runInference(melSpectrogram);
+        WhisperResult whisperResult = runInference(melSpectrogram, mAction);
         Log.d(TAG, "Inference is executed...!");
 
         return whisperResult;
@@ -109,10 +112,11 @@ public class WhisperEngineJava implements WhisperEngine {
         return mWhisperUtil.getMelSpectrogram(inputSamples, inputSamples.length, cores);
     }
 
-    private WhisperResult runInference(float[] inputData) {
+    private WhisperResult runInference(float[] inputData, Whisper.Action mAction) {
+        Log.d("Whisper","Signatures "+ Arrays.toString(mInterpreter.getSignatureKeys()));
+
         // Create input tensor
         Tensor inputTensor = mInterpreter.getInputTensor(0);
-        TensorBuffer inputBuffer = TensorBuffer.createFixedSize(inputTensor.shape(), inputTensor.dataType());
 
         // Create output tensor
         Tensor outputTensor = mInterpreter.getOutputTensor(0);
@@ -120,16 +124,29 @@ public class WhisperEngineJava implements WhisperEngine {
 
         // Load input data
         int inputSize = inputTensor.shape()[0] * inputTensor.shape()[1] * inputTensor.shape()[2] * Float.BYTES;
-        ByteBuffer inputBuf = ByteBuffer.allocateDirect(inputSize);
-        inputBuf.order(ByteOrder.nativeOrder());
+        ByteBuffer inputBuffer = ByteBuffer.allocateDirect(inputSize);
+        inputBuffer.order(ByteOrder.nativeOrder());
         for (float input : inputData) {
-            inputBuf.putFloat(input);
+            inputBuffer.putFloat(input);
         }
 
-        inputBuffer.loadBuffer(inputBuf);
+        String signature_key = "serving_default";
+        if (mAction == Whisper.Action.TRANSLATE) {
+            if (Arrays.asList(mInterpreter.getSignatureKeys()).contains("serving_translate")) signature_key = "serving_translate";
+        } else if (mAction == Whisper.ACTION_TRANSCRIBE) {
+            if (Arrays.asList(mInterpreter.getSignatureKeys()).contains("serving_transcribe")) signature_key = "serving_transcribe";
+        }
+
+        Map<String, Object> inputsMap = new HashMap<>();
+        String[] inputs = mInterpreter.getSignatureInputs(signature_key);
+        inputsMap.put(inputs[0], inputBuffer);
+
+        Map<String, Object> outputsMap = new HashMap<>();
+        String[] outputs = mInterpreter.getSignatureOutputs(signature_key);
+        outputsMap.put(outputs[0], outputBuffer.getBuffer());
 
         // Run inference
-        mInterpreter.run(inputBuffer.getBuffer(), outputBuffer.getBuffer());
+        mInterpreter.runSignature(inputsMap, outputsMap,signature_key);
 
         // Retrieve the results
         ArrayList<InputLang> inputLangList = InputLang.getLangList();
