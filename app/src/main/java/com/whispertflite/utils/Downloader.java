@@ -112,7 +112,7 @@ public class Downloader {
                         if (modelMultiLingualBaseFile.exists()) downloadModelMultiLingualBaseSize = modelMultiLingualBaseFile.length();
                         activity.runOnUiThread(() -> {
                             binding.downloadSize.setText((downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize)/1024/1024 + " MB");
-                            binding.downloadProgress.setProgress((int) (((double)(downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize) / (modelEnglishOnlySize + modelMultiLingualSmallSize + downloadModelMultiLingualBaseSize)) * 100));
+                            binding.downloadProgress.setProgress((int) (((double)(downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize) / (modelEnglishOnlySize + modelMultiLingualSmallSize +  modelMultiLingualBaseSize)) * 100));
                         });
                     }
                     outStream.flush();
@@ -182,7 +182,7 @@ public class Downloader {
                         if (modelMultiLingualSmallFile.exists()) downloadModelMultiLingualSmallSize = modelMultiLingualSmallFile.length();
                         activity.runOnUiThread(() -> {
                             binding.downloadSize.setText((downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize)/1024/1024 + " MB");
-                            binding.downloadProgress.setProgress((int) (((double)(downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize) / (modelEnglishOnlySize + modelMultiLingualSmallSize + downloadModelMultiLingualBaseSize)) * 100));
+                            binding.downloadProgress.setProgress((int) (((double)(downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize) / (modelEnglishOnlySize + modelMultiLingualSmallSize + modelMultiLingualBaseSize)) * 100));
                         });
                     }
                     outStream.flush();
@@ -249,7 +249,7 @@ public class Downloader {
                         if (modelEnglishOnlyFile.exists()) downloadModelEnglishOnlySize = modelEnglishOnlyFile.length();
                         activity.runOnUiThread(() -> {
                             binding.downloadSize.setText((downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize)/1024/1024 + " MB");
-                            binding.downloadProgress.setProgress((int) (((double)(downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize) / (modelEnglishOnlySize + modelMultiLingualSmallSize + downloadModelMultiLingualBaseSize)) * 100));
+                            binding.downloadProgress.setProgress((int) (((double)(downloadModelEnglishOnlySize + downloadModelMultiLingualSmallSize + downloadModelMultiLingualBaseSize) / (modelEnglishOnlySize + modelMultiLingualSmallSize +  modelMultiLingualBaseSize)) * 100));
                         });
                     }
                     outStream.flush();
