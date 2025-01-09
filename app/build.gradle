@@ -4,11 +4,6 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        release {
-            // Add signing configurations here if needed
-        }
-    }
     namespace 'com.whispertflite'
     compileSdk 34
 
@@ -19,9 +14,10 @@ android {
         versionCode 18
         versionName "1.8"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
 
-        // Removed NDK and ABI filters
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
