@@ -8,7 +8,7 @@
     <string name="select_model">Select model:</string>
     <string name="status">Status:</string>
     <string name="append">Append:</string>
-    <string name="translate">Translate:</string>
+    <string name="translate">Translate to English:</string>
     <string name="copy">Copy</string>
     <string name="processing">Processing…</string>
     <string name="start">Start</string>
