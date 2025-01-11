@@ -88,6 +88,7 @@ public class WhisperInputMethodService extends InputMethodService {
                     btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed);
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
                     btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
+                    startTranscription();
                 }
             }
 
@@ -96,19 +97,20 @@ public class WhisperInputMethodService extends InputMethodService {
         btnRecord.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // Pressed
-                if (mWhisper != null) stopTranscription();
-                startRecording();
+                if (mWhisper == null) initModel(selectedTfliteFile);
+                tvStatus.setText("");
+                btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed);
+                if (checkRecordPermission()){
+                    if (!mWhisper.isInProgress()) startRecording();
+                    else {
+                        tvStatus.setText(getString(R.string.please_wait));
+                    }
+                }
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
                 btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
                 if (mRecorder != null && mRecorder.isInProgress()) {
                     mRecorder.stop();
-                    if (!mWhisper.isInProgress()) {
-                        startTranscription();
-                    } else {
-                        stopTranscription();
-                    }
-
                 }
             }
             return true;
@@ -146,6 +148,9 @@ public class WhisperInputMethodService extends InputMethodService {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 processingBar.setIndeterminate(false);
+                tvStatus.setText("");
+                tvStatus.setVisibility(View.GONE);
+
                 if (whisperResult.getResult().trim().length() > 0) getCurrentInputConnection().commitText(whisperResult.getResult().trim()+" ",1);
             }
         });
@@ -162,12 +167,12 @@ public class WhisperInputMethodService extends InputMethodService {
         mWhisper.stop();
     }
 
-    private void checkRecordPermission() {
+    private boolean checkRecordPermission() {
         int permission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO);
         if (permission != PackageManager.PERMISSION_GRANTED) {
-            tvStatus.setVisibility(View.VISIBLE);
             tvStatus.setText(getString(R.string.need_record_audio_permission));
         }
+        return (permission == PackageManager.PERMISSION_GRANTED);
     }
 
     private void deinitModel() {

@@ -2,25 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/darkGrey"
     android:padding="5dp">
 
-    <ImageButton
-        android:id="@+id/btnKeyboard"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/darkGrey"
-        android:src="@drawable/ic_arrow_back_24dp" />
-
-    <TextView
-        android:id="@+id/tv_status"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:visibility="gone"/>
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnKeyboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="@color/darkGrey"
+            android:src="@drawable/ic_arrow_back_24dp" />
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@id/btnKeyboard"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:textSize="20dp"
+            android:textColor="@android:color/holo_red_dark" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

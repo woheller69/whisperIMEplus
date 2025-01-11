@@ -25,9 +25,10 @@ supports a broader range of languages. Select your preferred model within the ap
 
 To get the most out of Whisper, follow these simple tips:
 
-- Press and hold the button while speaking. 
-- Pause briefly before starting to speak. 
-- Speak clearly, loudly, and at a moderate pace.
+- Press and hold the button while speaking 
+- Pause briefly before starting to speak
+- Speak clearly, loudly, and at a moderate pace
+- Please note that there is a limit of 30s for each recording
 
 By following these guidelines, you'll be able to enjoy accurate and efficient voice recognition with Whisper.
 

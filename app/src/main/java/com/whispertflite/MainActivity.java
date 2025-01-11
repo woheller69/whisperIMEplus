@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize default model to use
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
+        if (mWhisper == null) initModel(selectedTfliteFile);
 
         // Sort the list to ensure MULTI_LINGUAL_MODEL is at the top (Default)
         if (tfliteFiles.contains(selectedTfliteFile)) {
@@ -135,28 +136,18 @@ public class MainActivity extends AppCompatActivity {
         btnRecord.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // Pressed
+                if (mWhisper == null) initModel(selectedTfliteFile);
+                handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 Log.d(TAG, "Start recording...");
-                if (mWhisper != null) stopProcessing();
-                startRecording();
+                if (!mWhisper.isInProgress()) startRecording();
+                else (Toast.makeText(this,getString(R.string.please_wait),Toast.LENGTH_SHORT)).show();
+
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
-                btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
+                handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
                 if (mRecorder != null && mRecorder.isInProgress()) {
                     Log.d(TAG, "Recording is in progress... stopping...");
                     stopRecording();
-
-                    if (mWhisper == null)
-                        initModel(selectedTfliteFile);
-
-                    if (!mWhisper.isInProgress()) {
-                        Log.d(TAG, "Start transcription...");
-                        if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);
-                        else startProcessing(Whisper.ACTION_TRANSCRIBE);
-                    } else {
-                        Log.d(TAG, "Whisper is already in progress...!");
-                        stopProcessing();
-                    }
-
                 }
             }
             return true;
@@ -188,6 +179,10 @@ public class MainActivity extends AppCompatActivity {
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
+
+                    if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);
+                    else startProcessing(Whisper.ACTION_TRANSCRIBE);
+
                 }
             }
 
