@@ -16,4 +16,13 @@
     <string name="dialog_StarOnGitHub">Do you like this app? Please give a star on GitHub or buy the developer a coffee via PayPal.</string>
     <string name="dialog_Later_button">Maybe later</string>
     <string name="please_wait">Please wait…</string>
+    <string name="exit_button">Exit button</string>
+    <string name="record_button">Record button</string>
+    <string name="return_button">Return button</string>
+    <string name="model_output">Model output text</string>
+    <string name="processing_done">Processing done in\u2009</string>
+    <string name="language">Language:\u2009</string>
+    <string name="multi_lingual_slow">Multi-lingual, slow</string>
+    <string name="english_only_fast">English only, fast</string>
+    <string name="multi_lingual_fast">Multi-lingual, fast</string>
 </resources>

@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:background="@color/darkGrey"
-            android:src="@drawable/ic_arrow_back_24dp" />
+            android:src="@drawable/ic_arrow_back_24dp"
+            android:contentDescription="@string/exit_button"/>
 
         <TextView
             android:id="@+id/tv_status"
@@ -46,7 +47,8 @@
             android:layout_margin="3dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/ic_mic_48dp" />
+            android:src="@drawable/ic_mic_48dp"
+            android:contentDescription="@string/record_button"/>
 
         <ImageButton
             android:id="@+id/btnEnter"
@@ -55,7 +57,8 @@
             android:layout_margin="3dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/ic_keyboard_return_48dp" />
+            android:src="@drawable/ic_keyboard_return_48dp"
+            android:contentDescription="@string/return_button"/>
 
     </LinearLayout>
 
