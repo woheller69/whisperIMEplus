@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -38,6 +40,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private File selectedTfliteFile = null;
     private ProgressBar processingBar = null;
     private SharedPreferences sp = null;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate() {
@@ -85,9 +88,9 @@ public class WhisperInputMethodService extends InputMethodService {
             @Override
             public void onUpdateReceived(String message) {
                 if (message.equals(Recorder.MSG_RECORDING)) {
-                    btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed);
+                    handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
-                    btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
+                    handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
                     startTranscription();
                 }
             }
@@ -97,18 +100,18 @@ public class WhisperInputMethodService extends InputMethodService {
         btnRecord.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // Pressed
-                if (mWhisper == null) initModel(selectedTfliteFile);
-                tvStatus.setText("");
-                btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed);
+                handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 if (checkRecordPermission()){
-                    if (!mWhisper.isInProgress()) startRecording();
-                    else {
-                        tvStatus.setText(getString(R.string.please_wait));
+                    if (!mWhisper.isInProgress()) {
+                        startRecording();
+                        handler.post(() -> tvStatus.setText(""));
+                    } else {
+                        handler.post(() -> tvStatus.setText(getString(R.string.please_wait)));
                     }
                 }
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
-                btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
+                handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
                 if (mRecorder != null && mRecorder.isInProgress()) {
                     mRecorder.stop();
                 }
@@ -147,11 +150,10 @@ public class WhisperInputMethodService extends InputMethodService {
 
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
-                processingBar.setIndeterminate(false);
-                tvStatus.setText("");
-                tvStatus.setVisibility(View.GONE);
+                handler.post(() -> processingBar.setIndeterminate(false));
+                handler.post(() -> tvStatus.setText(""));
 
-                if (whisperResult.getResult().trim().length() > 0) getCurrentInputConnection().commitText(whisperResult.getResult().trim()+" ",1);
+                if (whisperResult.getResult().trim().length() > 0) getCurrentInputConnection().commitText(whisperResult.getResult().trim() + " ",1);
             }
         });
     }
@@ -159,11 +161,11 @@ public class WhisperInputMethodService extends InputMethodService {
     private void startTranscription() {
         mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
         mWhisper.start();
-        processingBar.setIndeterminate(true);
+        handler.post(() -> processingBar.setIndeterminate(true));
     }
 
     private void stopTranscription() {
-        processingBar.setIndeterminate(false);
+        handler.post(() -> processingBar.setIndeterminate(false));
         mWhisper.stop();
     }
 

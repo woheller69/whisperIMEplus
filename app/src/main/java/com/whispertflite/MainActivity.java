@@ -84,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onPause() {
+        stopProcessing();
+        super.onPause();
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,13 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (message.equals(Whisper.MSG_PROCESSING)) {
                     handler.post(() -> tvStatus.setText(message));
-                    //handler.post(() -> tvResult.setText(""));
                     startTime = System.currentTimeMillis();
-                } if (message.equals(Whisper.MSG_PROCESSING_DONE)) {
-//                    handler.post(() -> tvStatus.setText(message));
-                } else if (message.equals(Whisper.MSG_FILE_NOT_FOUND)) {
-                    handler.post(() -> tvStatus.setText(message));
-                    Log.d(TAG, "File not found error...!");
                 }
             }
 
@@ -296,9 +296,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkRecordPermission() {
         int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
         if (permission == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Record permission is granted");
         } else {
-            Log.d(TAG, "Requesting record permission");
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 0);
             Toast.makeText(this, getString(R.string.need_record_audio_permission), Toast.LENGTH_SHORT).show();
         }
@@ -333,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopProcessing() {
         processingBar.setIndeterminate(false);
-        mWhisper.stop();
+        if (mWhisper != null && mWhisper.isInProgress()) mWhisper.stop();
     }
 
     // Copy assets with specified extensions to destination folder
