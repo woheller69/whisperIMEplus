@@ -1,6 +1,10 @@
 <pre>Send a coffee to 
 woheller69@t-online.de 
-<a href= "https://www.paypal.com/signin"><img  align="left" src="https://www.paypalobjects.com/webstatic/de_DE/i/de-pp-logo-150px.png"></a></pre>
+<a href= "https://www.paypal.com/signin"><img  align="left" src="https://www.paypalobjects.com/webstatic/de_DE/i/de-pp-logo-150px.png"></a>
+
+  
+Or via this link (with fees)
+<a href="https://www.paypal.com/donate?hosted_button_id=XVXQ54LBLZ4AA">Donate with Debit or Credit Card</a></pre>
 
 # Voice recognition based on Whisper
 
