@@ -51,8 +51,18 @@
             android:contentDescription="@string/record_button"/>
 
         <ImageButton
+            android:id="@+id/btnDel"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button_background"
+            android:src="@drawable/ic_keyboard_del_48dp"
+            android:contentDescription="@string/delete_button"/>
+
+        <ImageButton
             android:id="@+id/btnEnter"
-            android:layout_width="96dp"
+            android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
             android:layout_weight="1"

@@ -17,9 +17,10 @@
     <string name="dialog_Later_button">Maybe later</string>
     <string name="please_wait">Please wait…</string>
     <string name="exit_button">Exit button</string>
-    <string name="record_button">Record button</string>
-    <string name="return_button">Return button</string>
-    <string name="model_output">Model output text</string>
+    <string name="record_button">Record</string>
+    <string name="return_button">Return</string>
+    <string name="delete_button">Delete</string>
+    <string name="model_output">Model output</string>
     <string name="processing_done">Processing done in\u2009</string>
     <string name="language">Language:\u2009</string>
     <string name="multi_lingual_slow">Multi-lingual, slow</string>

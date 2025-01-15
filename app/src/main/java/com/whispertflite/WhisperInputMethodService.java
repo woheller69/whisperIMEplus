@@ -33,6 +33,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private ImageButton btnRecord;
     private ImageButton btnKeyboard;
     private ImageButton btnEnter;
+    private ImageButton btnDel;
     private TextView tvStatus;
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
@@ -76,6 +77,7 @@ public class WhisperInputMethodService extends InputMethodService {
         btnRecord = view.findViewById(R.id.btnRecord);
         btnKeyboard = view.findViewById(R.id.btnKeyboard);
         btnEnter = view.findViewById(R.id.btnEnter);
+        btnDel = view.findViewById(R.id.btnDel);
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
         sdcardDataFolder = this.getExternalFilesDir(null);
@@ -95,6 +97,46 @@ public class WhisperInputMethodService extends InputMethodService {
                 }
             }
 
+        });
+
+        btnDel.setOnTouchListener(new View.OnTouchListener() {
+            private Runnable initialDeleteRunnable;
+            private Runnable repeatDeleteRunnable;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                    // Post the initial delay of 500ms
+                    initialDeleteRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                            // Start repeating every 100ms
+                            repeatDeleteRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                                    handler.postDelayed(this, 100);
+                                }
+                            };
+                            handler.postDelayed(repeatDeleteRunnable, 100);
+                        }
+                    };
+                    handler.postDelayed(initialDeleteRunnable, 500);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Remove both callbacks
+                    if (initialDeleteRunnable != null) {
+                        handler.removeCallbacks(initialDeleteRunnable);
+                    }
+                    if (repeatDeleteRunnable != null) {
+                        handler.removeCallbacks(repeatDeleteRunnable);
+                    }
+                    initialDeleteRunnable = null;
+                    repeatDeleteRunnable = null;
+                }
+                return true;
+            }
         });
 
         btnRecord.setOnTouchListener((v, event) -> {
