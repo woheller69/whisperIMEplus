@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private File sdcardDataFolder = null;
     private File selectedTfliteFile = null;
     private SharedPreferences sp = null;
+    private Spinner spinnerTflite;
 
     private long startTime = 0;
 
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             tfliteFiles.add(0, selectedTfliteFile);
         }
 
-        Spinner spinnerTflite = findViewById(R.id.spnrTfliteFiles);
+        spinnerTflite = findViewById(R.id.spnrTfliteFiles);
         spinnerTflite.setAdapter(getFileArrayAdapter(tfliteFiles));
         spinnerTflite.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -234,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 if (message.equals(Whisper.MSG_PROCESSING)) {
                     handler.post(() -> tvStatus.setText(message));
                     startTime = System.currentTimeMillis();
+                    handler.post(() -> spinnerTflite.setEnabled(false));
                 }
             }
 
@@ -244,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(() -> processingBar.setIndeterminate(false));
                 Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
                 handler.post(() -> tvResult.append(whisperResult.getResult()));
+                handler.post(() -> spinnerTflite.setEnabled(true));
             }
         });
     }
