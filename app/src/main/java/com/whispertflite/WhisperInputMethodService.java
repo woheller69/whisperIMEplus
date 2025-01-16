@@ -13,6 +13,7 @@ import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.whispertflite.asr.WhisperResult;
 import java.io.File;
 
 public class WhisperInputMethodService extends InputMethodService {
+    private static final String TAG = "WhisperInputMethodService";
     private ImageButton btnRecord;
     private ImageButton btnKeyboard;
     private ImageButton btnEnter;
@@ -185,6 +187,7 @@ public class WhisperInputMethodService extends InputMethodService {
 
         mWhisper = new Whisper(this);
         mWhisper.loadModel(modelFile, vocabFile, isMultilingualModel);
+        Log.d(TAG, "Initialized: " + modelFile.getName());
         mWhisper.setListener(new Whisper.WhisperListener() {
             @Override
             public void onUpdateReceived(String message) {

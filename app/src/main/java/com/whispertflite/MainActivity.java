@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox append;
     private CheckBox translate;
     private ProgressBar processingBar;
+    private ImageButton btnInfo;
 
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
@@ -109,17 +111,17 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<File> tfliteFiles = getFilesWithExtension(sdcardDataFolder, ".tflite");
 
         // Initialize default model to use
+        initModel();
+
+        btnInfo = findViewById(R.id.btnInfo);
+        btnInfo.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whisperIME#Donate"))));
+
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
-        if (mWhisper == null) initModel(selectedTfliteFile);
-
-        // Sort the list to ensure MULTI_LINGUAL_MODEL is at the top (Default)
-        if (tfliteFiles.contains(selectedTfliteFile)) {
-            tfliteFiles.remove(selectedTfliteFile);
-            tfliteFiles.add(0, selectedTfliteFile);
-        }
-
+        ArrayAdapter<File> tfliteAdapter = getFileArrayAdapter(tfliteFiles);
+        int position = tfliteAdapter.getPosition(selectedTfliteFile);
         spinnerTflite = findViewById(R.id.spnrTfliteFiles);
-        spinnerTflite.setAdapter(getFileArrayAdapter(tfliteFiles));
+        spinnerTflite.setAdapter(tfliteAdapter);
+        spinnerTflite.setSelection(position,false);
         spinnerTflite.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -128,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("modelName",selectedTfliteFile.getName());
                 editor.apply();
+                initModel();
             }
 
             @Override
@@ -143,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
         btnRecord.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // Pressed
-                if (mWhisper == null) initModel(selectedTfliteFile);
                 handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 Log.d(TAG, "Start recording...");
                 if (!mWhisper.isInProgress()) startRecording();
@@ -220,13 +222,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Model initialization
-    private void initModel(File modelFile) {
+    private void initModel() {
+        File modelFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
         boolean isMultilingualModel = !(modelFile.getName().endsWith(ENGLISH_ONLY_MODEL_EXTENSION));
         String vocabFileName = isMultilingualModel ? MULTILINGUAL_VOCAB_FILE : ENGLISH_ONLY_VOCAB_FILE;
         File vocabFile = new File(sdcardDataFolder, vocabFileName);
 
         mWhisper = new Whisper(this);
         mWhisper.loadModel(modelFile, vocabFile, isMultilingualModel);
+        Log.d(TAG, "Initialized: " + modelFile.getName());
         mWhisper.setListener(new Whisper.WhisperListener() {
             @Override
             public void onUpdateReceived(String message) {

@@ -5,11 +5,12 @@
     <string name="error_download">Erreur de téléchargement</string>
     <string name="download_model">Téléchargement de Modèle</string>
     <string name="download_model_text">\nTélécharger les modèles Whisper à partir de Hugging Face (~350 MB)</string>
-    <string name="select_model">Sélectionner le modèle:</string>
+    <string name="select_model">Modèle:</string>
     <string name="status">Status:</string>
     <string name="append">Ajouter:</string>
     <string name="translate">Traduire en Anglais:</string>
     <string name="copy">Copie</string>
+    <string name="info">Informations</string>
     <string name="processing">Traitement…</string>
     <string name="start">Démarrage</string>
     <string name="stop">Stop</string>

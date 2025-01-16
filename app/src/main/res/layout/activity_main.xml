@@ -21,9 +21,10 @@
 
         <Spinner
             android:id="@+id/spnrTfliteFiles"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
+            android:layout_weight="1"
             android:contentDescription="@string/select_model"/>
     </LinearLayout>
     <LinearLayout
@@ -121,7 +122,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="3dp"
             android:layout_marginBottom="10dp"
             android:contentDescription="@string/copy"
             android:src="@drawable/ic_copy" />
@@ -135,7 +136,7 @@
         android:indeterminateTint="@color/colorAccent"
         style="?android:attr/progressBarStyleHorizontal"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -146,9 +147,18 @@
             android:layout_width="96dp"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/rounded_button_background"
             android:contentDescription="@string/record_button"
             android:src="@drawable/ic_mic_48dp" />
 
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/btnInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:contentDescription="@string/info"
+            android:src="@drawable/ic_info_48dp" />
+    </RelativeLayout>
 </LinearLayout>

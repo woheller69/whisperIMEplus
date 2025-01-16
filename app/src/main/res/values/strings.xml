@@ -5,11 +5,12 @@
     <string name="error_download">Download error</string>
     <string name="download_model">Download Model</string>
     <string name="download_model_text">\nDownload Whisper models from Hugging Face (~350 MB)</string>
-    <string name="select_model">Select model:</string>
+    <string name="select_model">Model:</string>
     <string name="status">Status:</string>
     <string name="append">Append:</string>
     <string name="translate">Translate to English:</string>
     <string name="copy">Copy</string>
+    <string name="info">Info</string>
     <string name="processing">Processing…</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
