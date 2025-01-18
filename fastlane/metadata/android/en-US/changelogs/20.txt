@@ -1,0 +1,3 @@
+Layout improvement
+French translation
+Backspace button

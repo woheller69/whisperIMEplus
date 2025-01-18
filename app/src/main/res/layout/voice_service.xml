@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:background="@color/darkGrey"
-            android:src="@drawable/ic_arrow_back_24dp"
+            android:src="@drawable/ic_keyboard_36dp"
             android:contentDescription="@string/exit_button"/>
 
         <TextView

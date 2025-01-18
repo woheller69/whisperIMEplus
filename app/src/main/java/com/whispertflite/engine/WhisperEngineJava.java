@@ -185,8 +185,7 @@ public class WhisperEngineJava implements WhisperEngine {
             }
         }
 
-        WhisperResult whisperResult = new WhisperResult(result.toString(),language, task);
-        return whisperResult;
+        return new WhisperResult(result.toString(),language, task);
     }
 
 }

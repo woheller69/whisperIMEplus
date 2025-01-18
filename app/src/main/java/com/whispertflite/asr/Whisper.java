@@ -8,8 +8,6 @@ import com.whispertflite.engine.WhisperEngineJava;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -25,7 +23,6 @@ public class Whisper {
     private static final String TAG = "Whisper";
     public static final String MSG_PROCESSING = "Processing...";
     public static final String MSG_PROCESSING_DONE = "Processing done...!";
-    public static final String MSG_FILE_NOT_FOUND = "Input file doesn't exist..!";
 
     public static final Action ACTION_TRANSCRIBE = Action.TRANSCRIBE;
     public static final Action ACTION_TRANSLATE = Action.TRANSLATE;
@@ -36,7 +33,6 @@ public class Whisper {
     }
 
     private final AtomicBoolean mInProgress = new AtomicBoolean(false);
-    private final Queue<float[]> audioBufferQueue = new LinkedList<>();
 
     private final WhisperEngine mWhisperEngine;
     private Action mAction;
@@ -50,8 +46,8 @@ public class Whisper {
         this.mWhisperEngine = new WhisperEngineJava(context);
 
         // Start thread for RecordBuffer transcription
-        Thread threadTranscbFile = new Thread(this::transcribeRecordBufferLoop);
-        threadTranscbFile.start();
+        Thread threadProcessRecordBuffer = new Thread(this::processRecordBufferLoop);
+        threadProcessRecordBuffer.start();
 
     }
 
@@ -108,14 +104,14 @@ public class Whisper {
         return mInProgress.get();
     }
 
-    private void transcribeRecordBufferLoop() {
+    private void processRecordBufferLoop() {
         while (!Thread.currentThread().isInterrupted()) {
             taskLock.lock();
             try {
                 while (!taskAvailable) {
                     hasTask.await();
                 }
-                transcribeRecordBuffer();
+                processRecordBuffer();
                 taskAvailable = false;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -125,7 +121,7 @@ public class Whisper {
         }
     }
 
-    private void transcribeRecordBuffer() {
+    private void processRecordBuffer() {
         try {
             if (mWhisperEngine.isInitialized() && RecordBuffer.getOutputBuffer() != null) {
                 long startTime = System.currentTimeMillis();

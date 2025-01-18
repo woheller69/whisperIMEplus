@@ -11,8 +11,8 @@ android {
         applicationId "org.woheller69.whisper"
         minSdk 28
         targetSdk 34
-        versionCode 19
-        versionName "1.9"
+        versionCode 20
+        versionName "2.0"
 
     }
 
@@ -57,7 +57,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
 
     // Main TensorFlow Lite library
-    implementation 'org.tensorflow:tensorflow-lite:2.14.0'
+    //noinspection GradleDependency: Crash with 2.16.1, nonsense output with com.google.ai.edge.litert:litert:1.0.1
+    implementation 'org.tensorflow:tensorflow-lite:2.15.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
 
 }
