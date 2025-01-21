@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Copy the text to the clipboard
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("Copied Text", textToCopy);
+            ClipData clip = ClipData.newPlainText(getString(R.string.model_output), textToCopy);
             clipboard.setPrimaryClip(clip);
         });
 
@@ -181,9 +181,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onUpdateReceived(String message) {
                 Log.d(TAG, "Update is received, Message: " + message);
-                handler.post(() -> tvStatus.setText(message));
-
                 if (message.equals(Recorder.MSG_RECORDING)) {
+                    handler.post(() -> tvStatus.setText(getString(R.string.record_button) +"…"));
                     if (!append.isChecked()) handler.post(() -> tvResult.setText(""));
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
@@ -191,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
 
                     if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);
                     else startProcessing(Whisper.ACTION_TRANSCRIBE);
-
                 }
             }
 
@@ -237,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Update is received, Message: " + message);
 
                 if (message.equals(Whisper.MSG_PROCESSING)) {
-                    handler.post(() -> tvStatus.setText(message));
+                    handler.post(() -> tvStatus.setText(getString(R.string.processing)));
                     startTime = System.currentTimeMillis();
                     handler.post(() -> spinnerTflite.setEnabled(false));
                 }
@@ -246,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 long timeTaken = System.currentTimeMillis() - startTime;
-                handler.post(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken/1000L + "\u2009s" + "\n"+ getString(R.string.language) + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating")));
+                handler.post(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken/1000L + "\u2009s" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
                 handler.post(() -> processingBar.setIndeterminate(false));
                 Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
                 handler.post(() -> tvResult.append(whisperResult.getResult()));
