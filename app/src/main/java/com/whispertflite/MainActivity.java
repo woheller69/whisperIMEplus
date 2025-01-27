@@ -283,13 +283,13 @@ public class MainActivity extends AppCompatActivity {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView textView = view.findViewById(android.R.id.text1);
                 if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_SLOW))
-                    textView.setText("Multi-lingual, slow");
+                    textView.setText(R.string.multi_lingual_slow);
                 else if ((getItem(position).getName()).equals(ENGLISH_ONLY_MODEL))
-                    textView.setText("English only, fast");
+                    textView.setText(R.string.english_only_fast);
                 else if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_FAST))
-                    textView.setText("Multi-lingual, fast");
+                    textView.setText(R.string.multi_lingual_fast);
                 else
-                textView.setText(getItem(position).getName().substring(0, getItem(position).getName().length() - ".tflite".length()));
+                    textView.setText(getItem(position).getName().substring(0, getItem(position).getName().length() - ".tflite".length()));
 
                 return view;
             }

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:context=".DownloadActivity">
 
     <LinearLayout
@@ -98,6 +99,7 @@
                 android:text="@string/start"
                 android:backgroundTint="@color/colorAccent"
                 android:visibility="gone"
+                android:textColor="@color/lightGrey"
                 android:onClick="startMain"/>
         </LinearLayout>
 
