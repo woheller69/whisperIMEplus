@@ -11,13 +11,14 @@ android {
         applicationId "org.woheller69.whisper"
         minSdk 28
         targetSdk 34
-        versionCode 20
-        versionName "2.0"
+        versionCode 21
+        versionName "2.1"
 
     }
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
 
     buildTypes {
@@ -37,10 +38,6 @@ android {
 
     kotlinOptions {
         jvmTarget = '11'
-    }
-
-    buildFeatures {
-        viewBinding true
     }
 
     dependenciesInfo {
