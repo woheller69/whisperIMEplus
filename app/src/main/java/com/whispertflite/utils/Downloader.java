@@ -80,7 +80,11 @@ public class Downloader {
     }
 
     public static void downloadModels(final Activity activity, ActivityDownloadBinding binding) {
+        checkModels(activity);
+
         binding.downloadProgress.setProgress(0);
+        binding.downloadButton.setEnabled(false);
+
 
         File modelMultiLingualBaseFile = new File(activity.getExternalFilesDir(null)+ "/" + modelMultiLingualBase);
         if (!modelMultiLingualBaseFile.exists()) {
@@ -130,6 +134,7 @@ public class Downloader {
                         modelMultiLingualBaseFinished = false;
                         activity.runOnUiThread(() -> {
                             Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                            binding.downloadButton.setEnabled(true);
                         });
                     } else {
                         modelMultiLingualBaseFinished = true;
@@ -138,8 +143,12 @@ public class Downloader {
                         });
                     }
                 } catch (NoSuchAlgorithmException | IOException i) {
-                    activity.runOnUiThread(() -> Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show());
                     modelMultiLingualBaseFile.delete();
+                    modelMultiLingualBaseFinished = false;
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                        binding.downloadButton.setEnabled(true);
+                    });
                     Log.w("WhisperASR", activity.getResources().getString(R.string.error_download), i);
                 }
             });
@@ -200,6 +209,7 @@ public class Downloader {
                         modelMultiLingualSmallFinished = false;
                         activity.runOnUiThread(() -> {
                             Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                            binding.downloadButton.setEnabled(true);
                         });
                     } else {
                         modelMultiLingualSmallFinished = true;
@@ -208,8 +218,12 @@ public class Downloader {
                         });
                     }
                 } catch (NoSuchAlgorithmException | IOException i) {
-                    activity.runOnUiThread(() -> Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show());
                     modelMultiLingualSmallFile.delete();
+                    modelMultiLingualSmallFinished = false;
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                        binding.downloadButton.setEnabled(true);
+                    });
                     Log.w("WhisperASR", activity.getResources().getString(R.string.error_download), i);
                 }
             });
@@ -268,6 +282,7 @@ public class Downloader {
                         modelEnglishOnlyFinished = false;
                         activity.runOnUiThread(() -> {
                             Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                            binding.downloadButton.setEnabled(true);
                         });
                     } else {
                         modelEnglishOnlyFinished = true;
@@ -276,8 +291,12 @@ public class Downloader {
                         });
                     }
                 } catch (NoSuchAlgorithmException | IOException i) {
-                    activity.runOnUiThread(() -> Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show());
                     modelEnglishOnlyFile.delete();
+                    modelEnglishOnlyFinished = false;
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(activity, activity.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                        binding.downloadButton.setEnabled(true);
+                    });
                     Log.w("WhisperASR", activity.getResources().getString(R.string.error_download), i);
                 }
             });
