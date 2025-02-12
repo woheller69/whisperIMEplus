@@ -13,7 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -38,6 +38,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
+import com.whispertflite.utils.HapticFeedback;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private Context mContext;
     private static final String TAG = "MainActivity";
 
     // whisper-small.tflite works well for multi-lingual
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(R.layout.activity_main);
 
         checkInputMethodEnabled();
@@ -148,8 +151,10 @@ public class MainActivity extends AppCompatActivity {
                 // Pressed
                 handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 Log.d(TAG, "Start recording...");
-                if (!mWhisper.isInProgress()) startRecording();
-                else (Toast.makeText(this,getString(R.string.please_wait),Toast.LENGTH_SHORT)).show();
+                if (!mWhisper.isInProgress()) {
+                    HapticFeedback.vibrate(this);
+                    startRecording();
+                } else (Toast.makeText(this,getString(R.string.please_wait),Toast.LENGTH_SHORT)).show();
 
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
@@ -186,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!append.isChecked()) handler.post(() -> tvResult.setText(""));
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
+                    HapticFeedback.vibrate(mContext);
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
 
                     if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);

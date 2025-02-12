@@ -6,13 +6,14 @@ import static com.whispertflite.MainActivity.MULTI_LINGUAL_MODEL_SLOW;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -27,6 +28,7 @@ import androidx.core.content.ContextCompat;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
+import com.whispertflite.utils.HapticFeedback;
 
 import java.io.File;
 
@@ -44,9 +46,11 @@ public class WhisperInputMethodService extends InputMethodService {
     private ProgressBar processingBar = null;
     private SharedPreferences sp = null;
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private Context mContext;
 
     @Override
     public void onCreate() {
+        mContext = this;
         super.onCreate();
     }
 
@@ -94,6 +98,7 @@ public class WhisperInputMethodService extends InputMethodService {
                 if (message.equals(Recorder.MSG_RECORDING)) {
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
+                    HapticFeedback.vibrate(mContext);
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
                     startTranscription();
                 }
@@ -147,6 +152,7 @@ public class WhisperInputMethodService extends InputMethodService {
                 handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 if (checkRecordPermission()){
                     if (!mWhisper.isInProgress()) {
+                        HapticFeedback.vibrate(this);
                         startRecording();
                         handler.post(() -> tvStatus.setText(""));
                     } else {
