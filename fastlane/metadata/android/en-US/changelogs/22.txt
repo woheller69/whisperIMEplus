@@ -1,0 +1,2 @@
+Haptic feedback
+Bugfixes
