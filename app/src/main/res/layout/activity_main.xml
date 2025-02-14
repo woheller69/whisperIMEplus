@@ -112,6 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/model_output"
+                android:text = "@string/instructions"
                 android:textSize="16sp" />
         </ScrollView>
         <com.google.android.material.floatingactionbutton.FloatingActionButton

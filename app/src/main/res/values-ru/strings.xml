@@ -13,6 +13,7 @@
     <string name="info">Информация</string>
     <string name="processing">Обрабатывается…</string>
     <string name="start">НАЧАТЬ</string>
+    <string name="dialog_StarOnGitHub">Вам нравится это приложение? Пожалуйста, поставьте звёздочку на GitHub или купите разработчику кофе через PayPal.</string>
     <string name="dialog_Later_button">Может быть позже</string>
     <string name="please_wait">Пожалуйста подождите…</string>
     <string name="exit_button">Выйти</string>
@@ -27,5 +28,4 @@
     <string name="mode_transcription">транскрипция</string>
     <string name="mode_translation">перевод</string>
     <string name="translate">Перевести на английский:</string>
-    <string name="dialog_StarOnGitHub">Вам нравится это приложение? Пожалуйста, поставьте звёздочку на GitHub или купите разработчику кофе через PayPal.</string>
 </resources>

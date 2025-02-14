@@ -28,4 +28,5 @@
     <string name="multi_lingual_fast">Multi-lingual, fast</string>
     <string name="mode_transcription">transcription</string>
     <string name="mode_translation">translation</string>
+    <string name="instructions">Press and hold the microphone button while speaking.</string>
 </resources>
