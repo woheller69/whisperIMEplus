@@ -36,9 +36,7 @@ To get the most out of Whisper, follow these simple tips:
 
 By following these guidelines, you'll be able to enjoy accurate and efficient voice recognition with Whisper.
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75">](https://f-droid.org/de/packages/org.woheller69.whisper/)
-
-[<img src="https://www.openapk.net/images/openapk-badge.png" height="75">]( https://www.openapk.net/whisper/org.woheller69.whisper/)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75">](https://f-droid.org/de/packages/org.woheller69.whisper/) [<img src="https://www.openapk.net/images/openapk-badge.png" height="75">]( https://www.openapk.net/whisper/org.woheller69.whisper/)
 
 
 ## Contribute
