@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.preference.PreferenceManager;
@@ -47,6 +48,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private SharedPreferences sp = null;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Context mContext;
+    private CountDownTimer countDownTimer;
 
     @Override
     public void onCreate() {
@@ -154,6 +156,16 @@ public class WhisperInputMethodService extends InputMethodService {
                     if (!mWhisper.isInProgress()) {
                         HapticFeedback.vibrate(this);
                         startRecording();
+                        handler.post(() -> processingBar.setProgress(100));
+                        countDownTimer = new CountDownTimer(30000, 1000) {
+                            @Override
+                            public void onTick(long l) {
+                                handler.post(() -> processingBar.setProgress((int) (l / 300)));
+                            }
+                            @Override
+                            public void onFinish() {}
+                        };
+                        countDownTimer.start();
                         handler.post(() -> tvStatus.setText(""));
                     } else {
                         handler.post(() -> tvStatus.setText(getString(R.string.please_wait)));
@@ -210,9 +222,11 @@ public class WhisperInputMethodService extends InputMethodService {
     }
 
     private void startTranscription() {
+        if (countDownTimer!=null) { countDownTimer.cancel();}
+        handler.post(() -> processingBar.setProgress(0));
+        handler.post(() -> processingBar.setIndeterminate(true));
         mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
         mWhisper.start();
-        handler.post(() -> processingBar.setIndeterminate(true));
     }
 
     private void stopTranscription() {

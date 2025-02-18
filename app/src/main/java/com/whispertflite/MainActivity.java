@@ -11,8 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.CountDownTimer;
 import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -78,10 +77,9 @@ public class MainActivity extends AppCompatActivity {
     private File selectedTfliteFile = null;
     private SharedPreferences sp = null;
     private Spinner spinnerTflite;
+    private CountDownTimer countDownTimer;
 
     private long startTime = 0;
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onDestroy() {
@@ -149,16 +147,26 @@ public class MainActivity extends AppCompatActivity {
         btnRecord.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // Pressed
-                handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
+                runOnUiThread(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 Log.d(TAG, "Start recording...");
                 if (!mWhisper.isInProgress()) {
                     HapticFeedback.vibrate(this);
                     startRecording();
+                    runOnUiThread(() -> processingBar.setProgress(100));
+                    countDownTimer = new CountDownTimer(30000, 1000) {
+                        @Override
+                        public void onTick(long l) {
+                            runOnUiThread(() -> processingBar.setProgress((int) (l / 300)));
+                        }
+                        @Override
+                        public void onFinish() {}
+                    };
+                    countDownTimer.start();
                 } else (Toast.makeText(this,getString(R.string.please_wait),Toast.LENGTH_SHORT)).show();
 
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Released
-                handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
+                runOnUiThread(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
                 if (mRecorder != null && mRecorder.isInProgress()) {
                     Log.d(TAG, "Recording is in progress... stopping...");
                     stopRecording();
@@ -187,12 +195,12 @@ public class MainActivity extends AppCompatActivity {
             public void onUpdateReceived(String message) {
                 Log.d(TAG, "Update is received, Message: " + message);
                 if (message.equals(Recorder.MSG_RECORDING)) {
-                    handler.post(() -> tvStatus.setText(getString(R.string.record_button) +"…"));
-                    if (!append.isChecked()) handler.post(() -> tvResult.setText(""));
-                    handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
+                    runOnUiThread(() -> tvStatus.setText(getString(R.string.record_button) +"…"));
+                    if (!append.isChecked()) runOnUiThread(() -> tvResult.setText(""));
+                    runOnUiThread(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background_pressed));
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
                     HapticFeedback.vibrate(mContext);
-                    handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
+                    runOnUiThread(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
 
                     if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);
                     else startProcessing(Whisper.ACTION_TRANSCRIBE);
@@ -241,20 +249,20 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Update is received, Message: " + message);
 
                 if (message.equals(Whisper.MSG_PROCESSING)) {
-                    handler.post(() -> tvStatus.setText(getString(R.string.processing)));
+                    runOnUiThread(() -> tvStatus.setText(getString(R.string.processing)));
                     startTime = System.currentTimeMillis();
-                    handler.post(() -> spinnerTflite.setEnabled(false));
+                    runOnUiThread(() -> spinnerTflite.setEnabled(false));
                 }
             }
 
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 long timeTaken = System.currentTimeMillis() - startTime;
-                handler.post(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken/1000L + "\u2009s" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
-                handler.post(() -> processingBar.setIndeterminate(false));
+                runOnUiThread(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken/1000L + "\u2009s" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
+                runOnUiThread(() -> processingBar.setIndeterminate(false));
                 Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
-                handler.post(() -> tvResult.append(whisperResult.getResult()));
-                handler.post(() -> spinnerTflite.setEnabled(true));
+                runOnUiThread(() -> tvResult.append(whisperResult.getResult()));
+                runOnUiThread(() -> spinnerTflite.setEnabled(true));
             }
         });
     }
@@ -335,9 +343,13 @@ public class MainActivity extends AppCompatActivity {
 
     // Transcription calls
     private void startProcessing(Whisper.Action action) {
+        if (countDownTimer!=null) { countDownTimer.cancel();}
+        runOnUiThread(() -> {
+            processingBar.setProgress(0);
+            processingBar.setIndeterminate(true);
+        });
         mWhisper.setAction(action);
         mWhisper.start();
-        processingBar.setIndeterminate(true);
     }
 
     private void stopProcessing() {
