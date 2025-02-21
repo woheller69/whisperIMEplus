@@ -37,6 +37,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private static final String TAG = "WhisperInputMethodService";
     private ImageButton btnRecord;
     private ImageButton btnKeyboard;
+    private ImageButton btnTranslate;
     private ImageButton btnEnter;
     private ImageButton btnDel;
     private TextView tvStatus;
@@ -49,6 +50,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Context mContext;
     private CountDownTimer countDownTimer;
+    private static boolean translate = false;
 
     @Override
     public void onCreate() {
@@ -84,12 +86,13 @@ public class WhisperInputMethodService extends InputMethodService {
         View view = getLayoutInflater().inflate(R.layout.voice_service, null);
         btnRecord = view.findViewById(R.id.btnRecord);
         btnKeyboard = view.findViewById(R.id.btnKeyboard);
+        btnTranslate = view.findViewById(R.id.btnTranslate);
         btnEnter = view.findViewById(R.id.btnEnter);
         btnDel = view.findViewById(R.id.btnDel);
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
         sdcardDataFolder = this.getExternalFilesDir(null);
-
+        btnTranslate.setImageResource(translate ? R.drawable.ic_english_on_36dp : R.drawable.ic_english_off_36dp);
         checkRecordPermission();
 
         // Audio recording functionality
@@ -186,6 +189,11 @@ public class WhisperInputMethodService extends InputMethodService {
             switchToPreviousInputMethod();
         });
 
+        btnTranslate.setOnClickListener(v -> {
+            translate = !translate;
+            btnTranslate.setImageResource(translate ? R.drawable.ic_english_on_36dp : R.drawable.ic_english_off_36dp);
+        });
+
         btnEnter.setOnClickListener(v -> {
             getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
         });
@@ -225,7 +233,8 @@ public class WhisperInputMethodService extends InputMethodService {
         if (countDownTimer!=null) { countDownTimer.cancel();}
         handler.post(() -> processingBar.setProgress(0));
         handler.post(() -> processingBar.setIndeterminate(true));
-        mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+        if (translate) mWhisper.setAction(Whisper.ACTION_TRANSLATE);
+        else mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
         mWhisper.start();
     }
 

@@ -21,6 +21,15 @@
             android:src="@drawable/ic_keyboard_36dp"
             android:contentDescription="@string/exit_button"/>
 
+        <ImageButton
+            android:id="@+id/btnTranslate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@color/darkGrey"
+            android:src="@drawable/ic_english_off_36dp"
+            android:contentDescription="@string/translate"/>
+
         <TextView
             android:id="@+id/tv_status"
             android:layout_alignParentEnd="true"
