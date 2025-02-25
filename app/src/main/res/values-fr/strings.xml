@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Whisper</string>
-
     <string name="need_record_audio_permission">"L\'autorisation ENREGISTREMENT AUDIO n\'est pas accordée"</string>
     <string name="error_download">Erreur de téléchargement</string>
     <string name="download_model">Téléchargement de Modèle</string>
@@ -9,7 +7,7 @@
     <string name="status">Status:</string>
     <string name="append">Ajouter:</string>
     <string name="translate">Traduire en Anglais:</string>
-    <string name="copy">Copie</string>
+    <string name="copy_to_clipboard">Copie</string>
     <string name="info">Informations</string>
     <string name="processing">Traitement…</string>
     <string name="start">Démarrage</string>

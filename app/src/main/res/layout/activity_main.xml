@@ -125,7 +125,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="3dp"
             android:layout_marginBottom="10dp"
-            android:contentDescription="@string/copy"
+            android:contentDescription="@string/copy_to_clipboard"
             android:src="@drawable/ic_copy" />
     </RelativeLayout>
 

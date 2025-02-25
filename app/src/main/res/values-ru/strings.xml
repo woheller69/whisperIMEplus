@@ -9,7 +9,7 @@
     <string name="select_model">Модель:</string>
     <string name="status">Состояние:</string>
     <string name="append">Добавить:</string>
-    <string name="copy">Копировать</string>
+    <string name="copy_to_clipboard">Копировать</string>
     <string name="info">Информация</string>
     <string name="processing">Обрабатывается…</string>
     <string name="start">НАЧАТЬ</string>

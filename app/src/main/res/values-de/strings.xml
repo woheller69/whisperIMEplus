@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Whisper</string>
-
     <string name="need_record_audio_permission">"RECORD_AUDIO Berechtigung fehlt"</string>
     <string name="error_download">Fehler beim Herunterladen</string>
     <string name="download_model">Modell herunterladen</string>
@@ -9,7 +7,7 @@
     <string name="status">Status:</string>
     <string name="append">Anhängen:</string>
     <string name="translate">Auf English übersetzen:</string>
-    <string name="copy">Kopieren</string>
+    <string name="copy_to_clipboard">Kopieren</string>
     <string name="info">Info</string>
     <string name="processing">Verarbeitung…</string>
     <string name="start">START</string>
