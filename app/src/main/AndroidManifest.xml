@@ -31,6 +31,20 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".WhisperRecognizeActivity"
+            android:exported="true"
+            android:clearTaskOnLaunch="true"
+            android:launchMode="singleInstance"
+            android:visibleToInstantApps="true"
+            android:theme="@style/Theme.Recognize"
+            android:configChanges="orientation|screenLayout|screenSize|keyboardHidden|keyboard|uiMode|density">
+            <intent-filter>
+                <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".WhisperInputMethodService"
             android:permission="android.permission.BIND_INPUT_METHOD"
