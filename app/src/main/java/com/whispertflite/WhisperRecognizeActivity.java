@@ -10,8 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Gravity;
@@ -44,6 +44,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     private File selectedTfliteFile = null;
     private SharedPreferences sp = null;
     private Context mContext;
+    private CountDownTimer countDownTimer;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -92,6 +93,16 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
                     if (!mWhisper.isInProgress()) {
                         HapticFeedback.vibrate(this);
                         startRecording();
+                        runOnUiThread(() -> processingBar.setProgress(100));
+                        countDownTimer = new CountDownTimer(30000, 1000) {
+                            @Override
+                            public void onTick(long l) {
+                                runOnUiThread(() -> processingBar.setProgress((int) (l / 300)));
+                            }
+                            @Override
+                            public void onFinish() {}
+                        };
+                        countDownTimer.start();
                     } else {
                         runOnUiThread(() -> Toast.makeText(this, getString(R.string.please_wait),Toast.LENGTH_SHORT).show());
                     }
@@ -151,7 +162,11 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     }
 
     private void startTranscription() {
-        runOnUiThread(() -> processingBar.setIndeterminate(true));
+        if (countDownTimer!=null) { countDownTimer.cancel();}
+        runOnUiThread(() -> {
+            processingBar.setProgress(0);
+            processingBar.setIndeterminate(true);
+        });
         mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
         mWhisper.start();
         Log.d(TAG,"Start Transcription");
