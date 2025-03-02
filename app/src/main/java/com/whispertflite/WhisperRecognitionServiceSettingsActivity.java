@@ -2,11 +2,10 @@ package com.whispertflite;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,11 +25,8 @@ import androidx.preference.PreferenceManager;
 import com.whispertflite.utils.Downloader;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -104,8 +100,8 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-        // Assume this Activity is the current activity, check record permission
-        checkRecordPermission();
+
+        checkPermissions();
 
     }
 
@@ -148,11 +144,17 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
         return adapter;
     }
 
-    private void checkRecordPermission() {
-        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 0);
+    private void checkPermissions() {
+        List<String> perms = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            perms.add(Manifest.permission.RECORD_AUDIO);
             Toast.makeText(this, getString(R.string.need_record_audio_permission), Toast.LENGTH_SHORT).show();
+        }
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) && (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)){
+            perms.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
+        if (!perms.isEmpty()) {
+            requestPermissions(perms.toArray(new String[] {}), 0);
         }
     }
 
