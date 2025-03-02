@@ -39,7 +39,6 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
     public static final String MULTI_LINGUAL_MODEL_FAST = "whisper-base.tflite";
     public static final String MULTI_LINGUAL_MODEL_SLOW = "whisper-small.tflite";
     public static final String ENGLISH_ONLY_MODEL = "whisper-tiny.en.tflite";
-    private static final String[] EXTENSIONS_TO_COPY = {"bin"};
 
     private File sdcardDataFolder = null;
     private File selectedTfliteFile = null;
@@ -64,7 +63,6 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         // Call the method to copy specific file types from assets to data folder
         sdcardDataFolder = this.getExternalFilesDir(null);
-        copyAssetsToSdcard(this, sdcardDataFolder, EXTENSIONS_TO_COPY);
 
         ArrayList<File> tfliteFiles = getFilesWithExtension(sdcardDataFolder, ".tflite");
 
@@ -165,43 +163,6 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
             Log.d(TAG, "Record permission is granted");
         } else {
             Log.d(TAG, "Record permission is not granted");
-        }
-    }
-
-    // Copy assets with specified extensions to destination folder
-    private static void copyAssetsToSdcard(Context context, File destFolder, String[] extensions) {
-        AssetManager assetManager = context.getAssets();
-
-        try {
-            // List all files in the assets folder once
-            String[] assetFiles = assetManager.list("");
-            if (assetFiles == null) return;
-
-            for (String assetFileName : assetFiles) {
-                // Check if file matches any of the provided extensions
-                for (String extension : extensions) {
-                    if (assetFileName.endsWith("." + extension)) {
-                        File outFile = new File(destFolder, assetFileName);
-
-                        // Skip if file already exists
-                        if (outFile.exists()) break;
-
-                        // Copy the file from assets to the destination folder
-                        try (InputStream inputStream = assetManager.open(assetFileName);
-                             OutputStream outputStream = new FileOutputStream(outFile)) {
-
-                            byte[] buffer = new byte[1024];
-                            int bytesRead;
-                            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                                outputStream.write(buffer, 0, bytesRead);
-                            }
-                        }
-                        break; // No need to check further extensions
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

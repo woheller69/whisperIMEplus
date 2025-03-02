@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -40,10 +39,6 @@ import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.HapticFeedback;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ENGLISH_ONLY_MODEL_EXTENSION = ".en.tflite";
     public static final String ENGLISH_ONLY_VOCAB_FILE = "filters_vocab_en.bin";
     public static final String MULTILINGUAL_VOCAB_FILE = "filters_vocab_multilingual.bin";
-    private static final String[] EXTENSIONS_TO_COPY = {"bin"};
+
 
     private TextView tvStatus;
     private TextView tvResult;
@@ -107,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         translate = findViewById(R.id.mode_translate);
         // Call the method to copy specific file types from assets to data folder
         sdcardDataFolder = this.getExternalFilesDir(null);
-        copyAssetsToSdcard(this, sdcardDataFolder, EXTENSIONS_TO_COPY);
 
         ArrayList<File> tfliteFiles = getFilesWithExtension(sdcardDataFolder, ".tflite");
 
@@ -355,43 +349,6 @@ public class MainActivity extends AppCompatActivity {
     private void stopProcessing() {
         processingBar.setIndeterminate(false);
         if (mWhisper != null && mWhisper.isInProgress()) mWhisper.stop();
-    }
-
-    // Copy assets with specified extensions to destination folder
-    private static void copyAssetsToSdcard(Context context, File destFolder, String[] extensions) {
-        AssetManager assetManager = context.getAssets();
-
-        try {
-            // List all files in the assets folder once
-            String[] assetFiles = assetManager.list("");
-            if (assetFiles == null) return;
-
-            for (String assetFileName : assetFiles) {
-                // Check if file matches any of the provided extensions
-                for (String extension : extensions) {
-                    if (assetFileName.endsWith("." + extension)) {
-                        File outFile = new File(destFolder, assetFileName);
-
-                        // Skip if file already exists
-                        if (outFile.exists()) break;
-
-                        // Copy the file from assets to the destination folder
-                        try (InputStream inputStream = assetManager.open(assetFileName);
-                             OutputStream outputStream = new FileOutputStream(outFile)) {
-
-                            byte[] buffer = new byte[1024];
-                            int bytesRead;
-                            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                                outputStream.write(buffer, 0, bytesRead);
-                            }
-                        }
-                        break; // No need to check further extensions
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public ArrayList<File> getFilesWithExtension(File directory, String extension) {

@@ -1,5 +1,6 @@
 package com.whispertflite;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_VOCAB_FILE;
 import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
 import static com.whispertflite.MainActivity.MULTI_LINGUAL_MODEL_SLOW;
@@ -7,6 +8,7 @@ import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
@@ -69,12 +71,19 @@ public class WhisperInputMethodService extends InputMethodService {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
 
-        if (mWhisper == null)
-            initModel(selectedTfliteFile);
-        else {
-            if (!mWhisper.getCurrentModelPath().equals(selectedTfliteFile.getAbsolutePath())){
-                deinitModel();
+        if (!selectedTfliteFile.exists()) {
+            switchToPreviousInputMethod();  //switch back and download models first
+            Intent intent = new Intent(this, DownloadActivity.class);
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            if (mWhisper == null)
                 initModel(selectedTfliteFile);
+            else {
+                if (!mWhisper.getCurrentModelPath().equals(selectedTfliteFile.getAbsolutePath())){
+                    deinitModel();
+                    initModel(selectedTfliteFile);
+                }
             }
         }
     }
