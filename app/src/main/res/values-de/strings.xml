@@ -1,4 +1,5 @@
 <resources>
+    <string name="voice_input">Whisper Spracheingabe</string>
     <string name="need_record_audio_permission">"RECORD_AUDIO Berechtigung fehlt"</string>
     <string name="error_download">Fehler beim Herunterladen</string>
     <string name="download_model">Modell herunterladen</string>

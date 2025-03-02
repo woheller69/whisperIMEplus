@@ -7,6 +7,7 @@ import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
 import static com.whispertflite.MainActivity.MULTI_LINGUAL_MODEL_SLOW;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,8 +17,10 @@ import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
@@ -33,15 +36,17 @@ public class WhisperRecognitionService extends RecognitionService {
     private File sdcardDataFolder = null;
     private File selectedTfliteFile = null;
     private boolean recognitionCancelled = false;
+    private SharedPreferences sp = null;
 
     @Override
     protected void onStartListening(Intent recognizerIntent, Callback callback) {
         Log.d("WhisperRecognition","StartListening in " + recognizerIntent.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE));
 
         checkRecordPermission(callback);
-
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        int recording_time = sp.getInt("recognitionServiceRecordingDuration", 5);
         sdcardDataFolder = this.getExternalFilesDir(null);
-        selectedTfliteFile = new File(sdcardDataFolder, MULTI_LINGUAL_MODEL_SLOW);
+        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("recognitionServiceModelName", MULTI_LINGUAL_MODEL_SLOW));
 
         initModel(selectedTfliteFile, callback);
 
@@ -60,7 +65,7 @@ public class WhisperRecognitionService extends RecognitionService {
                 throw new RuntimeException(e);
             }
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(this::stopRecording, 5000);
+            handler.postDelayed(this::stopRecording, recording_time * 1000L);
         }
 
     }
@@ -123,6 +128,8 @@ public class WhisperRecognitionService extends RecognitionService {
 
     private void startTranscription() {
         if (!recognitionCancelled){
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(()-> Toast.makeText(this,getString(R.string.processing), Toast.LENGTH_SHORT).show());
             mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
             mWhisper.start();
             Log.d(TAG,"Start Transcription");

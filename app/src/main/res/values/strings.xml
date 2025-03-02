@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Whisper</string>
-
+    <string name="voice_input">Whisper Voice Input</string>
     <string name="need_record_audio_permission">"RECORD_AUDIO permission is not granted"</string>
     <string name="error_download">Download error</string>
     <string name="download_model">Download Model</string>
@@ -29,4 +29,5 @@
     <string name="mode_transcription">transcription</string>
     <string name="mode_translation">translation</string>
     <string name="instructions">Press and hold the microphone button while speaking.</string>
+    <string name="recording_time">Recording time [s]</string>
 </resources>
