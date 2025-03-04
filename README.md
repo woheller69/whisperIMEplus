@@ -14,11 +14,17 @@ Whisper is an input method editor (IME) that leverages voice recognition technol
 It offers a seamless user experience, functioning both as a standalone application and an integrated IME that can be activated, e.g. via the microphone button in HeliBoard.
 As a standalone app Whisper can also translate any supported language to English.
 
+Besides providing an IME, whisper can also be selected as system-wide voice input and it supports calls via intent (RecognizerIntent.ACTION_RECOGNIZE_SPEECH).
+
 ## Initial Setup
 
 Upon launching Whisper for the first time, the app will download the necessary Whisper models from Hugging Face. 
 Please note that this is the only instance where internet permission is required. 
 Once the models are downloaded, voice recognition works entirely offline, ensuring your privacy and convenience.
+
+Please note that for use as voice input (not as IME) there is a separate settings activity which can be accessed from Android settings 
+(System > Languages > Speech > Voice Input). There you can activate the app as voice input and then click the settings button.
+In settings you can then select the model for voice input and the recording time (default: 5s).
 
 ## Model Selection
 

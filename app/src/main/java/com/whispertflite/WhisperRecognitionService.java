@@ -53,7 +53,12 @@ public class WhisperRecognitionService extends RecognitionService {
         mRecorder = new Recorder(this);
         mRecorder.setListener(message -> {
         if (message.equals(Recorder.MSG_RECORDING_DONE)) {
-                startTranscription();
+            try {
+                callback.rmsChanged(-20.0f);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+            startTranscription();
         }
         });
 
