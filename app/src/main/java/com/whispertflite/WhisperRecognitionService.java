@@ -135,8 +135,6 @@ public class WhisperRecognitionService extends RecognitionService {
     private void startRecording() {
         if (sp.getBoolean("voiceActivityDetection",true)) {
             mRecorder.initVad();
-            Handler handler = new Handler(Looper.getMainLooper()); //TODO Delete
-            handler.post(()-> Toast.makeText(this,"Using VAD", Toast.LENGTH_SHORT).show());
         }
         mRecorder.start();
         recognitionCancelled = false;
