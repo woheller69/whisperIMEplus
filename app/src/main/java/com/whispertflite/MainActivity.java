@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import androidx.preference.PreferenceManager;
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this, "https://github.com/woheller69/whisperIME");
         // Assume this Activity is the current activity, check record permission
-        checkRecordPermission();
+        checkPermissions();
 
     }
 
@@ -306,12 +307,17 @@ public class MainActivity extends AppCompatActivity {
         return adapter;
     }
 
-    private void checkRecordPermission() {
-        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
-        if (permission == PackageManager.PERMISSION_GRANTED) {
-        } else {
-            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 0);
+    private void checkPermissions() {
+        List<String> perms = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            perms.add(Manifest.permission.RECORD_AUDIO);
             Toast.makeText(this, getString(R.string.need_record_audio_permission), Toast.LENGTH_SHORT).show();
+        }
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) && (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)){
+            perms.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
+        if (!perms.isEmpty()) {
+            requestPermissions(perms.toArray(new String[] {}), 0);
         }
     }
 
@@ -327,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Recording calls
     private void startRecording() {
-        checkRecordPermission();
+        checkPermissions();
         mRecorder.start();
     }
 

@@ -7,6 +7,10 @@ android {
     namespace 'com.whispertflite'
     compileSdk 34
 
+    lintOptions{
+        disable 'MissingTranslation'
+    }
+    
     defaultConfig {
         applicationId "org.woheller69.whisper"
         minSdk 28
@@ -26,6 +30,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
+            ndk {
+                abiFilters "arm64-v8a", "armeabi-v7a"
+            }
         }
     }
 
@@ -58,5 +65,6 @@ dependencies {
     //noinspection GradleDependency: Crash with 2.16.1, nonsense output with com.google.ai.edge.litert:litert:1.0.1
     implementation 'org.tensorflow:tensorflow-lite:2.15.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
+    implementation 'com.github.gkonovalov.android-vad:silero:2.0.9'
 
 }

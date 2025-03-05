@@ -44,7 +44,7 @@ public class WhisperRecognitionService extends RecognitionService {
 
         checkRecordPermission(callback);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        int recording_time = sp.getInt("recognitionServiceRecordingDuration", 5);
+        int maxRecording_time = sp.getInt("recognitionServiceMaxRecordingTime", 30);
         sdcardDataFolder = this.getExternalFilesDir(null);
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("recognitionServiceModelName", MULTI_LINGUAL_MODEL_SLOW));
 
@@ -52,14 +52,20 @@ public class WhisperRecognitionService extends RecognitionService {
 
         mRecorder = new Recorder(this);
         mRecorder.setListener(message -> {
-        if (message.equals(Recorder.MSG_RECORDING_DONE)) {
-            try {
-                callback.rmsChanged(-20.0f);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
+            if (message.equals(Recorder.MSG_RECORDING)){
+                try {
+                    callback.rmsChanged(10);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
+                try {
+                    callback.rmsChanged(-20.0f);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                startTranscription();
             }
-            startTranscription();
-        }
         });
 
         if (!mWhisper.isInProgress()) {
@@ -70,7 +76,7 @@ public class WhisperRecognitionService extends RecognitionService {
                 throw new RuntimeException(e);
             }
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(this::stopRecording, recording_time * 1000L);
+            handler.postDelayed(this::stopRecording, maxRecording_time * 1000L);
         }
 
     }
@@ -127,6 +133,11 @@ public class WhisperRecognitionService extends RecognitionService {
     }
 
     private void startRecording() {
+        if (sp.getBoolean("voiceActivityDetection",true)) {
+            mRecorder.initVad();
+            Handler handler = new Handler(Looper.getMainLooper()); //TODO Delete
+            handler.post(()-> Toast.makeText(this,"Using VAD", Toast.LENGTH_SHORT).show());
+        }
         mRecorder.start();
         recognitionCancelled = false;
     }

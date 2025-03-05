@@ -24,7 +24,7 @@ Once the models are downloaded, voice recognition works entirely offline, ensuri
 
 Please note that for use as voice input (not as IME) there is a separate settings activity which can be accessed from Android settings 
 (System > Languages > Speech > Voice Input). There you can activate the app as voice input and then click the settings button.
-In settings you can then select the model for voice input and the recording time (default: 5s).
+In settings you can then select the model for voice input and the maximum recording time (default: 30s).
 
 ## Model Selection
 
@@ -53,6 +53,7 @@ For translations use https://toolate.othing.xyz/projects/whisperime/
 This work is licensed under MIT license, © woheller69
 
 - This app is built on the [Whisper-Android project](https://github.com/vilassn/whisper_android), and [OpenAI Whisper](https://github.com/openai/whisper) published under MIT license
+- It uses [Android VAD](https://github.com/gkonovalov/android-vad), which is published under MIT license
 - At first start it downloads the Whisper TFLite models from [Hugging Face](https://huggingface.co/DocWolle/whisper_tflite_models), which is published under MIT license
 
 # OTHER APPS

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
     private Spinner spinnerTflite;
     private SeekBar recordingTime;
     private TextView recodingTimeTV;
+    private CheckBox voiceActivityDetection;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -83,13 +85,13 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
 
         recodingTimeTV = findViewById(R.id.recording_time_tv);
         recordingTime = findViewById(R.id.recording_time);
-        recordingTime.setProgress(sp.getInt("recognitionServiceRecordingDuration", 5));
+        recordingTime.setProgress(sp.getInt("recognitionServiceMaxRecordingTime", 30));
         recodingTimeTV.setText(getString(R.string.recording_time) + ": " + recordingTime.getProgress());
         recordingTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putInt("recognitionServiceRecordingDuration", progress);
+                editor.putInt("recognitionServiceMaxRecordingTime", progress);
                 editor.apply();
                 recodingTimeTV.setText(getString(R.string.recording_time) + ": " + progress);
             }
@@ -99,6 +101,13 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+        voiceActivityDetection = findViewById(R.id.voice_activity_detection);
+        voiceActivityDetection.setChecked(sp.getBoolean("voiceActivityDetection", true));
+        voiceActivityDetection.setOnClickListener(view -> {
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("voiceActivityDetection", voiceActivityDetection.isChecked());
+            editor.apply();
         });
 
         checkPermissions();

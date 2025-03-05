@@ -10,12 +10,15 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import com.konovalov.vad.silero.Vad;
+import com.konovalov.vad.silero.VadSilero;
+import com.konovalov.vad.silero.config.FrameSize;
+import com.konovalov.vad.silero.config.Mode;
+import com.konovalov.vad.silero.config.SampleRate;
 import com.whispertflite.R;
 
 import java.io.ByteArrayOutputStream;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -42,6 +45,9 @@ public class Recorder {
     private final Object fileSavedLock = new Object(); // Lock object for wait/notify
 
     private volatile boolean shouldStartRecording = false;
+    private boolean useVAD = false;
+    private VadSilero vad = null;
+    private static final int VAD_FRAME_SIZE = 512;
 
     private final Thread workerThread;
 
@@ -71,6 +77,19 @@ public class Recorder {
             lock.unlock();
         }
     }
+
+    public void initVad(){
+        useVAD = true;
+        vad = Vad.builder()
+                .setContext(mContext)
+                .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+                .setFrameSize(FrameSize.FRAME_SIZE_512)
+                .setMode(Mode.NORMAL)
+                .setSilenceDurationMs(500)
+                .setSpeechDurationMs(50)
+                .build();
+    }
+
 
     public void stop() {
         mInProgress.set(false);
@@ -129,8 +148,6 @@ public class Recorder {
             return;
         }
 
-        sendUpdate(MSG_RECORDING);
-
         int channels = 1;
         int bytesPerSample = 2;
         int sampleRateInHz = 16000;
@@ -139,6 +156,7 @@ public class Recorder {
         int audioSource = MediaRecorder.AudioSource.VOICE_RECOGNITION;
 
         int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
+        if (bufferSize < VAD_FRAME_SIZE * 2) bufferSize = VAD_FRAME_SIZE * 2;
         AudioRecord audioRecord = new AudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat, bufferSize);
         audioRecord.startRecording();
 
@@ -150,8 +168,12 @@ public class Recorder {
         byte[] audioData = new byte[bufferSize];
         int totalBytesRead = 0;
 
+        boolean isSpeech;
+        boolean isRecording = false;
+        byte[] vadAudioBuffer = new byte[VAD_FRAME_SIZE * 2];  //VAD FRAME_SIZE_512 needs 1024 bytes (16 bit)
+
         while (mInProgress.get() && totalBytesRead < bytesForThirtySeconds) {
-            int bytesRead = audioRecord.read(audioData, 0, bufferSize);
+            int bytesRead = audioRecord.read(audioData, 0, VAD_FRAME_SIZE * 2);
             if (bytesRead > 0) {
                 outputBuffer.write(audioData, 0, bytesRead);  // Save all bytes read up to 30 seconds
                 totalBytesRead += bytesRead;
@@ -160,8 +182,32 @@ public class Recorder {
                 Log.d(TAG, "AudioRecord error, bytes read: " + bytesRead);
                 break;
             }
+
+            if (useVAD){
+                byte[] outputBufferByteArray = outputBuffer.toByteArray();
+                if (outputBufferByteArray.length >= VAD_FRAME_SIZE * 2) {
+                    // Always use the last 1024 bytes from outputBuffer for VAD
+                    System.arraycopy(outputBufferByteArray, outputBufferByteArray.length - VAD_FRAME_SIZE * 2, vadAudioBuffer, 0, VAD_FRAME_SIZE * 2);
+
+                    isSpeech = vad.isSpeech(vadAudioBuffer);
+                    if (isSpeech) {
+                        if (!isRecording) sendUpdate(MSG_RECORDING);
+                        isRecording = true;
+                    } else {
+                        if (isRecording) {
+                            isRecording = false;
+                            mInProgress.set(false);
+                        }
+                    }
+                }
+            } else {
+                if (!isRecording) sendUpdate(MSG_RECORDING);
+                isRecording = true;
+            }
         }
 
+        useVAD = false;
+        vad = null;
         audioRecord.stop();
         audioRecord.release();
 
