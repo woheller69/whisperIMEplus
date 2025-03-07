@@ -6,6 +6,16 @@
     android:background="@color/darkGrey"
     android:padding="5dp">
 
+    <ProgressBar
+        android:id="@+id/processing_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:progressTint="@color/colorAccent"
+        android:progressBackgroundTint="@color/lightGrey"
+        android:indeterminateTint="@color/colorAccent"
+        style="?android:attr/progressBarStyleHorizontal"/>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,13 +91,4 @@
 
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/processing_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        android:progressTint="@color/colorAccent"
-        android:progressBackgroundTint="@color/lightGrey"
-        android:indeterminateTint="@color/colorAccent"
-        style="?android:attr/progressBarStyleHorizontal"/>
 </LinearLayout>
