@@ -85,8 +85,8 @@ public class Recorder {
                 .setSampleRate(SampleRate.SAMPLE_RATE_16K)
                 .setFrameSize(FrameSize.FRAME_SIZE_512)
                 .setMode(Mode.NORMAL)
-                .setSilenceDurationMs(500)
-                .setSpeechDurationMs(50)
+                .setSilenceDurationMs(800)
+                .setSpeechDurationMs(200)
                 .build();
     }
 
