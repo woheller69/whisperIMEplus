@@ -195,6 +195,9 @@ public class Recorder {
                         isRecording = true;
                     } else {
                         if (isRecording) {
+                            vad.close();
+                            useVAD = false;
+                            vad = null;
                             isRecording = false;
                             mInProgress.set(false);
                         }
@@ -206,8 +209,6 @@ public class Recorder {
             }
         }
 
-        useVAD = false;
-        vad = null;
         audioRecord.stop();
         audioRecord.release();
 

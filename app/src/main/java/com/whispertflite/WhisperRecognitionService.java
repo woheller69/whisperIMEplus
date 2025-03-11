@@ -113,12 +113,14 @@ public class WhisperRecognitionService extends RecognitionService {
     protected void onCancel(Callback callback) {
         Log.d("WhisperRecognition","cancel");
         stopRecording();
+        deinitModel();
         recognitionCancelled = true;
     }
 
     @Override
     protected void onStopListening(Callback callback) {
         Log.d("WhisperRecognition","StopListening");
+        deinitModel();
         stopRecording();
     }
 
@@ -143,6 +145,7 @@ public class WhisperRecognitionService extends RecognitionService {
                     Log.d(TAG, whisperResult.getResult().trim());
                     try {
                         callback.endOfSpeech();
+                        deinitModel();
                         Bundle results = new Bundle();
                         ArrayList<String> resultList = new ArrayList<>();
                         resultList.add(whisperResult.getResult().trim());
