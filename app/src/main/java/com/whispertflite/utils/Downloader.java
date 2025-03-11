@@ -2,10 +2,13 @@ package com.whispertflite.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import com.whispertflite.R;
 import com.whispertflite.databinding.ActivityDownloadBinding;
@@ -27,16 +30,18 @@ import java.security.NoSuchAlgorithmException;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Downloader {
-    static final String modelMultiLingualBase = "whisper-base.tflite";
+    static final String modelMultiLingualBaseOLD = "whisper-base.tflite"; //Todo Remove ...OLD... stuff later
+    static final String modelMultiLingualBase = "whisper-base.EUROPEAN_UNION.tflite";
     static final String modelMultiLingualSmall = "whisper-small.tflite";
     static final String modelEnglishOnly = "whisper-tiny.en.tflite";
-    static final String modelMultiLingualBaseURL = "https://huggingface.co/DocWolle/whisper_tflite_models/resolve/main/whisper-base-transcribe-translate.tflite";
+    static final String modelMultiLingualBaseURL = "https://huggingface.co/DocWolle/whisper_tflite_models/resolve/main/whisper-base.EUROPEAN_UNION.tflite";
     static final String modelMultiLingualSmallURL = "https://huggingface.co/DocWolle/whisper_tflite_models/resolve/main/whisper-small-transcribe-translate.tflite";
     static final String modelEnglishOnlyURL = "https://huggingface.co/DocWolle/whisper_tflite_models/resolve/main/whisper-tiny.en.tflite";
-    static final String modelMultiLingualBaseMD5 = "4b4fddfac6a24ffecc4972bc2137ba04";
+    static final String modelMultiLingualBaseOLDMD5 = "4b4fddfac6a24ffecc4972bc2137ba04";
+    static final String modelMultiLingualBaseMD5 = "82adc0d42761f6d83fecd76d0325bcf5";
     static final String modelMultiLingualSmallMD5 = "c4f948b3b42e7536bcedf78eec9481a6";
     static final String modelEnglishOnlyMD5 ="2e745cdd5dfe2f868f47caa7a199f91a";
-    static final long modelMultiLingualBaseSize = 78508512;
+    static final long modelMultiLingualBaseSize = 94819264;
     static final long modelMultiLingualSmallSize = 248684440;
     static final long modelEnglishOnlySize = 41486616;
     static long downloadModelMultiLingualBaseSize = 0L;
@@ -46,17 +51,34 @@ public class Downloader {
     static boolean modelEnglishOnlyFinished = false;
     static boolean modelMultiLingualSmallFinished = false;
 
+    public static boolean checkUpdate(final Activity activity) {
+        File modelMultiLingualBaseFile = new File(activity.getExternalFilesDir(null) + "/" + modelMultiLingualBase);
+        if (!modelMultiLingualBaseFile.exists()) {
+            return true;   //update available
+        } else {
+            return false;  //no update
+        }
+    }
     public static boolean checkModels(final Activity activity) {
         copyAssetsToSdcard(activity);
         File modelMultiLingualBaseFile = new File(activity.getExternalFilesDir(null) + "/" + modelMultiLingualBase);
+        File modelMultiLingualBaseOLDFile = new File(activity.getExternalFilesDir(null) + "/" + modelMultiLingualBaseOLD);
         File modelMultiLingualSmallFile = new File(activity.getExternalFilesDir(null) + "/" + modelMultiLingualSmall);
         File modelEnglishOnlyFile = new File(activity.getExternalFilesDir(null) + "/" + modelEnglishOnly);
         String calcModelMultiLingualBaseMD5 = "";
+        String calcModelMultiLingualBaseOLDMD5 = "";
         String calcModelMultiLingualSmallMD5 = "";
         String calcModelEnglishOnlyMD5 = "";
         if (modelMultiLingualBaseFile.exists()) {
             try {
                 calcModelMultiLingualBaseMD5 = calculateMD5(String.valueOf(Paths.get(modelMultiLingualBaseFile.getPath())));
+            } catch (IOException | NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (modelMultiLingualBaseOLDFile.exists()) {
+            try {
+                calcModelMultiLingualBaseOLDMD5 = calculateMD5(String.valueOf(Paths.get(modelMultiLingualBaseOLDFile.getPath())));
             } catch (IOException | NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
@@ -76,11 +98,20 @@ public class Downloader {
             }
         }
 
+        if (modelMultiLingualBaseOLDFile.exists() && !(calcModelMultiLingualBaseOLDMD5.equals(modelMultiLingualBaseOLDMD5))) { modelMultiLingualBaseOLDFile.delete();}
         if (modelMultiLingualBaseFile.exists() && !(calcModelMultiLingualBaseMD5.equals(modelMultiLingualBaseMD5))) { modelMultiLingualBaseFile.delete(); modelMultiLingualBaseFinished = false;}
         if (modelMultiLingualSmallFile.exists() && !(calcModelMultiLingualSmallMD5.equals(modelMultiLingualSmallMD5))) { modelMultiLingualSmallFile.delete(); modelMultiLingualSmallFinished = false;}
         if (modelEnglishOnlyFile.exists() && !calcModelEnglishOnlyMD5.equals(modelEnglishOnlyMD5)) { modelEnglishOnlyFile.delete(); modelEnglishOnlyFinished = false; }
 
-        return calcModelMultiLingualSmallMD5.equals(modelMultiLingualSmallMD5) && calcModelMultiLingualBaseMD5.equals(modelMultiLingualBaseMD5) && calcModelEnglishOnlyMD5.equals(modelEnglishOnlyMD5);
+        return calcModelMultiLingualSmallMD5.equals(modelMultiLingualSmallMD5) && (calcModelMultiLingualBaseMD5.equals(modelMultiLingualBaseMD5) || calcModelMultiLingualBaseOLDMD5.equals(modelMultiLingualBaseOLDMD5)) && calcModelEnglishOnlyMD5.equals(modelEnglishOnlyMD5);
+    }
+
+    public static void deleteOldModels(final Activity activity){
+        File modelMultiLingualBaseOLDFile = new File(activity.getExternalFilesDir(null) + "/" + modelMultiLingualBaseOLD);
+        if (modelMultiLingualBaseOLDFile.exists()) modelMultiLingualBaseOLDFile.delete();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+        sp.edit().remove("modelName").apply();
+        sp.edit().remove("recognitionServiceModelName").apply();
     }
 
     public static void downloadModels(final Activity activity, ActivityDownloadBinding binding) {

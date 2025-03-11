@@ -1,5 +1,6 @@
 package com.whispertflite;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_VOCAB_FILE;
 import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
@@ -29,6 +30,7 @@ import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.HapticFeedback;
+import com.whispertflite.utils.InputLang;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,8 +56,26 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         sdcardDataFolder = this.getExternalFilesDir(null);
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
+        if (!selectedTfliteFile.exists()) {
+            Intent intent = new Intent(this, DownloadActivity.class);
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        }
+        String targetLang = getIntent().getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
+        String langCode = sp.getString("language", "auto");
+        int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+        Log.d("WhisperRecognition","default langToken " + langToken);
 
-        initModel(selectedTfliteFile);
+        if (targetLang != null) {
+            Log.d("WhisperRecognition","StartListening in " + targetLang);
+            langCode = targetLang.split("[-_]")[0].toLowerCase();  //support both de_DE and de-DE
+            langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+        } else {
+            Log.d("WhisperRecognition","StartListening, no language specified");
+        }
+
+        initModel(selectedTfliteFile, langToken);
 
         setContentView(R.layout.activity_recognize);
 
@@ -129,7 +149,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     }
 
     // Model initialization
-    private void initModel(File modelFile) {
+    private void initModel(File modelFile, int langToken) {
         boolean isMultilingualModel = !(modelFile.getName().endsWith(ENGLISH_ONLY_MODEL_EXTENSION));
         String vocabFileName = isMultilingualModel ? MULTILINGUAL_VOCAB_FILE : ENGLISH_ONLY_VOCAB_FILE;
         File vocabFile = new File(sdcardDataFolder, vocabFileName);
@@ -137,6 +157,8 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
         mWhisper = new Whisper(this);
         mWhisper.loadModel(modelFile, vocabFile, isMultilingualModel);
         Log.d(TAG, "Initialized: " + modelFile.getName());
+        mWhisper.setLanguage(langToken);
+        Log.d(TAG, "Language token " + langToken);
         mWhisper.setListener(new Whisper.WhisperListener() {
             @Override
             public void onUpdateReceived(String message) { }

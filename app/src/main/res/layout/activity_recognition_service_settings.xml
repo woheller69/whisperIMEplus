@@ -28,6 +28,29 @@
             android:contentDescription="@string/select_model"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layout_language"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:text="@string/language" />
+
+        <Spinner
+            android:id="@+id/spnrLanguage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/language"/>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/recording_time_tv"
         android:layout_width="wrap_content"

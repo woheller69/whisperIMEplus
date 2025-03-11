@@ -36,6 +36,7 @@ public class Whisper {
 
     private final WhisperEngine mWhisperEngine;
     private Action mAction;
+    private int mLangToken = -1;
     private WhisperListener mUpdateListener;
 
     private final Lock taskLock = new ReentrantLock();
@@ -80,6 +81,10 @@ public class Whisper {
 
     public void setAction(Action action) {
         this.mAction = action;
+    }
+
+    public void setLanguage(int language){
+        this.mLangToken = language;
     }
 
     public void start() {
@@ -129,7 +134,7 @@ public class Whisper {
 
                 WhisperResult whisperResult = null;
                 synchronized (mWhisperEngine) {
-                    whisperResult = mWhisperEngine.processRecordBuffer(mAction);
+                    whisperResult = mWhisperEngine.processRecordBuffer(mAction, mLangToken);
                 }
                 sendResult(whisperResult);
 

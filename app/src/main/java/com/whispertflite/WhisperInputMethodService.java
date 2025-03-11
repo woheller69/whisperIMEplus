@@ -32,6 +32,7 @@ import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.HapticFeedback;
+import com.whispertflite.utils.InputLang;
 
 import java.io.File;
 
@@ -244,6 +245,11 @@ public class WhisperInputMethodService extends InputMethodService {
         handler.post(() -> processingBar.setIndeterminate(true));
         if (translate) mWhisper.setAction(Whisper.ACTION_TRANSLATE);
         else mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+
+        String langCode = sp.getString("language", "auto");
+        int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+        Log.d("WhisperIME","default langToken " + langToken);
+        mWhisper.setLanguage(langToken);
         mWhisper.start();
     }
 

@@ -127,6 +127,15 @@ public class InputLang {
         return "";
     }
 
+    public static int getIdForLanguage(ArrayList<InputLang> list, String language) {
+        for (InputLang inputLang : list) {
+            if (inputLang.getCode().equals(language)) {
+                return (int) inputLang.getId();
+            }
+        }
+        return -1; // Return -1 if the language is not found
+    }
+
     private long getId() {
         return id;
     }

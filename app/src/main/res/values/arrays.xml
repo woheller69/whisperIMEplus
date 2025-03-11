@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="eu_languages">
+        <item>auto</item>
+        <item>en</item>
+        <item>de</item>
+        <item>es</item>
+        <item>fr</item>
+        <item>pt</item>
+        <item>tr</item>
+        <item>pl</item>
+        <item>nl</item>
+        <item>sv</item>
+        <item>it</item>
+        <item>fi</item>
+        <item>el</item>
+        <item>cs</item>
+        <item>ro</item>
+        <item>da</item>
+        <item>hu</item>
+        <item>no</item>
+        <item>hr</item>
+        <item>bg</item>
+        <item>lt</item>
+        <item>sk</item>
+        <item>lv</item>
+        <item>sl</item>
+        <item>et</item>
+        <item>mt</item>
+        <item>lb</item>
+    </string-array>
+
+</resources>

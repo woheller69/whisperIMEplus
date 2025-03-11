@@ -22,9 +22,13 @@ class DownloadActivity  : AppCompatActivity() {
             binding?.downloadProgress?.setProgress(100)
             binding?.downloadProgress?.setVisibility(View.VISIBLE)
             binding?.buttonStart?.setVisibility(View.VISIBLE)
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            if (!Downloader.checkUpdate(this)){
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                binding?.buttonUpdate?.setVisibility(View.VISIBLE)
+            }
         }
     }
 
@@ -39,5 +43,14 @@ class DownloadActivity  : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    fun updateModels(view: View) {
+        binding?.downloadSize?.setVisibility(View.VISIBLE)
+        binding?.downloadProgress?.setVisibility(View.VISIBLE)
+        binding?.buttonStart?.setVisibility(View.INVISIBLE)
+        binding?.buttonUpdate?.setVisibility(View.GONE)
+        Downloader.deleteOldModels(this);
+        Downloader.downloadModels(this, binding)
     }
 }

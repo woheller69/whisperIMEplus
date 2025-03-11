@@ -89,6 +89,18 @@
                     tools:progress="0" />
 
             </LinearLayout>
+            <Button
+                android:id="@+id/button_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/update"
+                android:backgroundTint="@color/colorAccent"
+                android:visibility="gone"
+                android:textAllCaps="true"
+                android:textColor="@color/lightGrey"
+                android:onClick="updateModels"/>
 
             <Button
                 android:id="@+id/button_start"
@@ -99,6 +111,7 @@
                 android:text="@string/start"
                 android:backgroundTint="@color/colorAccent"
                 android:visibility="gone"
+                android:textAllCaps="true"
                 android:textColor="@color/lightGrey"
                 android:onClick="startMain"/>
         </LinearLayout>

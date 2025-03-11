@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,14 +71,14 @@ public class WhisperEngineJava implements WhisperEngine {
     }
 
     @Override
-    public WhisperResult processRecordBuffer(Whisper.Action mAction) {
+    public WhisperResult processRecordBuffer(Whisper.Action mAction, int mLangToken) {
         // Calculate Mel spectrogram
         Log.d(TAG, "Calculating Mel spectrogram...");
         float[] melSpectrogram = getMelSpectrogram();
         Log.d(TAG, "Mel spectrogram is calculated...!");
 
         // Perform inference
-        WhisperResult whisperResult = runInference(melSpectrogram, mAction);
+        WhisperResult whisperResult = runInference(melSpectrogram, mAction, mLangToken);
         Log.d(TAG, "Inference is executed...!");
 
         return whisperResult;
@@ -112,7 +113,7 @@ public class WhisperEngineJava implements WhisperEngine {
         return mWhisperUtil.getMelSpectrogram(inputSamples, inputSamples.length, cores);
     }
 
-    private WhisperResult runInference(float[] inputData, Whisper.Action mAction) {
+    private WhisperResult runInference(float[] inputData, Whisper.Action mAction, int mLangToken) {
         Log.d("Whisper","Signatures "+ Arrays.toString(mInterpreter.getSignatureKeys()));
 
         // Create input tensor
@@ -134,12 +135,20 @@ public class WhisperEngineJava implements WhisperEngine {
         if (mAction == Whisper.Action.TRANSLATE) {
             if (Arrays.asList(mInterpreter.getSignatureKeys()).contains("serving_translate")) signature_key = "serving_translate";
         } else if (mAction == Whisper.ACTION_TRANSCRIBE) {
-            if (Arrays.asList(mInterpreter.getSignatureKeys()).contains("serving_transcribe")) signature_key = "serving_transcribe";
+            if (Arrays.asList(mInterpreter.getSignatureKeys()).contains("serving_transcribe_lang") && mLangToken != -1) signature_key = "serving_transcribe_lang";
+            else if (Arrays.asList(mInterpreter.getSignatureKeys()).contains("serving_transcribe")) signature_key = "serving_transcribe";
         }
 
         Map<String, Object> inputsMap = new HashMap<>();
         String[] inputs = mInterpreter.getSignatureInputs(signature_key);
         inputsMap.put(inputs[0], inputBuffer);
+        if (signature_key.equals("serving_transcribe_lang")) {
+            Log.d(TAG,"Serving_transcribe_lang " + mLangToken);
+            IntBuffer langTokenBuffer = IntBuffer.allocate(1);
+            langTokenBuffer.put(mLangToken);
+            langTokenBuffer.rewind();
+            inputsMap.put(inputs[1], langTokenBuffer);
+        }
 
         Map<String, Object> outputsMap = new HashMap<>();
         String[] outputs = mInterpreter.getSignatureOutputs(signature_key);
@@ -177,7 +186,7 @@ public class WhisperEngineJava implements WhisperEngine {
                 }
 
                 if (token >= 50259 && token <= 50357){
-                    language = InputLang.getLanguageCodeById(inputLangList,token);
+                    language = InputLang.getLanguageCodeById(inputLangList, token);
                     Log.d(TAG, "Detected language code: "+ language);
                 }
                 String word = mWhisperUtil.getWordFromToken(token);
