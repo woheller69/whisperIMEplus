@@ -3,7 +3,7 @@
     <string name="need_record_audio_permission">"RECORD_AUDIO Berechtigung fehlt"</string>
     <string name="error_download">Fehler beim Herunterladen</string>
     <string name="download_model">Modell herunterladen</string>
-    <string name="download_model_text">\nWhisper Modell von Hugging Face herunterladen (~350 MB)</string>
+    <string name="download_model_text">\nWhisper Modell von Hugging Face herunterladen (~370 MB)</string>
     <string name="select_model">Modell:</string>
     <string name="status">Status:</string>
     <string name="append">Anhängen:</string>

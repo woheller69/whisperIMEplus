@@ -17,7 +17,7 @@
     <string name="need_record_audio_permission">لم يتم منح إذن تسجيل الصوت</string>
     <string name="error_download">خطأ في التنزيل</string>
     <string name="download_model">تنزيل النموذج</string>
-    <string name="download_model_text">\nقم بتنزيل نماذج Whisper من Hugging Face (~350 ميجابايت)</string>
+    <string name="download_model_text">\nقم بتنزيل نماذج Whisper من Hugging Face (~370 ميجابايت)</string>
     <string name="select_model">النموذج:</string>
     <string name="status">الحالة:</string>
     <string name="append">إلحاق:</string>
