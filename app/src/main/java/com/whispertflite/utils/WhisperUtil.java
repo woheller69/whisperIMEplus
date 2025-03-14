@@ -9,6 +9,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class WhisperUtil {
         return vocab.tokenBEG;
     }
 
-    public String getWordFromToken(int token) {
+    public byte[] getWordFromToken(int token) {
         return vocab.tokenToWord.get(token);
     }
 
@@ -107,8 +108,7 @@ public class WhisperUtil {
             int len = vocabBuf.getInt();
             byte[] wordBytes = new byte[len];
             vocabBuf.get(wordBytes, 0, wordBytes.length);
-            String word = new String(wordBytes);
-            vocab.tokenToWord.put(i, word);
+            vocab.tokenToWord.put(i, wordBytes);
         }
 
         // Add additional vocab ids
@@ -143,7 +143,7 @@ public class WhisperUtil {
                 word = "[_extra_token_" + i + "]";
             }
 
-            vocab.tokenToWord.put(i, word);
+            vocab.tokenToWord.put(i, word.getBytes(StandardCharsets.UTF_8));
             //Log.d(TAG, "i= " + i + ", word= " + word);
         }
 
@@ -334,7 +334,7 @@ public class WhisperUtil {
         // Vocab types
         final int nVocabEnglish = 51864;       // for english only vocab
         final int nVocabMultilingual = 51865;  // for multilingual vocab
-        Map<Integer, String> tokenToWord = new HashMap<>();
+        Map<Integer, byte[]> tokenToWord = new HashMap<Integer, byte[]>();
     }
 
     private static class WhisperFilter {

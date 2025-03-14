@@ -3,6 +3,8 @@ package com.whispertflite.engine;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.common.base.Utf8;
+import com.google.common.primitives.Bytes;
 import com.whispertflite.asr.RecordBuffer;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
@@ -20,9 +22,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WhisperEngineJava implements WhisperEngine {
@@ -163,7 +167,7 @@ public class WhisperEngineJava implements WhisperEngine {
         Whisper.Action task = null;
         int outputLen = outputBuffer.getIntArray().length;
         Log.d(TAG, "output_len: " + outputLen);
-        StringBuilder result = new StringBuilder();
+        List<byte[]> resultArray = new ArrayList<>();
         for (int i = 0; i < outputLen; i++) {
             int token = outputBuffer.getBuffer().getInt();
             if (token == mWhisperUtil.getTokenEOT())
@@ -171,9 +175,8 @@ public class WhisperEngineJava implements WhisperEngine {
 
             // Get word for token and Skip additional token
             if (token < mWhisperUtil.getTokenEOT()) {
-                String word = mWhisperUtil.getWordFromToken(token);
-                //Log.d(TAG, "Adding token: " + token + ", word: " + word);
-                result.append(word);
+                byte[] wordBytes = mWhisperUtil.getWordFromToken(token);
+                resultArray.add(wordBytes);
             } else {
                 if (token == mWhisperUtil.getTokenTranscribe()){
                     Log.d(TAG, "It is Transcription...");
@@ -189,12 +192,26 @@ public class WhisperEngineJava implements WhisperEngine {
                     language = InputLang.getLanguageCodeById(inputLangList, token);
                     Log.d(TAG, "Detected language code: "+ language);
                 }
-                String word = mWhisperUtil.getWordFromToken(token);
-                Log.d(TAG, "Skipping token: " + token + ", word: " + word);
+                byte[] wordBytes = mWhisperUtil.getWordFromToken(token);
+                Log.d(TAG, "Skipping token: " + token + ", word: " + new String(wordBytes, StandardCharsets.UTF_8));
             }
         }
 
-        return new WhisperResult(result.toString(),language, task);
+        // Calculate the total length of the combined byte array
+        int totalLength = 0;
+        for (byte[] byteArray : resultArray) {
+            totalLength += byteArray.length;
+        }
+
+        // Combine the byte arrays into a single byte array
+        byte[] combinedBytes = new byte[totalLength];
+        int offset = 0;
+        for (byte[] byteArray : resultArray) {
+            System.arraycopy(byteArray, 0, combinedBytes, offset, byteArray.length);
+            offset += byteArray.length;
+        }
+
+        return new WhisperResult(new String(combinedBytes, StandardCharsets.UTF_8), language, task);
     }
 
 }
