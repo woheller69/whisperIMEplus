@@ -71,6 +71,7 @@ public class Recorder {
         }
         lock.lock();
         try {
+            Log.d(TAG, "Recording starts now");
             shouldStartRecording = true;
             hasTask.signal();
         } finally {
@@ -79,7 +80,6 @@ public class Recorder {
     }
 
     public void initVad(){
-        useVAD = true;
         vad = Vad.builder()
                 .setContext(mContext)
                 .setSampleRate(SampleRate.SAMPLE_RATE_16K)
@@ -88,10 +88,13 @@ public class Recorder {
                 .setSilenceDurationMs(800)
                 .setSpeechDurationMs(200)
                 .build();
+        useVAD = true;
+        Log.d(TAG, "VAD initialized");
     }
 
 
     public void stop() {
+        Log.d(TAG, "Recording stopped");
         mInProgress.set(false);
 
         // Wait for the recording thread to finish
@@ -177,7 +180,6 @@ public class Recorder {
             if (bytesRead > 0) {
                 outputBuffer.write(audioData, 0, bytesRead);  // Save all bytes read up to 30 seconds
                 totalBytesRead += bytesRead;
-
             } else {
                 Log.d(TAG, "AudioRecord error, bytes read: " + bytesRead);
                 break;
@@ -191,13 +193,13 @@ public class Recorder {
 
                     isSpeech = vad.isSpeech(vadAudioBuffer);
                     if (isSpeech) {
-                        if (!isRecording) sendUpdate(MSG_RECORDING);
+                        if (!isRecording) {
+                            Log.d(TAG, "VAD Speech detected: recording starts");
+                            sendUpdate(MSG_RECORDING);
+                        }
                         isRecording = true;
                     } else {
                         if (isRecording) {
-                            vad.close();
-                            useVAD = false;
-                            vad = null;
                             isRecording = false;
                             mInProgress.set(false);
                         }
@@ -208,7 +210,14 @@ public class Recorder {
                 isRecording = true;
             }
         }
+        Log.d(TAG, "Total bytes recorded: " + totalBytesRead);
 
+        if (useVAD){
+            useVAD = false;
+            vad.close();
+            vad = null;
+            Log.d(TAG, "Closing VAD");
+        }
         audioRecord.stop();
         audioRecord.release();
 

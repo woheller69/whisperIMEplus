@@ -1,5 +1,6 @@
 package com.whispertflite;
 
+import static android.speech.SpeechRecognizer.ERROR_CLIENT;
 import static android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS;
 import static android.speech.SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
@@ -10,6 +11,7 @@ import static com.whispertflite.MainActivity.MULTI_LINGUAL_MODEL_SLOW;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -39,6 +41,7 @@ public class WhisperRecognitionService extends RecognitionService {
     private File selectedTfliteFile = null;
     private boolean recognitionCancelled = false;
     private SharedPreferences sp = null;
+    private Handler recordingTimeHandler;
 
     @Override
     protected void onStartListening(Intent recognizerIntent, Callback callback) {
@@ -46,14 +49,14 @@ public class WhisperRecognitionService extends RecognitionService {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String langCode = sp.getString("recognitionServiceLanguage", "auto");
         int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
-        Log.d("WhisperRecognition","default langToken " + langToken);
+        Log.d(TAG,"default langToken " + langToken);
 
         if (targetLang != null) {
-            Log.d("WhisperRecognition","StartListening in " + targetLang);
+            Log.d(TAG,"StartListening in " + targetLang);
             langCode = targetLang.split("[-_]")[0].toLowerCase();   //support both de_DE and de-DE
             langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
         } else {
-            Log.d("WhisperRecognition","StartListening, no language specified");
+            Log.d(TAG,"StartListening, no language specified");
         }
 
         checkRecordPermission(callback);
@@ -64,7 +67,11 @@ public class WhisperRecognitionService extends RecognitionService {
 
         if (!selectedTfliteFile.exists()) {
             try {
-                callback.error(ERROR_LANGUAGE_UNAVAILABLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    callback.error(ERROR_LANGUAGE_UNAVAILABLE);
+                } else {
+                    callback.error(ERROR_CLIENT);
+                }
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -96,8 +103,12 @@ public class WhisperRecognitionService extends RecognitionService {
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(this::stopRecording, maxRecording_time * 1000L);
+                if (recordingTimeHandler != null) { recordingTimeHandler.removeCallbacksAndMessages(null); }
+                recordingTimeHandler = new Handler(Looper.getMainLooper());
+                recordingTimeHandler.postDelayed(() -> {
+                    Log.d(TAG,"Reached max recording time");
+                    stopRecording();
+                }, maxRecording_time * 1000L);
             }
         }
 
@@ -111,7 +122,7 @@ public class WhisperRecognitionService extends RecognitionService {
 
     @Override
     protected void onCancel(Callback callback) {
-        Log.d("WhisperRecognition","cancel");
+        Log.d(TAG,"cancel");
         stopRecording();
         deinitModel();
         recognitionCancelled = true;
@@ -119,7 +130,7 @@ public class WhisperRecognitionService extends RecognitionService {
 
     @Override
     protected void onStopListening(Callback callback) {
-        Log.d("WhisperRecognition","StopListening");
+        Log.d(TAG,"StopListening");
         deinitModel();
         stopRecording();
     }

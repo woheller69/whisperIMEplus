@@ -314,10 +314,6 @@ public class WhisperUtil {
 
     // Helper class definitions
     private static class WhisperVocab {
-        int[] golden_generated_ids = {
-                50257, 50362, 1770, 13, 2264, 346, 353, 318,
-                262, 46329, 286, 262, 3504, 6097, 11, 290, 356, 389, 9675, 284, 7062
-        };
 
         // Token types
         int tokenEOT = 50256; // end of transcript

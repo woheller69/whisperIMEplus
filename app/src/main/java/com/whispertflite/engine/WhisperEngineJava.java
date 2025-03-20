@@ -69,6 +69,7 @@ public class WhisperEngineJava implements WhisperEngine {
     @Override
     public void deinitialize() {
         if (mInterpreter != null) {
+            mInterpreter.setCancelled(true);
             mInterpreter.close();
             mInterpreter = null; // Optional: Set to null to avoid accidental reuse
         }
@@ -100,6 +101,7 @@ public class WhisperEngineJava implements WhisperEngine {
         // Set the number of threads for inference
         Interpreter.Options options = new Interpreter.Options();
         options.setNumThreads(Runtime.getRuntime().availableProcessors());
+        options.setCancellable(true);
 
         mInterpreter = new Interpreter(tfliteModel, options);
     }
