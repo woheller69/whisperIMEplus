@@ -41,7 +41,6 @@ public class WhisperRecognitionService extends RecognitionService {
     private File selectedTfliteFile = null;
     private boolean recognitionCancelled = false;
     private SharedPreferences sp = null;
-    private Handler recordingTimeHandler;
 
     @Override
     protected void onStartListening(Intent recognizerIntent, Callback callback) {
@@ -61,7 +60,6 @@ public class WhisperRecognitionService extends RecognitionService {
 
         checkRecordPermission(callback);
 
-        int maxRecording_time = sp.getInt("recognitionServiceMaxRecordingTime", 30);
         sdcardDataFolder = this.getExternalFilesDir(null);
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("recognitionServiceModelName", MULTI_LINGUAL_MODEL_SLOW));
 
@@ -103,12 +101,6 @@ public class WhisperRecognitionService extends RecognitionService {
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
-                if (recordingTimeHandler != null) { recordingTimeHandler.removeCallbacksAndMessages(null); }
-                recordingTimeHandler = new Handler(Looper.getMainLooper());
-                recordingTimeHandler.postDelayed(() -> {
-                    Log.d(TAG,"Reached max recording time");
-                    stopRecording();
-                }, maxRecording_time * 1000L);
             }
         }
 
@@ -171,9 +163,7 @@ public class WhisperRecognitionService extends RecognitionService {
     }
 
     private void startRecording() {
-        if (sp.getBoolean("voiceActivityDetection",true)) {
-            mRecorder.initVad();
-        }
+        mRecorder.initVad();
         mRecorder.start();
         recognitionCancelled = false;
     }

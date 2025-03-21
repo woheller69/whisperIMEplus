@@ -28,6 +28,4 @@
     <string name="mode_transcription">transcription</string>
     <string name="mode_translation">traduction</string>
     <string name="instructions">Appuyez et maintenez activé le bouton du microphone tout en parlant.</string>
-    <string name="recording_time">Durée d\'enregistrement maximale [s]</string>
-    <string name="settings_vad">Utiliser la détection d\'activité vocale (VAD)</string>
 </resources>

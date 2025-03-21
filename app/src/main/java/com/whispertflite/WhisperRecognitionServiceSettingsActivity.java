@@ -120,33 +120,6 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        recodingTimeTV = findViewById(R.id.recording_time_tv);
-        recordingTime = findViewById(R.id.recording_time);
-        recordingTime.setProgress(sp.getInt("recognitionServiceMaxRecordingTime", 30));
-        recodingTimeTV.setText(getString(R.string.recording_time) + ": " + recordingTime.getProgress());
-        recordingTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putInt("recognitionServiceMaxRecordingTime", progress);
-                editor.apply();
-                recodingTimeTV.setText(getString(R.string.recording_time) + ": " + progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
-        voiceActivityDetection = findViewById(R.id.voice_activity_detection);
-        voiceActivityDetection.setChecked(sp.getBoolean("voiceActivityDetection", true));
-        voiceActivityDetection.setOnClickListener(view -> {
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("voiceActivityDetection", voiceActivityDetection.isChecked());
-            editor.apply();
-        });
-
         checkPermissions();
 
     }

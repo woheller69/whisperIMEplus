@@ -29,7 +29,5 @@
     <string name="mode_transcription">transcription</string>
     <string name="mode_translation">translation</string>
     <string name="instructions">Press and hold the microphone button while speaking.</string>
-    <string name="recording_time">Maximum recording time [s]</string>
-    <string name="settings_vad">Use voice activity detection (VAD)</string>
     <string name="update">UPDATE</string>
 </resources>

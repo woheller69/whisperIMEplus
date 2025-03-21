@@ -51,22 +51,4 @@
             android:contentDescription="@string/language"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/recording_time_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginBottom="5dp"
-        android:text = "@string/recording_time"/>
-    <SeekBar
-        android:id="@+id/recording_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="30"
-        android:progress="30"/>
-    <CheckBox
-        android:id="@+id/voice_activity_detection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_vad"/>
 </LinearLayout>
