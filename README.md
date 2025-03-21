@@ -14,7 +14,7 @@ Whisper is an input method editor (IME) that leverages voice recognition technol
 It offers a seamless user experience, functioning both as a standalone application and an integrated IME that can be activated, e.g. via the microphone button in HeliBoard.
 As a standalone app Whisper can also translate any supported language to English.
 
-Besides providing an IME, whisper can also be selected as system-wide voice input and it supports calls via intent (RecognizerIntent.ACTION_RECOGNIZE_SPEECH).
+Besides providing an IME, whisper can also be selected as system-wide voice input (RecognitionService) and it supports calls via intent (RecognizerIntent.ACTION_RECOGNIZE_SPEECH).
 
 ## Initial Setup
 
