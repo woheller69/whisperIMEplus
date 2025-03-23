@@ -10,11 +10,11 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import com.konovalov.vad.silero.Vad;
-import com.konovalov.vad.silero.VadSilero;
-import com.konovalov.vad.silero.config.FrameSize;
-import com.konovalov.vad.silero.config.Mode;
-import com.konovalov.vad.silero.config.SampleRate;
+import com.konovalov.vad.webrtc.Vad;
+import com.konovalov.vad.webrtc.VadWebRTC;
+import com.konovalov.vad.webrtc.config.FrameSize;
+import com.konovalov.vad.webrtc.config.Mode;
+import com.konovalov.vad.webrtc.config.SampleRate;
 import com.whispertflite.R;
 
 import java.io.ByteArrayOutputStream;
@@ -46,8 +46,8 @@ public class Recorder {
 
     private volatile boolean shouldStartRecording = false;
     private boolean useVAD = false;
-    private VadSilero vad = null;
-    private static final int VAD_FRAME_SIZE = 512;
+    private VadWebRTC vad = null;
+    private static final int VAD_FRAME_SIZE = 480;
 
     private final Thread workerThread;
 
@@ -81,9 +81,8 @@ public class Recorder {
 
     public void initVad(){
         vad = Vad.builder()
-                .setContext(mContext)
                 .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-                .setFrameSize(FrameSize.FRAME_SIZE_512)
+                .setFrameSize(FrameSize.FRAME_SIZE_480)
                 .setMode(Mode.NORMAL)
                 .setSilenceDurationMs(800)
                 .setSpeechDurationMs(200)
@@ -173,7 +172,7 @@ public class Recorder {
 
         boolean isSpeech;
         boolean isRecording = false;
-        byte[] vadAudioBuffer = new byte[VAD_FRAME_SIZE * 2];  //VAD FRAME_SIZE_512 needs 1024 bytes (16 bit)
+        byte[] vadAudioBuffer = new byte[VAD_FRAME_SIZE * 2];  //VAD needs 16 bit
 
         while (mInProgress.get() && totalBytesRead < bytesForThirtySeconds) {
             int bytesRead = audioRecord.read(audioData, 0, VAD_FRAME_SIZE * 2);
@@ -188,7 +187,7 @@ public class Recorder {
             if (useVAD){
                 byte[] outputBufferByteArray = outputBuffer.toByteArray();
                 if (outputBufferByteArray.length >= VAD_FRAME_SIZE * 2) {
-                    // Always use the last 1024 bytes from outputBuffer for VAD
+                    // Always use the last VAD_FRAME_SIZE * 2 bytes (16 bit) from outputBuffer for VAD
                     System.arraycopy(outputBufferByteArray, outputBufferByteArray.length - VAD_FRAME_SIZE * 2, vadAudioBuffer, 0, VAD_FRAME_SIZE * 2);
 
                     isSpeech = vad.isSpeech(vadAudioBuffer);

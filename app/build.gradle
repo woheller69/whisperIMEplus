@@ -65,6 +65,6 @@ dependencies {
     //noinspection GradleDependency: Crash with 2.16.1, nonsense output with com.google.ai.edge.litert:litert:1.0.1
     implementation 'org.tensorflow:tensorflow-lite:2.15.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
-    implementation 'com.github.gkonovalov.android-vad:silero:2.0.9'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.9'
 
 }
