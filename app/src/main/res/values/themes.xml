@@ -1,11 +1,17 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.TFLiteAudio" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Whisper.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="android:windowBackground">@color/windowBackground</item>
     </style>
 
-    <style name="Theme.Recognize" parent="Theme.TFLiteAudio">
+    <!-- Base application theme. -->
+    <style name="Theme.Whisper.ActionBar" parent="Theme.Material3.DayNight">
+        <!-- Customize your light theme here. -->
+        <item name="android:windowBackground">@color/windowBackground</item>
+    </style>
+
+    <style name="Theme.WhisperFloating" parent="Theme.Whisper.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>

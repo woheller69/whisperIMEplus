@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
@@ -151,7 +152,14 @@ public class WhisperRecognitionService extends RecognitionService {
                         deinitModel();
                         Bundle results = new Bundle();
                         ArrayList<String> resultList = new ArrayList<>();
-                        resultList.add(whisperResult.getResult().trim());
+
+                        String result = whisperResult.getResult();
+                        if (whisperResult.getLanguage().equals("zh")){
+                            boolean simpleChinese = sp.getBoolean("RecognitionServiceSimpleChinese",false);
+                            result = simpleChinese ? ZhConverterUtil.toSimple(result) : ZhConverterUtil.toTraditional(result);
+                        }
+
+                        resultList.add(result.trim());
                         results.putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, resultList);
                         callback.results(results);
                     } catch (RemoteException e) {
@@ -171,7 +179,21 @@ public class WhisperRecognitionService extends RecognitionService {
     private void startTranscription() {
         if (!recognitionCancelled){
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(()-> Toast.makeText(this,getString(R.string.processing), Toast.LENGTH_SHORT).show());
+            handler.post(()-> {
+                Toast toast = new Toast(this);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setText(R.string.processing);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    toast.addCallback(new Toast.Callback() {
+                        @Override
+                        public void onToastHidden() {
+                            super.onToastHidden();
+                            if (mWhisper!=null) toast.show();
+                        }
+                    });
+                }
+                toast.show();
+            });
             mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
             mWhisper.start();
             Log.d(TAG,"Start Transcription");

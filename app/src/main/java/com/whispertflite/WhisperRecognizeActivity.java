@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
@@ -166,8 +167,14 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 runOnUiThread(() -> processingBar.setIndeterminate(false));
-                if (whisperResult.getResult().trim().length() > 0){
-                    sendResult(whisperResult.getResult().trim());
+
+                String result = whisperResult.getResult();
+                if (whisperResult.getLanguage().equals("zh")){
+                    boolean simpleChinese = sp.getBoolean("simpleChinese",false);
+                    result = simpleChinese ? ZhConverterUtil.toSimple(result) : ZhConverterUtil.toTraditional(result);
+                }
+                if (result.trim().length() > 0){
+                    sendResult(result.trim());
                 }
             }
         });

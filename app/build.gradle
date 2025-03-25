@@ -66,5 +66,6 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite:2.15.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
     implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.9'
+    implementation 'com.github.houbb:opencc4j:1.8.1'
 
 }

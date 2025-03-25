@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
@@ -64,8 +66,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvResult;
     private FloatingActionButton fabCopy;
     private ImageButton btnRecord;
+    private LinearLayout layoutModeChinese;
     private CheckBox append;
     private CheckBox translate;
+    private CheckBox modeSimpleChinese;
     private ProgressBar processingBar;
     private ImageButton btnInfo;
 
@@ -210,6 +214,16 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        layoutModeChinese = findViewById(R.id.layout_mode_chinese);
+        modeSimpleChinese = findViewById(R.id.mode_simple_chinese);
+        modeSimpleChinese.setChecked(sp.getBoolean("simpleChinese",false));  //default to traditional Chinese
+        modeSimpleChinese.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("simpleChinese", isChecked);
+            editor.apply();
+            tvResult.setText("");
+        });
+
         tvStatus = findViewById(R.id.tvStatus);
         tvResult = findViewById(R.id.tvResult);
         fabCopy = findViewById(R.id.fabCopy);
@@ -296,7 +310,15 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken/1000L + "\u2009s" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
                 runOnUiThread(() -> processingBar.setIndeterminate(false));
                 Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
-                runOnUiThread(() -> tvResult.append(whisperResult.getResult()));
+                if (whisperResult.getLanguage().equals("zh")){
+                    runOnUiThread(() -> layoutModeChinese.setVisibility(View.VISIBLE));
+                    boolean simpleChinese = sp.getBoolean("simpleChinese",false);  //convert to desired Chinese mode
+                    String result = simpleChinese ? ZhConverterUtil.toSimple(whisperResult.getResult()) : ZhConverterUtil.toTraditional(whisperResult.getResult());
+                    runOnUiThread(() -> tvResult.append(result));
+                } else {
+                    runOnUiThread(() -> layoutModeChinese.setVisibility(View.GONE));
+                    runOnUiThread(() -> tvResult.append(whisperResult.getResult()));
+                }
                 runOnUiThread(() -> spinnerTflite.setEnabled(true));
             }
         });

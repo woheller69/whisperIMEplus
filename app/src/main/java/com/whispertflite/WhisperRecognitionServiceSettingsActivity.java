@@ -8,17 +8,18 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -43,16 +44,17 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
     private File selectedTfliteFile = null;
     private SharedPreferences sp = null;
     private Spinner spinnerTflite;
-    private SeekBar recordingTime;
-    private TextView recodingTimeTV;
-    private CheckBox voiceActivityDetection;
     private Spinner spinnerLanguage;
+    private CheckBox modeSimpleChinese;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recognition_service_settings);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         if (!Downloader.checkModels(this)){
             Intent intent = new Intent(this, DownloadActivity.class);
@@ -118,6 +120,14 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        modeSimpleChinese = findViewById(R.id.mode_simple_chinese);
+        modeSimpleChinese.setChecked(sp.getBoolean("RecognitionServiceSimpleChinese",false));  //default to traditional Chinese
+        modeSimpleChinese.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("RecognitionServiceSimpleChinese", isChecked);
+            editor.apply();
         });
 
         checkPermissions();
@@ -211,4 +221,12 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
         return filteredFiles;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) { //handle "back click" on action bar
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

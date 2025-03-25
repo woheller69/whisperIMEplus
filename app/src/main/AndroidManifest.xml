@@ -19,7 +19,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TFLiteAudio">
+        android:theme="@style/Theme.Whisper.NoActionBar">
         <activity android:name="com.whispertflite.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true">
@@ -44,7 +44,7 @@
             android:clearTaskOnLaunch="true"
             android:launchMode="singleInstance"
             android:visibleToInstantApps="true"
-            android:theme="@style/Theme.Recognize"
+            android:theme="@style/Theme.WhisperFloating"
             android:configChanges="orientation|screenLayout|screenSize|keyboardHidden|keyboard|uiMode|density">
             <intent-filter>
                 <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
@@ -83,6 +83,8 @@
 
         <activity android:name="com.whispertflite.WhisperRecognitionServiceSettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/Theme.Whisper.ActionBar"
+            android:label="@string/voice_input"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

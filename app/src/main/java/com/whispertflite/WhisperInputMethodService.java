@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
@@ -234,7 +235,12 @@ public class WhisperInputMethodService extends InputMethodService {
                 handler.post(() -> processingBar.setIndeterminate(false));
                 handler.post(() -> tvStatus.setText(""));
 
-                if (whisperResult.getResult().trim().length() > 0) getCurrentInputConnection().commitText(whisperResult.getResult().trim() + " ",1);
+                String result = whisperResult.getResult();
+                if (whisperResult.getLanguage().equals("zh")){
+                    boolean simpleChinese = sp.getBoolean("simpleChinese",false);
+                    result = simpleChinese ? ZhConverterUtil.toSimple(result) : ZhConverterUtil.toTraditional(result);
+                }
+                if (result.trim().length() > 0) getCurrentInputConnection().commitText(result.trim() + " ",1);
             }
         });
     }

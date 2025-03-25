@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -31,7 +31,7 @@
         android:id="@+id/layout_language"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -52,7 +52,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10sp"
+        android:layout_marginBottom="6dp"
         android:orientation="horizontal">
 
         <TextView
@@ -89,6 +89,8 @@
             android:id="@+id/mode_append"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
             android:contentDescription="@string/append"/>
 
     </LinearLayout>
@@ -110,7 +112,34 @@
             android:id="@+id/mode_translate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
             android:contentDescription="@string/translate"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_mode_chinese"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:gravity="start">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:text="@string/simple_chinese" />
+
+        <CheckBox
+            android:id="@+id/mode_simple_chinese"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:contentDescription="@string/simple_chinese"/>
 
     </LinearLayout>
     <!-- Use ProgressBar as "Space" with same look -->

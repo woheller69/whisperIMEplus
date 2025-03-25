@@ -54,6 +54,7 @@ This work is licensed under MIT license, © woheller69
 
 - This app is built on the [Whisper-Android project](https://github.com/vilassn/whisper_android), and [OpenAI Whisper](https://github.com/openai/whisper) published under MIT license
 - It uses [Android VAD](https://github.com/gkonovalov/android-vad), which is published under MIT license
+- It uses [Opencc4j](https://github.com/houbb/opencc4j), for Chinese conversions, published under Apache-2.0 license
 - At first start it downloads the Whisper TFLite models from [Hugging Face](https://huggingface.co/DocWolle/whisper_tflite_models), which is published under MIT license
 
 # OTHER APPS
