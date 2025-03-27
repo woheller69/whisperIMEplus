@@ -8,7 +8,7 @@ Dies ist die einzige Verwendung der Internetberechtigung.
 
 Die Spracherkennung erfolgt vollständig offline.
 
-In der App kann Whisper auch alle unterstützen Sprachen in Englisch übersetzen.
+In der App kann Whisper auch alle unterstützten Sprachen in Englisch übersetzen.
 
 So holen Sie das Beste aus Whisper heraus:
 - Halte die Taste gedrückt, während Du sprichst
