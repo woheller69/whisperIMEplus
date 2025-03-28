@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken/1000L + "\u2009s" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
                 runOnUiThread(() -> processingBar.setIndeterminate(false));
                 Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
-                if (whisperResult.getLanguage().equals("zh")){
+                if ((whisperResult.getLanguage().equals("zh")) && (whisperResult.getTask() == Whisper.Action.TRANSCRIBE)){
                     runOnUiThread(() -> layoutModeChinese.setVisibility(View.VISIBLE));
                     boolean simpleChinese = sp.getBoolean("simpleChinese",false);  //convert to desired Chinese mode
                     String result = simpleChinese ? ZhConverterUtil.toSimple(whisperResult.getResult()) : ZhConverterUtil.toTraditional(whisperResult.getResult());
