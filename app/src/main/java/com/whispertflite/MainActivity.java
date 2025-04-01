@@ -133,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(() -> Toast.makeText(mContext, mContext.getString(R.string.tts_initialization_failed),Toast.LENGTH_SHORT).show());
                     }
                 });
+            } else {
+                deinitTTS();
             }
         });
 
@@ -155,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
         spinnerLanguage = findViewById(R.id.spnrLanguage);
         String[] eu_languages = getResources().getStringArray(R.array.eu_languages);
+        Arrays.sort(eu_languages);
         ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, eu_languages);
         spinnerLanguage.setAdapter(lang);
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
