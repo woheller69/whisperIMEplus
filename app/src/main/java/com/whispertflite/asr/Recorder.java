@@ -83,7 +83,7 @@ public class Recorder {
         vad = Vad.builder()
                 .setSampleRate(SampleRate.SAMPLE_RATE_16K)
                 .setFrameSize(FrameSize.FRAME_SIZE_480)
-                .setMode(Mode.NORMAL)
+                .setMode(Mode.VERY_AGGRESSIVE)
                 .setSilenceDurationMs(800)
                 .setSpeechDurationMs(200)
                 .build();

@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private ImageButton btnRecord;
     private ImageButton btnKeyboard;
     private ImageButton btnTranslate;
+    private ImageButton btnModeAuto;
     private ImageButton btnEnter;
     private ImageButton btnDel;
     private TextView tvStatus;
@@ -55,6 +57,8 @@ public class WhisperInputMethodService extends InputMethodService {
     private Context mContext;
     private CountDownTimer countDownTimer;
     private static boolean translate = false;
+    private boolean modeAuto = false;
+    private LinearLayout layoutButtons;
 
     @Override
     public void onCreate() {
@@ -65,12 +69,14 @@ public class WhisperInputMethodService extends InputMethodService {
     @Override
     public void onDestroy() {
         deinitModel();
+        if (mRecorder != null && mRecorder.isInProgress()) {
+            mRecorder.stop();
+        }
         super.onDestroy();
     }
 
     @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting){
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
 
         if (!selectedTfliteFile.exists()) {
@@ -93,17 +99,22 @@ public class WhisperInputMethodService extends InputMethodService {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public View onCreateInputView() {
+    public View onCreateInputView() {  //runs before onStartInputView
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
         View view = getLayoutInflater().inflate(R.layout.voice_service, null);
         btnRecord = view.findViewById(R.id.btnRecord);
         btnKeyboard = view.findViewById(R.id.btnKeyboard);
         btnTranslate = view.findViewById(R.id.btnTranslate);
+        btnModeAuto = view.findViewById(R.id.btnModeAuto);
         btnEnter = view.findViewById(R.id.btnEnter);
         btnDel = view.findViewById(R.id.btnDel);
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
         sdcardDataFolder = this.getExternalFilesDir(null);
         btnTranslate.setImageResource(translate ? R.drawable.ic_english_on_36dp : R.drawable.ic_english_off_36dp);
+        modeAuto = sp.getBoolean("imeModeAuto",false);
+        btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
+        layoutButtons = view.findViewById(R.id.layout_buttons);
         checkRecordPermission();
 
         // Audio recording functionality
@@ -121,6 +132,26 @@ public class WhisperInputMethodService extends InputMethodService {
             }
 
         });
+
+        if (modeAuto) {
+            layoutButtons.setVisibility(View.GONE);
+            HapticFeedback.vibrate(this);
+            startRecording();
+            handler.post(() -> processingBar.setProgress(100));
+            countDownTimer = new CountDownTimer(30000, 1000) {
+                @Override
+                public void onTick(long l) {
+                    handler.post(() -> processingBar.setProgress((int) (l / 300)));
+                }
+                @Override
+                public void onFinish() {}
+            };
+            countDownTimer.start();
+            handler.post(() -> {
+                tvStatus.setText("");
+                tvStatus.setVisibility(View.GONE);
+            });
+        }
 
         btnDel.setOnTouchListener(new View.OnTouchListener() {
             private Runnable initialDeleteRunnable;
@@ -180,9 +211,15 @@ public class WhisperInputMethodService extends InputMethodService {
                             public void onFinish() {}
                         };
                         countDownTimer.start();
-                        handler.post(() -> tvStatus.setText(""));
+                        handler.post(() -> {
+                            tvStatus.setText("");
+                            tvStatus.setVisibility(View.GONE);
+                        });
                     } else {
-                        handler.post(() -> tvStatus.setText(getString(R.string.please_wait)));
+                        handler.post(() -> {
+                            tvStatus.setText(getString(R.string.please_wait));
+                            tvStatus.setVisibility(View.VISIBLE);
+                        });
                     }
                 }
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -209,10 +246,20 @@ public class WhisperInputMethodService extends InputMethodService {
             getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
         });
 
+        btnModeAuto.setOnClickListener(v -> {
+            modeAuto = !modeAuto;
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("imeModeAuto", modeAuto);
+            editor.apply();
+            layoutButtons.setVisibility(modeAuto ? View.GONE : View.VISIBLE);
+            btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
+            switchToPreviousInputMethod();
+        });
         return view;
     }
 
     private void startRecording() {
+        if (modeAuto) mRecorder.initVad();
         mRecorder.start();
     }
 
@@ -233,7 +280,10 @@ public class WhisperInputMethodService extends InputMethodService {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 handler.post(() -> processingBar.setIndeterminate(false));
-                handler.post(() -> tvStatus.setText(""));
+                handler.post(() -> {
+                    tvStatus.setText("");
+                    tvStatus.setVisibility(View.GONE);
+                });
 
                 String result = whisperResult.getResult();
                 if (whisperResult.getLanguage().equals("zh")){
@@ -241,6 +291,7 @@ public class WhisperInputMethodService extends InputMethodService {
                     result = simpleChinese ? ZhConverterUtil.toSimple(result) : ZhConverterUtil.toTraditional(result);
                 }
                 if (result.trim().length() > 0) getCurrentInputConnection().commitText(result.trim() + " ",1);
+                if (modeAuto) switchToPreviousInputMethod();
             }
         });
     }
@@ -249,14 +300,16 @@ public class WhisperInputMethodService extends InputMethodService {
         if (countDownTimer!=null) { countDownTimer.cancel();}
         handler.post(() -> processingBar.setProgress(0));
         handler.post(() -> processingBar.setIndeterminate(true));
-        if (translate) mWhisper.setAction(Whisper.ACTION_TRANSLATE);
-        else mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+        if (mWhisper!=null){
+            if (translate) mWhisper.setAction(Whisper.ACTION_TRANSLATE);
+            else mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
 
-        String langCode = sp.getString("language", "auto");
-        int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
-        Log.d("WhisperIME","default langToken " + langToken);
-        mWhisper.setLanguage(langToken);
-        mWhisper.start();
+            String langCode = sp.getString("language", "auto");
+            int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+            Log.d("WhisperIME","default langToken " + langToken);
+            mWhisper.setLanguage(langToken);
+            mWhisper.start();
+        }
     }
 
     private void stopTranscription() {
@@ -267,6 +320,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private boolean checkRecordPermission() {
         int permission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO);
         if (permission != PackageManager.PERMISSION_GRANTED) {
+            tvStatus.setVisibility(View.VISIBLE);
             tvStatus.setText(getString(R.string.need_record_audio_permission));
         }
         return (permission == PackageManager.PERMISSION_GRANTED);

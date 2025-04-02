@@ -32,6 +32,15 @@
             android:contentDescription="@string/exit_button"/>
 
         <ImageButton
+            android:id="@+id/btnModeAuto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@color/darkGrey"
+            android:src="@drawable/ic_auto_off_36dp"
+            android:contentDescription="@string/auto_button"/>
+
+        <ImageButton
             android:id="@+id/btnTranslate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,19 +49,20 @@
             android:src="@drawable/ic_english_off_36dp"
             android:contentDescription="@string/translate"/>
 
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@id/btnKeyboard"
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:textSize="20dp"
-            android:textColor="@android:color/holo_red_dark" />
     </RelativeLayout>
-
+    <TextView
+        android:id="@+id/tv_status"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/btnKeyboard"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        android:textSize="20dp"
+        android:textColor="@android:color/holo_red_dark" />
     <LinearLayout
+        android:id="@+id/layout_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
