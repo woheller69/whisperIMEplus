@@ -3,8 +3,6 @@ package com.whispertflite.engine;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.common.base.Utf8;
-import com.google.common.primitives.Bytes;
 import com.whispertflite.asr.RecordBuffer;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
@@ -47,7 +45,7 @@ public class WhisperEngineJava implements WhisperEngine {
     }
 
     @Override
-    public boolean initialize(String modelPath, String vocabPath, boolean multilingual) throws IOException {
+    public void initialize(String modelPath, String vocabPath, boolean multilingual) throws IOException {
         // Load model
         loadModel(modelPath);
         Log.d(TAG, "Model is loaded..." + modelPath);
@@ -62,7 +60,6 @@ public class WhisperEngineJava implements WhisperEngine {
             Log.d(TAG, "Failed to load Filters and Vocab...");
         }
 
-        return mIsInitialized;
     }
 
     // Unload the model by closing the interpreter
@@ -161,7 +158,7 @@ public class WhisperEngineJava implements WhisperEngine {
         outputsMap.put(outputs[0], outputBuffer.getBuffer());
 
         // Run inference
-        mInterpreter.runSignature(inputsMap, outputsMap,signature_key);
+        mInterpreter.runSignature(inputsMap, outputsMap, signature_key);
 
         // Retrieve the results
         ArrayList<InputLang> inputLangList = InputLang.getLangList();

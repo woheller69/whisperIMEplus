@@ -17,6 +17,7 @@ import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -40,6 +41,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     private static final String TAG = "WhisperRecognizeActivity";
     private ImageButton btnRecord;
     private ImageButton btnCancel;
+    private ImageButton btnModeAuto;
     private ProgressBar processingBar = null;
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
@@ -48,6 +50,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     private SharedPreferences sp = null;
     private Context mContext;
     private CountDownTimer countDownTimer;
+    private boolean modeAuto = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -88,7 +91,11 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
 
         btnCancel = findViewById(R.id.btnCancel);
         btnRecord = findViewById(R.id.btnRecord);
+        btnModeAuto = findViewById(R.id.btnModeAuto);
         processingBar = findViewById(R.id.processing_bar);
+
+        modeAuto = sp.getBoolean("imeModeAuto",false);
+        btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
 
         // Audio recording functionality
         mRecorder = new Recorder(this);
@@ -104,6 +111,34 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
                 }
             }
 
+        });
+
+        if (modeAuto) {
+            btnRecord.setVisibility(View.GONE);
+            HapticFeedback.vibrate(this);
+            startRecording();
+            runOnUiThread(() -> processingBar.setProgress(100));
+            countDownTimer = new CountDownTimer(30000, 1000) {
+                @Override
+                public void onTick(long l) {
+                    runOnUiThread(() -> processingBar.setProgress((int) (l / 300)));
+                }
+                @Override
+                public void onFinish() {}
+            };
+            countDownTimer.start();
+        }
+
+        btnModeAuto.setOnClickListener(v -> {
+            modeAuto = !modeAuto;
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("imeModeAuto", modeAuto);
+            editor.apply();
+            btnRecord.setVisibility(modeAuto ? View.GONE : View.VISIBLE);
+            btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
+            if (mWhisper != null) stopTranscription();
+            setResult(RESULT_CANCELED, null);
+            finish();
         });
 
         btnRecord.setOnTouchListener((v, event) -> {
@@ -146,6 +181,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
 
     }
     private void startRecording() {
+        if (modeAuto) mRecorder.initVad();
         mRecorder.start();
     }
 
@@ -196,9 +232,11 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
             processingBar.setProgress(0);
             processingBar.setIndeterminate(true);
         });
-        mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
-        mWhisper.start();
-        Log.d(TAG,"Start Transcription");
+        if (mWhisper!=null){
+            mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+            mWhisper.start();
+            Log.d(TAG,"Start Transcription");
+        }
     }
 
     private void stopTranscription() {
@@ -224,6 +262,9 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         deinitModel();
+        if (mRecorder != null && mRecorder.isInProgress()) {
+            mRecorder.stop();
+        }
         super.onDestroy();
     }
 }

@@ -32,6 +32,15 @@
             android:src="@drawable/ic_cancel_36dp"
             android:contentDescription="@string/exit_button"/>
 
+        <ImageButton
+            android:id="@+id/btnModeAuto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@color/darkGrey"
+            android:src="@drawable/ic_auto_off_36dp"
+            android:contentDescription="@string/auto_button"/>
+
     </RelativeLayout>
 
     <LinearLayout
