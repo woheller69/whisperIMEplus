@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     // whisper-small.tflite works well for multi-lingual
     public static final String MULTI_LINGUAL_EU_MODEL_FAST = "whisper-base.EUROPEAN_UNION.tflite";
+    public static final String MULTI_LINGUAL_TOP_WORLD_FAST = "whisper-base.TOP_WORLD.tflite";
     public static final String MULTI_LINGUAL_MODEL_FAST = "whisper-base.tflite";
     public static final String MULTI_LINGUAL_MODEL_SLOW = "whisper-small.tflite";
     public static final String ENGLISH_ONLY_MODEL = "whisper-tiny.en.tflite";
@@ -156,16 +157,15 @@ public class MainActivity extends AppCompatActivity {
         btnInfo.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whisperIME#Donate"))));
 
         spinnerLanguage = findViewById(R.id.spnrLanguage);
-        String[] eu_languages = getResources().getStringArray(R.array.eu_languages);
-        Arrays.sort(eu_languages);
-        ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, eu_languages);
+        String[] top40_languages = getResources().getStringArray(R.array.top40_languages);
+        ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, top40_languages);
         spinnerLanguage.setAdapter(lang);
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                langToken = InputLang.getIdForLanguage(InputLang.getLangList(),eu_languages[i]);
+                langToken = InputLang.getIdForLanguage(InputLang.getLangList(),top40_languages[i]);
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putString("language",eu_languages[i]);
+                editor.putString("language",top40_languages[i]);
                 editor.apply();
             }
 
@@ -181,10 +181,10 @@ public class MainActivity extends AppCompatActivity {
         spinnerTflite = findViewById(R.id.spnrTfliteFiles);
         spinnerTflite.setAdapter(tfliteAdapter);
         spinnerTflite.setSelection(position,false);
-        if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST)){
+        if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_FAST)){
             spinnerLanguage.setEnabled(true);
             String langCode = sp.getString("language", "auto");
-            spinnerLanguage.setSelection(Arrays.asList(eu_languages).indexOf(langCode));
+            spinnerLanguage.setSelection(Arrays.asList(top40_languages).indexOf(langCode));
         } else {
             spinnerLanguage.setSelection(0);
             spinnerLanguage.setEnabled(false);
@@ -198,10 +198,10 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("modelName",selectedTfliteFile.getName());
                 editor.apply();
                 initModel();
-                if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST)){
+                if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_FAST)){
                     spinnerLanguage.setEnabled(true);
                     String langCode = sp.getString("language", "auto");
-                    spinnerLanguage.setSelection(Arrays.asList(eu_languages).indexOf(langCode));
+                    spinnerLanguage.setSelection(Arrays.asList(top40_languages).indexOf(langCode));
                 } else {
                     spinnerLanguage.setSelection(0);
                     spinnerLanguage.setEnabled(false);
@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 long timeTaken = System.currentTimeMillis() - startTime;
-                runOnUiThread(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken/1000L + "\u2009s" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
+                runOnUiThread(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken + "\u2009ms" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
                 runOnUiThread(() -> processingBar.setIndeterminate(false));
                 Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
                 if ((whisperResult.getLanguage().equals("zh")) && (whisperResult.getTask() == Whisper.Action.TRANSCRIBE)){
@@ -390,6 +390,8 @@ public class MainActivity extends AppCompatActivity {
                     textView.setText(R.string.multi_lingual_fast);
                 else if ((getItem(position).getName()).equals(MULTI_LINGUAL_EU_MODEL_FAST))
                     textView.setText(R.string.multi_lingual_fast);
+                else if ((getItem(position).getName()).equals(MULTI_LINGUAL_TOP_WORLD_FAST))
+                    textView.setText(R.string.multi_lingual_fast);
                 else
                     textView.setText(getItem(position).getName().substring(0, getItem(position).getName().length() - ".tflite".length()));
 
@@ -407,6 +409,8 @@ public class MainActivity extends AppCompatActivity {
                 else if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_FAST))
                     textView.setText(R.string.multi_lingual_fast);
                 else if ((getItem(position).getName()).equals(MULTI_LINGUAL_EU_MODEL_FAST))
+                    textView.setText(R.string.multi_lingual_fast);
+                else if ((getItem(position).getName()).equals(MULTI_LINGUAL_TOP_WORLD_FAST))
                     textView.setText(R.string.multi_lingual_fast);
                 else
                     textView.setText(getItem(position).getName().substring(0, getItem(position).getName().length() - ".tflite".length()));
