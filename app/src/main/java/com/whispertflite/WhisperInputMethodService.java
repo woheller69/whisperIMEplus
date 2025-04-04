@@ -3,7 +3,7 @@ package com.whispertflite;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_VOCAB_FILE;
 import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTI_LINGUAL_MODEL_SLOW;
+import static com.whispertflite.MainActivity.MULTI_LINGUAL_TOP_WORLD_SLOW;
 import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
 
 import android.annotation.SuppressLint;
@@ -77,7 +77,7 @@ public class WhisperInputMethodService extends InputMethodService {
 
     @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting){
-        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
+        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_TOP_WORLD_SLOW));
 
         if (!selectedTfliteFile.exists()) {
             switchToPreviousInputMethod();  //switch back and download models first

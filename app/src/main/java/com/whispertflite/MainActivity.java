@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     // whisper-small.tflite works well for multi-lingual
     public static final String MULTI_LINGUAL_EU_MODEL_FAST = "whisper-base.EUROPEAN_UNION.tflite";
     public static final String MULTI_LINGUAL_TOP_WORLD_FAST = "whisper-base.TOP_WORLD.tflite";
+    public static final String MULTI_LINGUAL_TOP_WORLD_SLOW = "whisper-small.TOP_WORLD.tflite";
     public static final String MULTI_LINGUAL_MODEL_FAST = "whisper-base.tflite";
     public static final String MULTI_LINGUAL_MODEL_SLOW = "whisper-small.tflite";
     public static final String ENGLISH_ONLY_MODEL = "whisper-tiny.en.tflite";
@@ -175,13 +176,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
+        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_TOP_WORLD_SLOW));
         ArrayAdapter<File> tfliteAdapter = getFileArrayAdapter(tfliteFiles);
         int position = tfliteAdapter.getPosition(selectedTfliteFile);
         spinnerTflite = findViewById(R.id.spnrTfliteFiles);
         spinnerTflite.setAdapter(tfliteAdapter);
         spinnerTflite.setSelection(position,false);
-        if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_FAST)){
+        if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_SLOW)){
             spinnerLanguage.setEnabled(true);
             String langCode = sp.getString("language", "auto");
             spinnerLanguage.setSelection(Arrays.asList(top40_languages).indexOf(langCode));
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("modelName",selectedTfliteFile.getName());
                 editor.apply();
                 initModel();
-                if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_FAST)){
+                if (selectedTfliteFile.getName().equals(MULTI_LINGUAL_EU_MODEL_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_FAST) || selectedTfliteFile.getName().equals(MULTI_LINGUAL_TOP_WORLD_SLOW)){
                     spinnerLanguage.setEnabled(true);
                     String langCode = sp.getString("language", "auto");
                     spinnerLanguage.setSelection(Arrays.asList(top40_languages).indexOf(langCode));
@@ -319,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Model initialization
     private void initModel() {
-        File modelFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_MODEL_SLOW));
+        File modelFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_TOP_WORLD_SLOW));
         boolean isMultilingualModel = !(modelFile.getName().endsWith(ENGLISH_ONLY_MODEL_EXTENSION));
         String vocabFileName = isMultilingualModel ? MULTILINGUAL_VOCAB_FILE : ENGLISH_ONLY_VOCAB_FILE;
         File vocabFile = new File(sdcardDataFolder, vocabFileName);
@@ -384,6 +385,8 @@ public class MainActivity extends AppCompatActivity {
                 TextView textView = view.findViewById(android.R.id.text1);
                 if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_SLOW))
                     textView.setText(R.string.multi_lingual_slow);
+                else if ((getItem(position).getName()).equals(MULTI_LINGUAL_TOP_WORLD_SLOW))
+                    textView.setText(R.string.multi_lingual_slow);
                 else if ((getItem(position).getName()).equals(ENGLISH_ONLY_MODEL))
                     textView.setText(R.string.english_only_fast);
                 else if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_FAST))
@@ -403,6 +406,8 @@ public class MainActivity extends AppCompatActivity {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView textView = view.findViewById(android.R.id.text1);
                 if ((getItem(position).getName()).equals(MULTI_LINGUAL_MODEL_SLOW))
+                    textView.setText(R.string.multi_lingual_slow);
+                else if ((getItem(position).getName()).equals(MULTI_LINGUAL_TOP_WORLD_SLOW))
                     textView.setText(R.string.multi_lingual_slow);
                 else if ((getItem(position).getName()).equals(ENGLISH_ONLY_MODEL))
                     textView.setText(R.string.english_only_fast);
