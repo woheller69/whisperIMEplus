@@ -33,4 +33,5 @@
     <string name="text_to_speech">Sprachausgabe:</string>
     <string name="tts_language_not_supported">Sprachausgabe: Sprache nicht unterstützt</string>
     <string name="tts_initialization_failed">Sprachausgabe: Initialisierung fehlgeschlagen</string>
+    <string name="error_no_input">Keine Sprache detektiert</string>
 </resources>

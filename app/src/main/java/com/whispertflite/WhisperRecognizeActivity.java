@@ -108,6 +108,14 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
                     HapticFeedback.vibrate(mContext);
                     runOnUiThread(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
                     startTranscription();
+                } else if (message.equals(Recorder.MSG_RECORDING_ERROR)) {
+                    HapticFeedback.vibrate(mContext);
+                    if (countDownTimer!=null) { countDownTimer.cancel();}
+                    runOnUiThread(() -> {
+                        btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
+                        processingBar.setProgress(0);
+                        Toast.makeText(mContext,R.string.error_no_input,Toast.LENGTH_SHORT).show();
+                    });
                 }
             }
 

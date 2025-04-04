@@ -289,6 +289,14 @@ public class MainActivity extends AppCompatActivity {
 
                     if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);
                     else startProcessing(Whisper.ACTION_TRANSCRIBE);
+                } else if (message.equals(Recorder.MSG_RECORDING_ERROR)) {
+                    HapticFeedback.vibrate(mContext);
+                    if (countDownTimer!=null) { countDownTimer.cancel();}
+                    runOnUiThread(() -> {
+                        btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
+                        processingBar.setProgress(0);
+                        tvStatus.setText(getString(R.string.error_no_input));
+                    });
                 }
             }
 

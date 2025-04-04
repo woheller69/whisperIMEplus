@@ -92,6 +92,12 @@ public class WhisperRecognitionService extends RecognitionService {
                         throw new RuntimeException(e);
                     }
                     startTranscription();
+                } else if (message.equals(Recorder.MSG_RECORDING_ERROR)) {
+                    try {
+                        callback.error(ERROR_CLIENT);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
 

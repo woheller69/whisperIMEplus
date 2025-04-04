@@ -128,6 +128,15 @@ public class WhisperInputMethodService extends InputMethodService {
                     HapticFeedback.vibrate(mContext);
                     handler.post(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
                     startTranscription();
+                } else if (message.equals(Recorder.MSG_RECORDING_ERROR)) {
+                    HapticFeedback.vibrate(mContext);
+                    if (countDownTimer!=null) { countDownTimer.cancel();}
+                    handler.post(() -> {
+                        btnRecord.setBackgroundResource(R.drawable.rounded_button_background);
+                        tvStatus.setText(getString(R.string.error_no_input));
+                        tvStatus.setVisibility(View.VISIBLE);
+                        processingBar.setProgress(0);
+                    });
                 }
             }
 
