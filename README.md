@@ -35,7 +35,7 @@ supports a broader range of languages. Select your preferred model within the ap
 
 To get the most out of Whisper, follow these simple tips:
 
-- Press and hold the button while speaking 
+- Press and hold the button while speaking or use automatic mode where available
 - Pause briefly before starting to speak
 - Speak clearly, loudly, and at a moderate pace
 - Please note that there is a limit of 30s for each recording
@@ -52,7 +52,8 @@ For translations use https://toolate.othing.xyz/projects/whisperime/
 # License
 This work is licensed under MIT license, © woheller69
 
-- This app is built on the [Whisper-Android project](https://github.com/vilassn/whisper_android), and [OpenAI Whisper](https://github.com/openai/whisper) published under MIT license
+- This app is based on the [Whisper-Android project](https://github.com/vilassn/whisper_android), published under MIT license
+- It uses [OpenAI Whisper](https://github.com/openai/whisper) published under MIT license. Details on Whisper are found [here](https://arxiv.org/abs/2212.04356).
 - It uses [Android VAD](https://github.com/gkonovalov/android-vad), which is published under MIT license
 - It uses [Opencc4j](https://github.com/houbb/opencc4j), for Chinese conversions, published under Apache-2.0 license
 - At first start it downloads the Whisper TFLite models from [Hugging Face](https://huggingface.co/DocWolle/whisper_tflite_models), which is published under MIT license
