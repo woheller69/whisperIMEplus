@@ -76,6 +76,17 @@ public class WhisperInputMethodService extends InputMethodService {
     }
 
     @Override
+    public void onStartInput(EditorInfo attribute, boolean restarting) {
+        if (attribute.inputType ==  EditorInfo.TYPE_NULL) {
+            Log.d(TAG, "Cancelling: onStartInput: inputType=" + attribute.inputType + ", package=" + attribute.packageName + ", fieldId=" + attribute.fieldId);
+            deinitModel();
+            if (mRecorder != null && mRecorder.isInProgress()) {
+                mRecorder.stop();
+            }
+        }
+    }
+
+    @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting){
         selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_TOP_WORLD_SLOW));
 
