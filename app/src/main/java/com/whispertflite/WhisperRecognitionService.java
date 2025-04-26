@@ -29,6 +29,7 @@ import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
+import com.whispertflite.utils.HapticFeedback;
 import com.whispertflite.utils.InputLang;
 
 import java.io.File;
@@ -86,6 +87,7 @@ public class WhisperRecognitionService extends RecognitionService {
                         throw new RuntimeException(e);
                     }
                 } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
+                    HapticFeedback.vibrate(this);
                     try {
                         callback.rmsChanged(-20.0f);
                     } catch (RemoteException e) {
@@ -102,6 +104,7 @@ public class WhisperRecognitionService extends RecognitionService {
             });
 
             if (!mWhisper.isInProgress()) {
+                HapticFeedback.vibrate(this);
                 startRecording();
                 try {
                     callback.beginningOfSpeech();
