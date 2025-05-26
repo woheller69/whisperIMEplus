@@ -1,0 +1,4 @@
+Haptic feedback for recognition service
+Exclude from system backup
+Translations
+Bugfix
