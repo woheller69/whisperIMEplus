@@ -1,10 +1,5 @@
 package com.whispertflite;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static com.whispertflite.MainActivity.ENGLISH_ONLY_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTI_LINGUAL_TOP_WORLD_SLOW;
-import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -34,9 +29,6 @@ import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.HapticFeedback;
-import com.whispertflite.utils.InputLang;
-
-import java.io.File;
 
 public class WhisperInputMethodService extends InputMethodService {
     private static final String TAG = "WhisperInputMethodService";
@@ -49,8 +41,6 @@ public class WhisperInputMethodService extends InputMethodService {
     private TextView tvStatus;
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
-    private File sdcardDataFolder = null;
-    private File selectedTfliteFile = null;
     private ProgressBar processingBar = null;
     private SharedPreferences sp = null;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -88,23 +78,9 @@ public class WhisperInputMethodService extends InputMethodService {
 
     @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting){
-        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_TOP_WORLD_SLOW));
 
-        if (!selectedTfliteFile.exists()) {
-            switchToPreviousInputMethod();  //switch back and download models first
-            Intent intent = new Intent(this, DownloadActivity.class);
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else {
-            if (mWhisper == null)
-                initModel(selectedTfliteFile);
-            else {
-                if (!mWhisper.getCurrentModelPath().equals(selectedTfliteFile.getAbsolutePath())){
-                    deinitModel();
-                    initModel(selectedTfliteFile);
-                }
-            }
-        }
+        if (mWhisper == null)  initModel();
+
     }
 
 
@@ -121,7 +97,6 @@ public class WhisperInputMethodService extends InputMethodService {
         btnDel = view.findViewById(R.id.btnDel);
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
-        sdcardDataFolder = this.getExternalFilesDir(null);
         btnTranslate.setImageResource(translate ? R.drawable.ic_english_on_36dp : R.drawable.ic_english_off_36dp);
         modeAuto = sp.getBoolean("imeModeAuto",false);
         btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
@@ -284,14 +259,10 @@ public class WhisperInputMethodService extends InputMethodService {
     }
 
     // Model initialization
-    private void initModel(File modelFile) {
-        boolean isMultilingualModel = !(modelFile.getName().endsWith(ENGLISH_ONLY_MODEL_EXTENSION));
-        String vocabFileName = isMultilingualModel ? MULTILINGUAL_VOCAB_FILE : ENGLISH_ONLY_VOCAB_FILE;
-        File vocabFile = new File(sdcardDataFolder, vocabFileName);
+    private void initModel() {
 
         mWhisper = new Whisper(this);
-        mWhisper.loadModel(modelFile, vocabFile, isMultilingualModel);
-        Log.d(TAG, "Initialized: " + modelFile.getName());
+        mWhisper.loadModel();
         mWhisper.setListener(new Whisper.WhisperListener() {
             @Override
             public void onUpdateReceived(String message) {
@@ -326,7 +297,7 @@ public class WhisperInputMethodService extends InputMethodService {
             else mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
 
             String langCode = sp.getString("language", "auto");
-            int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+            String langToken = langCode;
             Log.d("WhisperIME","default langToken " + langToken);
             mWhisper.setLanguage(langToken);
             mWhisper.start();

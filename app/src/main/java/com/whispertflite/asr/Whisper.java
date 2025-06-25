@@ -3,11 +3,10 @@ package com.whispertflite.asr;
 import android.content.Context;
 import android.util.Log;
 
-import com.whispertflite.engine.WhisperEngine;
-import com.whispertflite.engine.WhisperEngineJava;
+import com.whispertflite.voice_translation.neural_networks.NeuralNetworkApi;
+import com.whispertflite.voice_translation.neural_networks.voice.Recognizer;
+import com.whispertflite.voice_translation.neural_networks.voice.RecognizerListener;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -26,7 +25,6 @@ public class Whisper {
 
     public static final Action ACTION_TRANSCRIBE = Action.TRANSCRIBE;
     public static final Action ACTION_TRANSLATE = Action.TRANSLATE;
-    private String currentModelPath = "";
 
     public enum Action {
         TRANSLATE, TRANSCRIBE
@@ -34,18 +32,19 @@ public class Whisper {
 
     private final AtomicBoolean mInProgress = new AtomicBoolean(false);
 
-    private final WhisperEngine mWhisperEngine;
     private Action mAction;
-    private int mLangToken = -1;
+    private String mLangToken = "";
     private WhisperListener mUpdateListener;
 
     private final Lock taskLock = new ReentrantLock();
     private final Condition hasTask = taskLock.newCondition();
     private volatile boolean taskAvailable = false;
+    private Recognizer recognizer = null;
+    private Context mContext;
+    private long startTime;
 
     public Whisper(Context context) {
-        this.mWhisperEngine = new WhisperEngineJava(context);
-
+        mContext = context;
         // Start thread for RecordBuffer transcription
         Thread threadProcessRecordBuffer = new Thread(this::processRecordBufferLoop);
         threadProcessRecordBuffer.start();
@@ -56,34 +55,51 @@ public class Whisper {
         this.mUpdateListener = listener;
     }
 
-    public void loadModel(File modelPath, File vocabPath, boolean isMultilingual) {
-        loadModel(modelPath.getAbsolutePath(), vocabPath.getAbsolutePath(), isMultilingual);
-        currentModelPath = modelPath.getAbsolutePath();
-    }
+    public void loadModel() {
+        recognizer = new Recognizer(mContext, false, new NeuralNetworkApi.InitListener() {
+            @Override
+            public void onInitializationFinished() {
+                Log.d(TAG, "Recognizer initialized");
+            }
 
-    public void loadModel(String modelPath, String vocabPath, boolean isMultilingual) {
-        try {
-            mWhisperEngine.initialize(modelPath, vocabPath, isMultilingual);
-        } catch (IOException e) {
-            Log.e(TAG, "Error initializing model...", e);
-            sendUpdate("Model initialization failed");
-        }
-    }
+            @Override
+            public void onError(int[] reasons, long value) {
+                Log.d(TAG, "Recognizer init error");
+            }
+        });
 
-    public String getCurrentModelPath(){
-        return currentModelPath;
+
+        recognizer.addCallback(new RecognizerListener() {
+            @Override
+            public void onSpeechRecognizedResult(String text, String languageCode, double confidenceScore, boolean isFinal) {
+                Log.d(TAG, languageCode + " " + text);
+                WhisperResult whisperResult = new WhisperResult(text,languageCode, mAction);
+
+                sendResult(whisperResult);
+
+                long timeTaken = System.currentTimeMillis() - startTime;
+                Log.d(TAG, "Time Taken for transcription: " + timeTaken + "ms");
+                sendUpdate(MSG_PROCESSING_DONE);
+            }
+
+            @Override
+            public void onError(int[] reasons, long value) {
+                Log.d(TAG, "ERROR during recognition");
+            }
+        });
     }
 
     public void unloadModel() {
-        mWhisperEngine.deinitialize();
-        currentModelPath = "";
+        if (recognizer != null) {
+            recognizer.destroy();
+        }
     }
 
     public void setAction(Action action) {
         this.mAction = action;
     }
 
-    public void setLanguage(int language){
+    public void setLanguage(String language){
         this.mLangToken = language;
     }
 
@@ -128,19 +144,10 @@ public class Whisper {
 
     private void processRecordBuffer() {
         try {
-            if (mWhisperEngine.isInitialized() && RecordBuffer.getOutputBuffer() != null) {
-                long startTime = System.currentTimeMillis();
+            if (RecordBuffer.getOutputBuffer() != null) {
+                startTime = System.currentTimeMillis();
                 sendUpdate(MSG_PROCESSING);
-
-                WhisperResult whisperResult = null;
-                synchronized (mWhisperEngine) {
-                    whisperResult = mWhisperEngine.processRecordBuffer(mAction, mLangToken);
-                }
-                sendResult(whisperResult);
-
-                long timeTaken = System.currentTimeMillis() - startTime;
-                Log.d(TAG, "Time Taken for transcription: " + timeTaken + "ms");
-                sendUpdate(MSG_PROCESSING_DONE);
+                recognizer.recognize(RecordBuffer.getSamples(),1,mLangToken);
             } else {
                 sendUpdate("Engine not initialized or file path not set");
             }

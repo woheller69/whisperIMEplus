@@ -2,11 +2,6 @@ package com.whispertflite;
 
 import static android.speech.SpeechRecognizer.ERROR_CLIENT;
 import static android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS;
-import static android.speech.SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE;
-import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
-import static com.whispertflite.MainActivity.ENGLISH_ONLY_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTI_LINGUAL_TOP_WORLD_SLOW;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,17 +25,12 @@ import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.HapticFeedback;
-import com.whispertflite.utils.InputLang;
-
-import java.io.File;
 import java.util.ArrayList;
 
 public class WhisperRecognitionService extends RecognitionService {
     private static final String TAG = "WhisperRecognitionService";
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
-    private File sdcardDataFolder = null;
-    private File selectedTfliteFile = null;
     private boolean recognitionCancelled = false;
     private SharedPreferences sp = null;
 
@@ -49,70 +39,56 @@ public class WhisperRecognitionService extends RecognitionService {
         String targetLang = recognizerIntent.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String langCode = sp.getString("recognitionServiceLanguage", "auto");
-        int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+        String langToken = langCode;
         Log.d(TAG,"default langToken " + langToken);
 
         if (targetLang != null) {
             Log.d(TAG,"StartListening in " + targetLang);
             langCode = targetLang.split("[-_]")[0].toLowerCase();   //support both de_DE and de-DE
-            langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+            langToken = langCode;
         } else {
             Log.d(TAG,"StartListening, no language specified");
         }
 
         checkRecordPermission(callback);
 
-        sdcardDataFolder = this.getExternalFilesDir(null);
-        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("recognitionServiceModelName", MULTI_LINGUAL_TOP_WORLD_SLOW));
+        initModel(callback, langToken);
 
-        if (!selectedTfliteFile.exists()) {
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    callback.error(ERROR_LANGUAGE_UNAVAILABLE);
-                } else {
-                    callback.error(ERROR_CLIENT);
-                }
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            initModel(selectedTfliteFile, callback, langToken);
-
-            mRecorder = new Recorder(this);
-            mRecorder.setListener(message -> {
-                if (message.equals(Recorder.MSG_RECORDING)){
-                    try {
-                        callback.rmsChanged(10);
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-                } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
-                    HapticFeedback.vibrate(this);
-                    try {
-                        callback.rmsChanged(-20.0f);
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-                    startTranscription();
-                } else if (message.equals(Recorder.MSG_RECORDING_ERROR)) {
-                    try {
-                        callback.error(ERROR_CLIENT);
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-
-            if (!mWhisper.isInProgress()) {
-                HapticFeedback.vibrate(this);
-                startRecording();
+        mRecorder = new Recorder(this);
+        mRecorder.setListener(message -> {
+            if (message.equals(Recorder.MSG_RECORDING)){
                 try {
-                    callback.beginningOfSpeech();
+                    callback.rmsChanged(10);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (message.equals(Recorder.MSG_RECORDING_DONE)) {
+                HapticFeedback.vibrate(this);
+                try {
+                    callback.rmsChanged(-20.0f);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                startTranscription();
+            } else if (message.equals(Recorder.MSG_RECORDING_ERROR)) {
+                try {
+                    callback.error(ERROR_CLIENT);
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
             }
+        });
+
+        if (!mWhisper.isInProgress()) {
+            HapticFeedback.vibrate(this);
+            startRecording();
+            try {
+                callback.beginningOfSpeech();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
+
 
     }
 
@@ -137,14 +113,10 @@ public class WhisperRecognitionService extends RecognitionService {
     }
 
     // Model initialization
-    private void initModel(File modelFile, Callback callback, int langToken) {
-        boolean isMultilingualModel = !(modelFile.getName().endsWith(ENGLISH_ONLY_MODEL_EXTENSION));
-        String vocabFileName = isMultilingualModel ? MULTILINGUAL_VOCAB_FILE : ENGLISH_ONLY_VOCAB_FILE;
-        File vocabFile = new File(sdcardDataFolder, vocabFileName);
+    private void initModel(Callback callback, String langToken) {
 
         mWhisper = new Whisper(this);
-        mWhisper.loadModel(modelFile, vocabFile, isMultilingualModel);
-        Log.d(TAG, "Initialized: " + modelFile.getName());
+        mWhisper.loadModel();
         mWhisper.setLanguage(langToken);
         Log.d(TAG, "Language token " + langToken);
         mWhisper.setListener(new Whisper.WhisperListener() {

@@ -1,11 +1,5 @@
 package com.whispertflite;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static com.whispertflite.MainActivity.ENGLISH_ONLY_MODEL_EXTENSION;
-import static com.whispertflite.MainActivity.ENGLISH_ONLY_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTILINGUAL_VOCAB_FILE;
-import static com.whispertflite.MainActivity.MULTI_LINGUAL_TOP_WORLD_SLOW;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -32,9 +26,7 @@ import com.whispertflite.asr.Recorder;
 import com.whispertflite.asr.Whisper;
 import com.whispertflite.asr.WhisperResult;
 import com.whispertflite.utils.HapticFeedback;
-import com.whispertflite.utils.InputLang;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class WhisperRecognizeActivity extends AppCompatActivity {
@@ -45,8 +37,6 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     private ProgressBar processingBar = null;
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
-    private File sdcardDataFolder = null;
-    private File selectedTfliteFile = null;
     private SharedPreferences sp = null;
     private Context mContext;
     private CountDownTimer countDownTimer;
@@ -58,28 +48,21 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        sdcardDataFolder = this.getExternalFilesDir(null);
-        selectedTfliteFile = new File(sdcardDataFolder, sp.getString("modelName", MULTI_LINGUAL_TOP_WORLD_SLOW));
-        if (!selectedTfliteFile.exists()) {
-            Intent intent = new Intent(this, DownloadActivity.class);
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-        }
+
         String targetLang = getIntent().getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
         String langCode = sp.getString("language", "auto");
-        int langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+        String langToken = langCode;
         Log.d("WhisperRecognition","default langToken " + langToken);
 
         if (targetLang != null) {
             Log.d("WhisperRecognition","StartListening in " + targetLang);
             langCode = targetLang.split("[-_]")[0].toLowerCase();  //support both de_DE and de-DE
-            langToken = InputLang.getIdForLanguage(InputLang.getLangList(),langCode);
+            langToken = langCode;
         } else {
             Log.d("WhisperRecognition","StartListening, no language specified");
         }
 
-        initModel(selectedTfliteFile, langToken);
+        initModel(langToken);
 
         setContentView(R.layout.activity_recognize);
 
@@ -194,14 +177,10 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     }
 
     // Model initialization
-    private void initModel(File modelFile, int langToken) {
-        boolean isMultilingualModel = !(modelFile.getName().endsWith(ENGLISH_ONLY_MODEL_EXTENSION));
-        String vocabFileName = isMultilingualModel ? MULTILINGUAL_VOCAB_FILE : ENGLISH_ONLY_VOCAB_FILE;
-        File vocabFile = new File(sdcardDataFolder, vocabFileName);
+    private void initModel(String langToken) {
 
         mWhisper = new Whisper(this);
-        mWhisper.loadModel(modelFile, vocabFile, isMultilingualModel);
-        Log.d(TAG, "Initialized: " + modelFile.getName());
+        mWhisper.loadModel();
         mWhisper.setLanguage(langToken);
         Log.d(TAG, "Language token " + langToken);
         mWhisper.setListener(new Whisper.WhisperListener() {
