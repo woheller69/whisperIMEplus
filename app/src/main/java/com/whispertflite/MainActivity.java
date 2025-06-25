@@ -140,15 +140,17 @@ public class MainActivity extends AppCompatActivity {
         btnInfo.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whisperIME#Donate"))));
 
         spinnerLanguage = findViewById(R.id.spnrLanguage);
-        String[] top40_languages = Recognizer.LANGUAGES;
-        ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, top40_languages);
+        String[] supported_languages = new String[Recognizer.LANGUAGES.length + 1];
+        supported_languages[0] = "auto";
+        System.arraycopy(Recognizer.LANGUAGES, 0, supported_languages, 1, Recognizer.LANGUAGES.length);
+        ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, supported_languages);
         spinnerLanguage.setAdapter(lang);
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                langToken = top40_languages[i];
+                langToken = supported_languages[i];
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putString("language",top40_languages[i]);
+                editor.putString("language",supported_languages[i]);
                 editor.apply();
             }
 

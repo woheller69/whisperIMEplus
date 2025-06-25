@@ -391,7 +391,11 @@ public class Recognizer extends NeuralNetworkApi {
                         time = System.currentTimeMillis();
                         if (j <= 4) {
                             if(batchSize == 1) {
-                                inputIDsTensor = TensorUtils.convertIntArrayToTensor(onnxEnv, new int[]{decoderInitialInputIDs[j-1]});
+                                if (languageID == -1 && j == 2) {  //In case of just one language allow "auto" detection
+                                    Log.d("decoderInitialInputIDs", "language auto dectect");
+                                } else {
+                                    inputIDsTensor = TensorUtils.convertIntArrayToTensor(onnxEnv, new int[]{decoderInitialInputIDs[j-1]});
+                                }
                             }else{
                                 inputIDsTensor = TensorUtils.convertIntArrayToTensor(onnxEnv, new int[]{decoderInitialInputIDs[j-1], decoderInitialInputIDs2[j-1]}, new long[]{2,1});
                             }
@@ -494,9 +498,11 @@ public class Recognizer extends NeuralNetworkApi {
                     //execution of the detokenizer
                     Map detokenizerInputs = (Map) (new LinkedHashMap());
                     if(batchSize == 1) {
+                        String language = data.languageCode;
                         String finalText = UNDEFINED_TEXT;
                         if(!execution1HitMaxLength) {
                             int[] sequences = completeOutput.stream().mapToInt(i -> i).toArray();
+                            language = getLanguageCode(sequences[0]);
                             detokenizerInputs.put("sequences", TensorUtils.createInt32Tensor(onnxEnv, sequences, new long[]{1, 1, sequences.length}));
                             OrtSession.Result detokenizerOutputs = this.detokenizerSession.run(detokenizerInputs);
                             Object finalTextResult = detokenizerOutputs.get(0).getValue();
@@ -507,12 +513,15 @@ public class Recognizer extends NeuralNetworkApi {
                         Log.i("score", "score: " + outputProbability1);
 
                         outputs.close();
-                        notifyResult(correctText(finalText), data.languageCode, outputProbability1, true);
+                        notifyResult(correctText(finalText), language, outputProbability1, true);
 
                     }else{
+                        String language = data.languageCode;
+                        String language2 = data.languageCode2;
                         String firstText = UNDEFINED_TEXT;
                         if(!execution1HitMaxLength) {
                             int[] sequence1 = completeOutput.stream().mapToInt(i -> i).toArray();
+                            language = getLanguageCode(sequence1[0]);
                             detokenizerInputs.put("sequences", OnnxTensor.createTensor(onnxEnv, IntBuffer.wrap(sequence1), TensorUtils.tensorShape(1, 1, sequence1.length)));
                             OrtSession.Result detokenizerOutputs = this.detokenizerSession.run(detokenizerInputs);
                             Object firstTextResult = detokenizerOutputs.get(0).getValue();
@@ -523,6 +532,7 @@ public class Recognizer extends NeuralNetworkApi {
                         String secondText = UNDEFINED_TEXT;
                         if(!execution2HitMaxLength) {
                             int[] sequence2 = completeOutput2.stream().mapToInt(i -> i).toArray();
+                            language2 = getLanguageCode(sequence2[0]);
                             detokenizerInputs = (Map) (new LinkedHashMap());
                             detokenizerInputs.put("sequences", OnnxTensor.createTensor(onnxEnv, IntBuffer.wrap(sequence2), TensorUtils.tensorShape(1, 1, sequence2.length)));
                             OrtSession.Result detokenizerOutputs2 = this.detokenizerSession.run(detokenizerInputs);
@@ -536,7 +546,7 @@ public class Recognizer extends NeuralNetworkApi {
                         Log.i("result", "score 1: " + outputProbability1);
                         Log.i("result", "score 2: " + outputProbability2);
 
-                        notifyMultiResult(correctText(firstText), data.languageCode, outputProbability1, correctText(secondText), data.languageCode2, outputProbability2);
+                        notifyMultiResult(correctText(firstText), language, outputProbability1, correctText(secondText), language2, outputProbability2);
                     }
                     //closing all results
                     outputs.close();
@@ -582,32 +592,6 @@ public class Recognizer extends NeuralNetworkApi {
         return correctedText;
     }
 
-    // this method returns only the languages of Whisper-small that have a minimum quality (wer <= 37%)
-    // LANGUAGES instead contains all languages supported by Whisper and it is needed for generating the language ID
-    public static ArrayList<CustomLocale> getSupportedLanguages(Context context) {
-        ArrayList<CustomLocale> languages = new ArrayList<>();
-        SharedPreferences sharedPreferences = context.getSharedPreferences("default", Context.MODE_PRIVATE);
-        boolean qualityLow = sharedPreferences.getBoolean("languagesNNQualityLow", false);
-        if(!qualityLow) {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            try {
-                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                Document document = documentBuilder.parse(context.getResources().openRawResource(R.raw.whisper_supported_languages));
-                NodeList list = document.getElementsByTagName("code");
-                for (int i = 0; i < list.getLength(); i++) {
-                    languages.add(CustomLocale.getInstance(list.item(i).getTextContent()));
-                }
-            } catch (IOException | SAXException | ParserConfigurationException e) {
-                e.printStackTrace();
-            }
-        }else{
-            for (String language : LANGUAGES) {
-                languages.add(CustomLocale.getInstance(language));
-            }
-        }
-        return languages;
-    }
-
     public void destroy() {
         //eventually if in the future I decide to load Whisper only for WalkieTalkie and Conversation then all the resources will be released here
     }
@@ -620,6 +604,10 @@ public class Recognizer extends NeuralNetworkApi {
         }
         Log.e("error", "Error Converting Language code " + language + " to Whisper code");
         return -1;
+    }
+
+    public String getLanguageCode(int langToken){
+        return LANGUAGES[langToken - START_TOKEN_ID -1];
     }
 
     public void addCallback(final RecognizerListener callback) {
