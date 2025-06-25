@@ -23,16 +23,9 @@ public class Whisper {
     public static final String MSG_PROCESSING = "Processing...";
     public static final String MSG_PROCESSING_DONE = "Processing done...!";
 
-    public static final Action ACTION_TRANSCRIBE = Action.TRANSCRIBE;
-    public static final Action ACTION_TRANSLATE = Action.TRANSLATE;
-
-    public enum Action {
-        TRANSLATE, TRANSCRIBE
-    }
-
     private final AtomicBoolean mInProgress = new AtomicBoolean(false);
 
-    private Action mAction;
+    private Recognizer.Action mAction;
     private String mLangToken = "";
     private WhisperListener mUpdateListener;
 
@@ -95,7 +88,7 @@ public class Whisper {
         }
     }
 
-    public void setAction(Action action) {
+    public void setAction(Recognizer.Action action) {
         this.mAction = action;
     }
 
@@ -147,7 +140,7 @@ public class Whisper {
             if (RecordBuffer.getOutputBuffer() != null) {
                 startTime = System.currentTimeMillis();
                 sendUpdate(MSG_PROCESSING);
-                recognizer.recognize(RecordBuffer.getSamples(),1,mLangToken);
+                recognizer.recognize(RecordBuffer.getSamples(),1, mLangToken, mAction );
             } else {
                 sendUpdate("Engine not initialized or file path not set");
             }

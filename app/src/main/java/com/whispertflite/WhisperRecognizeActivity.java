@@ -1,5 +1,7 @@
 package com.whispertflite;
 
+import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -220,7 +222,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
             processingBar.setIndeterminate(true);
         });
         if (mWhisper!=null){
-            mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+            mWhisper.setAction(ACTION_TRANSCRIBE);
             mWhisper.start();
             Log.d(TAG,"Start Transcription");
         }

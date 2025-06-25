@@ -1,5 +1,8 @@
 package com.whispertflite;
 
+import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
+import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSLATE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -231,8 +234,8 @@ public class MainActivity extends AppCompatActivity {
                     HapticFeedback.vibrate(mContext);
                     runOnUiThread(() -> btnRecord.setBackgroundResource(R.drawable.rounded_button_background));
 
-                    if (translate.isChecked()) startProcessing(Whisper.ACTION_TRANSLATE);
-                    else startProcessing(Whisper.ACTION_TRANSCRIBE);
+                    if (translate.isChecked()) startProcessing(ACTION_TRANSLATE);
+                    else startProcessing(ACTION_TRANSCRIBE);
                 } else if (message.equals(Recorder.MSG_RECORDING_ERROR)) {
                     HapticFeedback.vibrate(mContext);
                     if (countDownTimer!=null) { countDownTimer.cancel();}
@@ -288,10 +291,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 long timeTaken = System.currentTimeMillis() - startTime;
-                runOnUiThread(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken + "\u2009ms" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
+                runOnUiThread(() -> tvStatus.setText(getString(R.string.processing_done) + timeTaken + "\u2009ms" + "\n"+ getString(R.string.language) + whisperResult.getLanguage().toUpperCase() + " " + (whisperResult.getTask() == ACTION_TRANSCRIBE ? getString(R.string.mode_transcription) : getString(R.string.mode_translation))));
                 runOnUiThread(() -> processingBar.setIndeterminate(false));
-                Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == Whisper.Action.TRANSCRIBE ? "transcribing" : "translating"));
-                if ((whisperResult.getLanguage().equals("zh")) && (whisperResult.getTask() == Whisper.Action.TRANSCRIBE)){
+                Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == ACTION_TRANSCRIBE ? "transcribing" : "translating"));
+                if ((whisperResult.getLanguage().equals("zh")) && (whisperResult.getTask() == ACTION_TRANSCRIBE)){
                     runOnUiThread(() -> layoutModeChinese.setVisibility(View.VISIBLE));
                     boolean simpleChinese = sp.getBoolean("simpleChinese",false);  //convert to desired Chinese mode
                     String result = simpleChinese ? ZhConverterUtil.toSimple(whisperResult.getResult()) : ZhConverterUtil.toTraditional(whisperResult.getResult());
@@ -356,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Transcription calls
-    private void startProcessing(Whisper.Action action) {
+    private void startProcessing(Recognizer.Action action) {
         if (countDownTimer!=null) { countDownTimer.cancel();}
         runOnUiThread(() -> {
             processingBar.setProgress(0);

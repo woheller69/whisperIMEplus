@@ -3,6 +3,8 @@ package com.whispertflite;
 import static android.speech.SpeechRecognizer.ERROR_CLIENT;
 import static android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS;
 
+import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -174,7 +176,7 @@ public class WhisperRecognitionService extends RecognitionService {
                 }
                 toast.show();
             });
-            mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+            mWhisper.setAction(ACTION_TRANSCRIBE);
             mWhisper.start();
             Log.d(TAG,"Start Transcription");
         }

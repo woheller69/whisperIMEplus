@@ -59,6 +59,13 @@ public class Recognizer extends NeuralNetworkApi {
     private ArrayDeque<DataContainer> dataToRecognize = new ArrayDeque<>();
     private final Object lock = new Object();
 
+    public static final Action ACTION_TRANSCRIBE = Action.TRANSCRIBE;
+    public static final Action ACTION_TRANSLATE = Action.TRANSLATE;
+
+    public enum Action {
+        TRANSLATE, TRANSCRIBE
+    }
+
     public static final String[] LANGUAGES = {
             "en",
             "zh",
@@ -163,6 +170,7 @@ public class Recognizer extends NeuralNetworkApi {
     };
 
     private final int START_TOKEN_ID = 50258;
+    private final int TRANSLATE_TOKEN_ID = 50358;
     private final int TRANSCRIBE_TOKEN_ID = 50359;
     private final int NO_TIMESTAMPS_TOKEN_ID = 50363;
 
@@ -254,7 +262,7 @@ public class Recognizer extends NeuralNetworkApi {
      *
      * @param data The audio data.
      */
-    public void recognize(final float[] data, int beamSize, final String languageCode) {
+    public void recognize(final float[] data, int beamSize, final String languageCode, final Action action) {
         new Thread("recognizer"){
             @Override
             public void run() {
@@ -262,7 +270,7 @@ public class Recognizer extends NeuralNetworkApi {
                 synchronized (lock) {
                     Log.e("recognizer","recognizingCalled");
                     if (data != null) {
-                        dataToRecognize.addLast(new DataContainer(data, beamSize, languageCode));
+                        dataToRecognize.addLast(new DataContainer(data, beamSize, languageCode, action));
                         if (dataToRecognize.size() >= 1 && !recognizing) {
                             recognize();
                         }
@@ -383,7 +391,7 @@ public class Recognizer extends NeuralNetworkApi {
                     if(batchSize == 2){
                         languageID2 = getLanguageID(data.languageCode2);
                     }
-                    int[] decoderInitialInputIDs = {START_TOKEN_ID, languageID, TRANSCRIBE_TOKEN_ID, NO_TIMESTAMPS_TOKEN_ID};
+                    int[] decoderInitialInputIDs = {START_TOKEN_ID, languageID, (batchSize == 1 && data.action == ACTION_TRANSLATE) ? TRANSLATE_TOKEN_ID : TRANSCRIBE_TOKEN_ID, NO_TIMESTAMPS_TOKEN_ID};
                     int[] decoderInitialInputIDs2 = {START_TOKEN_ID, languageID2, TRANSCRIBE_TOKEN_ID, NO_TIMESTAMPS_TOKEN_ID};
                     
                     while (!(max == eos && max2 == eos)) {
@@ -653,11 +661,13 @@ public class Recognizer extends NeuralNetworkApi {
         private String languageCode;
         private String languageCode2;
         private int beamSize;
+        private Action action;
 
-        private DataContainer(float[] data, int beamSize, String languageCode){
+        private DataContainer(float[] data, int beamSize, String languageCode, Action action){
             this.data = data;
             this.beamSize = beamSize;
             this.languageCode = languageCode;
+            this.action = action;
         }
 
         private DataContainer(float[] data, int beamSize, String languageCode, String languageCode2){

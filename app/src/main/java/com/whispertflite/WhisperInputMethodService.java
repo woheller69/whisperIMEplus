@@ -1,6 +1,9 @@
 package com.whispertflite;
 
 
+import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
+import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSLATE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -293,8 +296,8 @@ public class WhisperInputMethodService extends InputMethodService {
         handler.post(() -> processingBar.setProgress(0));
         handler.post(() -> processingBar.setIndeterminate(true));
         if (mWhisper!=null){
-            if (translate) mWhisper.setAction(Whisper.ACTION_TRANSLATE);
-            else mWhisper.setAction(Whisper.ACTION_TRANSCRIBE);
+            if (translate) mWhisper.setAction(ACTION_TRANSLATE);
+            else mWhisper.setAction(ACTION_TRANSCRIBE);
 
             String langCode = sp.getString("language", "auto");
             String langToken = langCode;

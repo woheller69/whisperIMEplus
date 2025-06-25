@@ -1,11 +1,13 @@
 package com.whispertflite.asr;
 
+import com.whispertflite.voice_translation.neural_networks.voice.Recognizer;
+
 public class WhisperResult {
     private final String result;
     private final String language;
-    private final Whisper.Action task;
+    private final Recognizer.Action task;
 
-    public WhisperResult(String result, String language, Whisper.Action task){
+    public WhisperResult(String result, String language, Recognizer.Action task){
         this.result = result;
         this.language = language;
         this.task = task;
@@ -19,7 +21,7 @@ public class WhisperResult {
         return language;
     }
 
-    public Whisper.Action getTask() {
+    public Recognizer.Action getTask() {
         return task;
     }
 }
