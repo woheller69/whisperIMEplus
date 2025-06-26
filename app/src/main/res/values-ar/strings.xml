@@ -13,7 +13,6 @@
     <string name="mode_translation">ترجمة</string>
     <string name="need_record_audio_permission">لم يتم منح إذن تسجيل الصوت</string>
     <string name="download_model">تنزيل النموذج</string>
-    <string name="download_model_text">قم بتنزيل نماذج Whisper من Hugging Face</string>
     <string name="status">الحالة:</string>
     <string name="append">إلحاق:</string>
     <string name="translate">ترجمة إلى الإنجليزية:</string>

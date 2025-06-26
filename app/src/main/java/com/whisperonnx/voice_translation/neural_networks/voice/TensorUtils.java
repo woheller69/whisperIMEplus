@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.whispertflite.voice_translation.neural_networks.voice;
+package com.whisperonnx.voice_translation.neural_networks.voice;
 
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;

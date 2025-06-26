@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.whispertflite.voice_translation.neural_networks.voice;
+package com.whisperonnx.voice_translation.neural_networks.voice;
 
 
-import com.whispertflite.voice_translation.neural_networks.NeuralNetworkApiListener;
+import com.whisperonnx.voice_translation.neural_networks.NeuralNetworkApiListener;
 
-public interface RecognizerMultiListener extends NeuralNetworkApiListener {
-    void onSpeechRecognizedResult(String text1, String languageCode1, double confidenceScore1, String text2, String languageCode2, double confidenceScore2);
+public interface RecognizerListener extends NeuralNetworkApiListener {
+    void onSpeechRecognizedResult(String text, String languageCode, double confidenceScore, boolean isFinal);
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.whispertflite.voice_translation.neural_networks;
+package com.whisperonnx.voice_translation.neural_networks;
 
-import com.whispertflite.voice_translation.neural_networks.voice.CustomLocale;
+import com.whisperonnx.voice_translation.neural_networks.voice.CustomLocale;
 
 import java.io.Serializable;
 

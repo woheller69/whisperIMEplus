@@ -1,6 +1,6 @@
-package com.whispertflite;
+package com.whisperonnx;
 
-import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
+import static com.whisperonnx.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -24,10 +24,10 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
-import com.whispertflite.asr.Recorder;
-import com.whispertflite.asr.Whisper;
-import com.whispertflite.asr.WhisperResult;
-import com.whispertflite.utils.HapticFeedback;
+import com.whisperonnx.asr.Recorder;
+import com.whisperonnx.asr.Whisper;
+import com.whisperonnx.asr.WhisperResult;
+import com.whisperonnx.utils.HapticFeedback;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.whispertflite.asr;
+package com.whisperonnx.asr;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

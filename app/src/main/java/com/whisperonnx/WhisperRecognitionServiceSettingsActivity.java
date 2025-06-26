@@ -1,4 +1,4 @@
-package com.whispertflite;
+package com.whisperonnx;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import com.whispertflite.voice_translation.neural_networks.voice.Recognizer;
+import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
 
 import java.util.ArrayList;
 import java.util.List;

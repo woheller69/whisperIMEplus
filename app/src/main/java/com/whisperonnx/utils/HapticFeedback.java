@@ -1,4 +1,4 @@
-package com.whispertflite.utils;
+package com.whisperonnx.utils;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 

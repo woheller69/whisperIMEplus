@@ -2,7 +2,6 @@
 <resources>
     <string name="need_record_audio_permission">RECORD_AUDIO engedély nincs megadva</string>
     <string name="download_model">Modell letöltése</string>
-    <string name="download_model_text">A Whisper modellek letöltése az Hugging Face-ről</string>
     <string name="status">Állapot:</string>
     <string name="append">Hozzáfűzés:</string>
     <string name="translate">Fordítsa le angolra:</string>

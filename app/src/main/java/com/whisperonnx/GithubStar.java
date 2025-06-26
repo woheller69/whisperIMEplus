@@ -1,4 +1,4 @@
-package com.whispertflite;
+package com.whisperonnx;
 
 import android.app.AlertDialog;
 import android.content.Context;

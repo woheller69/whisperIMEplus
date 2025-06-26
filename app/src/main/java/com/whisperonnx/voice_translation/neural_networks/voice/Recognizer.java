@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package com.whispertflite.voice_translation.neural_networks.voice;
+package com.whisperonnx.voice_translation.neural_networks.voice;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.whispertflite.R;
-import com.whispertflite.voice_translation.neural_networks.NeuralNetworkApi;
+import com.whisperonnx.voice_translation.neural_networks.NeuralNetworkApi;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayDeque;
@@ -37,10 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
@@ -323,14 +312,14 @@ public class Recognizer extends NeuralNetworkApi {
                     initInputs.put("audio_pcm", audioTensor);
                     OrtSession.Result outputsInit = initSession.run(initInputs);
                     OnnxTensor outputInit = (OnnxTensor) outputsInit.get(0);
-                    Log.i("performance", "pre ops done in: " + (System.currentTimeMillis()-time) + "ms");
+                    //Log.i("performance", "pre ops done in: " + (System.currentTimeMillis()-time) + "ms");
 
                     //execution of the encoder
                     Map inputs = (Map) (new LinkedHashMap());
                     inputs.put("input_features", outputInit);
                     OrtSession.Result outputs = encoderSession.run(inputs);
                     OnnxTensor outputEncoder = (OnnxTensor) outputs.get(0);
-                    Log.i("performance", "Encoder done in: " + (SystemClock.elapsedRealtime() - startTimeInMs) + "ms");
+                    //Log.i("performance", "Encoder done in: " + (SystemClock.elapsedRealtime() - startTimeInMs) + "ms");
 
                     //execution of decoder
                     final int eos = 50257;
@@ -361,21 +350,21 @@ public class Recognizer extends NeuralNetworkApi {
                         initInput.put("encoder_hidden_states", outputEncoder);
                         time = System.currentTimeMillis();
                         initResult = cacheInitSession.run(initInput);
-                        Log.i("performance", "Cache initialization done in: " + (System.currentTimeMillis() - time) + "ms");
+                        //Log.i("performance", "Cache initialization done in: " + (System.currentTimeMillis() - time) + "ms");
                     }else{
                         long timeInner = System.currentTimeMillis();
                         float[][] outputEncoderValue = ((float[][][]) outputEncoder.getValue())[0];
-                        Log.i("performance", "Encoder batch extract done in: " + (System.currentTimeMillis()-timeInner) + "ms");
+                        //Log.i("performance", "Encoder batch extract done in: " + (System.currentTimeMillis()-timeInner) + "ms");
                         timeInner = System.currentTimeMillis();
                         float[][][] outputEncoderFlatBatched = TensorUtils.batchTensor(outputEncoderValue, 2);
-                        Log.i("performance", "Encoder batch batching done in: " + (System.currentTimeMillis()-timeInner) + "ms");
+                        //Log.i("performance", "Encoder batch batching done in: " + (System.currentTimeMillis()-timeInner) + "ms");
                         timeInner = System.currentTimeMillis();
                         OnnxTensor outputEncoderBatched = TensorUtils.createFloatTensor(onnxEnv, outputEncoderFlatBatched, new long[]{2, outputEncoderValue.length, outputEncoderValue[0].length}, new long[]{0});
-                        Log.i("performance", "Encoder batch creation done in: " + (System.currentTimeMillis()-timeInner) + "ms");
+                        //Log.i("performance", "Encoder batch creation done in: " + (System.currentTimeMillis()-timeInner) + "ms");
                         initInput.put("encoder_hidden_states", outputEncoderBatched);
                         time = System.currentTimeMillis();
                         initResult = cacheInitBatchSession.run(initInput);
-                        Log.i("performance", "Cache initialization done in: " + (System.currentTimeMillis() - time) + "ms");
+                        //Log.i("performance", "Cache initialization done in: " + (System.currentTimeMillis() - time) + "ms");
                     }
 
                     //We start the iterative execution of the decoder
@@ -430,16 +419,16 @@ public class Recognizer extends NeuralNetworkApi {
                             }
                         }
                         oldResult = result;
-                        Log.i("performance", "pre-execution of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
+                        //Log.i("performance", "pre-execution of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
                         time = System.currentTimeMillis();
                         //execution of decoder (with cache)
                         result = decoderSession.run(decoderInput);
-                        Log.i("performance", "execution of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
+                        //Log.i("performance", "execution of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
                         time = System.currentTimeMillis();
 
                         if (oldResult != null) {
                             oldResult.close(); //serve a rilasciare la memoria occupata dal risultato (altrimenti di accumula e aumenta molto)
-                            Log.i("performance", "release RAM of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
+                            //Log.i("performance", "release RAM of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
                         }
                         //we extract the logits and the highest value
                         decoderOutput = (OnnxTensor) result.get("logits").get();
@@ -491,8 +480,8 @@ public class Recognizer extends NeuralNetworkApi {
                         if(max2 == eos){
                             finished2 = true;
                         }
-                        Log.i("performance", "post-execution of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
-                        Log.i("performance", "Generation of" + j + "th word done in: " + (System.currentTimeMillis() - initialTime) + "ms");
+                        //Log.i("performance", "post-execution of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
+                        //Log.i("performance", "Generation of" + j + "th word done in: " + (System.currentTimeMillis() - initialTime) + "ms");
 
                         j++;
                     }
@@ -517,8 +506,8 @@ public class Recognizer extends NeuralNetworkApi {
                             finalText = ((String[][]) finalTextResult)[0][0];
                             detokenizerOutputs.close();
                         }
-                        Log.i("result", "result: " + correctText(finalText));
-                        Log.i("score", "score: " + outputProbability1);
+                        //Log.i("result", "result: " + correctText(finalText));
+                        //Log.i("score", "score: " + outputProbability1);
 
                         outputs.close();
                         notifyResult(correctText(finalText), language, outputProbability1, true);
@@ -549,10 +538,10 @@ public class Recognizer extends NeuralNetworkApi {
                             detokenizerOutputs2.close();
                         }
 
-                        Log.i("result", "result 1: " + correctText(firstText));
-                        Log.i("result", "result 2: " + correctText(secondText));
-                        Log.i("result", "score 1: " + outputProbability1);
-                        Log.i("result", "score 2: " + outputProbability2);
+                        //Log.i("result", "result 1: " + correctText(firstText));
+                        //Log.i("result", "result 2: " + correctText(secondText));
+                        //Log.i("result", "score 1: " + outputProbability1);
+                        //Log.i("result", "score 2: " + outputProbability2);
 
                         notifyMultiResult(correctText(firstText), language, outputProbability1, correctText(secondText), language2, outputProbability2);
                     }

@@ -1,12 +1,11 @@
-package com.whispertflite;
+package com.whisperonnx;
 
 
-import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
-import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSLATE;
+import static com.whisperonnx.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
+import static com.whisperonnx.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSLATE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
@@ -28,10 +27,10 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
-import com.whispertflite.asr.Recorder;
-import com.whispertflite.asr.Whisper;
-import com.whispertflite.asr.WhisperResult;
-import com.whispertflite.utils.HapticFeedback;
+import com.whisperonnx.asr.Recorder;
+import com.whisperonnx.asr.Whisper;
+import com.whisperonnx.asr.WhisperResult;
+import com.whisperonnx.utils.HapticFeedback;
 
 public class WhisperInputMethodService extends InputMethodService {
     private static final String TAG = "WhisperInputMethodService";

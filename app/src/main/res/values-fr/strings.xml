@@ -3,7 +3,6 @@
     <string name="voice_input">Entrée vocale Whisper</string>
     <string name="need_record_audio_permission">"L\'autorisation ENREGISTREMENT AUDIO n\'est pas accordée"</string>
     <string name="download_model">Téléchargement de Modèle</string>
-    <string name="download_model_text">Télécharger les modèles Whisper à partir de Hugging Face</string>
     <string name="status">Statut:</string>
     <string name="append">Ajouter:</string>
     <string name="translate">Traduire en Anglais:</string>

@@ -1,4 +1,4 @@
-package com.whispertflite.asr;
+package com.whisperonnx.asr;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,7 +15,7 @@ import com.konovalov.vad.webrtc.VadWebRTC;
 import com.konovalov.vad.webrtc.config.FrameSize;
 import com.konovalov.vad.webrtc.config.Mode;
 import com.konovalov.vad.webrtc.config.SampleRate;
-import com.whispertflite.R;
+import com.whisperonnx.R;
 
 import java.io.ByteArrayOutputStream;
 

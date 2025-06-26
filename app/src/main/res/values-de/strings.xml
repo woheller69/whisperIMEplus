@@ -3,7 +3,6 @@
     <string name="voice_input">Whisper Spracheingabe</string>
     <string name="need_record_audio_permission">"RECORD_AUDIO Berechtigung fehlt"</string>
     <string name="download_model">Modell herunterladen</string>
-    <string name="download_model_text">Whisper Modell von Hugging Face herunterladen</string>
     <string name="status">Status:</string>
     <string name="append">Anhängen:</string>
     <string name="translate">Auf English übersetzen:</string>

@@ -1,12 +1,17 @@
-package com.whispertflite.asr;
+package com.whisperonnx.asr;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
-import com.whispertflite.voice_translation.neural_networks.NeuralNetworkApi;
-import com.whispertflite.voice_translation.neural_networks.voice.Recognizer;
-import com.whispertflite.voice_translation.neural_networks.voice.RecognizerListener;
+import com.whisperonnx.SetupActivity;
+import com.whisperonnx.voice_translation.neural_networks.NeuralNetworkApi;
+import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
+import com.whisperonnx.voice_translation.neural_networks.voice.RecognizerListener;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -38,9 +43,27 @@ public class Whisper {
 
     public Whisper(Context context) {
         mContext = context;
-        // Start thread for RecordBuffer transcription
-        Thread threadProcessRecordBuffer = new Thread(this::processRecordBufferLoop);
-        threadProcessRecordBuffer.start();
+
+        //check if model is installed
+        File sdcardDataFolder = mContext.getExternalFilesDir(null);
+        if (sdcardDataFolder == null) sdcardDataFolder.mkdir();
+
+        File[] files = sdcardDataFolder.listFiles();
+
+        int fileCount = 0;
+        for (File file : files) {
+            if (file.isFile()) {
+                fileCount++;
+            }
+        }
+        if (fileCount != 6) { //install model
+            Intent intent = new Intent(mContext, SetupActivity.class);
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
+        } else { // Start thread for RecordBuffer transcription
+            Thread threadProcessRecordBuffer = new Thread(this::processRecordBufferLoop);
+            threadProcessRecordBuffer.start();
+        }
 
     }
 

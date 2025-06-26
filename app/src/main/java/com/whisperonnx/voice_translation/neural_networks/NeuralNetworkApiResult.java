@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.whispertflite.voice_translation.neural_networks;
+package com.whisperonnx.voice_translation.neural_networks;
 
 
 public class NeuralNetworkApiResult extends NeuralNetworkApiText {

@@ -1,7 +1,8 @@
-package com.whispertflite;
+package com.whisperonnx;
 
-import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
-import static com.whispertflite.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSLATE;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static com.whisperonnx.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
+import static com.whisperonnx.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSLATE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -21,7 +22,6 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -39,11 +39,11 @@ import androidx.core.content.ContextCompat;
 
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.whispertflite.asr.Recorder;
-import com.whispertflite.asr.Whisper;
-import com.whispertflite.asr.WhisperResult;
-import com.whispertflite.utils.HapticFeedback;
-import com.whispertflite.voice_translation.neural_networks.voice.Recognizer;
+import com.whisperonnx.asr.Recorder;
+import com.whisperonnx.asr.Whisper;
+import com.whisperonnx.asr.WhisperResult;
+import com.whisperonnx.utils.HapticFeedback;
+import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
 
 
 import java.io.File;
@@ -98,9 +98,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         setContentView(R.layout.activity_main);
-        File sdcardDataFolder = getExternalFilesDir(null);
-        if (sdcardDataFolder == null) sdcardDataFolder.mkdir();
-
         checkInputMethodEnabled();
         processingBar = findViewById(R.id.processing_bar);
         sp = PreferenceManager.getDefaultSharedPreferences(this);

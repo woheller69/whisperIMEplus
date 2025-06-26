@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:largeHeap="true"
         android:theme="@style/Theme.Whisper.NoActionBar">
-        <activity android:name="com.whispertflite.MainActivity"
+        <activity android:name="com.whisperonnx.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true">
             <intent-filter>
@@ -32,6 +32,13 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SetupActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".WhisperRecognizeActivity"
@@ -76,7 +83,7 @@
                 android:resource="@xml/whisper_recognition_service_metadata" />
         </service>
 
-        <activity android:name="com.whispertflite.WhisperRecognitionServiceSettingsActivity"
+        <activity android:name="com.whisperonnx.WhisperRecognitionServiceSettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/Theme.Whisper.ActionBar"
             android:label="@string/voice_input"

@@ -1,6 +1,6 @@
-package com.whispertflite.asr;
+package com.whisperonnx.asr;
 
-import com.whispertflite.voice_translation.neural_networks.voice.Recognizer;
+import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
 
 public class WhisperResult {
     private final String result;
