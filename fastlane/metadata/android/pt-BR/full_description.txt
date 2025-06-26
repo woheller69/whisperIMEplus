@@ -1,16 +1,15 @@
-O Whisper é um editor de método de entrada (IME) com reconhecimento de voz baseado no Whisper
+O Whisper+ é um editor de método de entrada (IME) com reconhecimento de voz baseado no Whisper
 
 Pode funcionar como um app sozinho ou também como um "teclado" que pode ser por exemplo ativado
 pelo botão de microfone no <a href="https://f-droid.org/packages/helium314.keyboard/">HeliBoard</a>.
 
 Na primeira inicialização, ele precisa baixar os modelos Whisper do Hugging Face.
-Isso é o único uso da permissão de internet.
 
 O reconhecimento de voz funciona completamente offline.
 
-Como um app sozinho, o Whisper também pode traduzir qualquer idioma suportado para inglês.
+Como um app sozinho, o Whisper+ também pode traduzir qualquer idioma suportado para inglês.
 
-Para aproveitar ao máximo o Whisper:
+Para aproveitar ao máximo o Whisper+:
 <ul>
 <li>Toque e segure no botão enquanto fala</li>
 <li>Pause brevemente antes de falar</li>

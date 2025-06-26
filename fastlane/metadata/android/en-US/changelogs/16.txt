@@ -1,3 +1,0 @@
-Normalize audio input
-Record to RAM instead of file
-Bugfixes

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="multi_lingual_slow">Многоязычный, медленно</string>
     <string name="app_name">Whisper</string>
     <string name="need_record_audio_permission">Разрешение Запись аудио (RECORD_AUDIO) не предоставлено</string>
-    <string name="error_download">Ошибка при скачивании</string>
     <string name="download_model">Скачать модель</string>
-    <string name="download_model_text">\nСкачать модели Whisper из Hugging Face (~435 MB)</string>
-    <string name="select_model">Модель:</string>
+    <string name="download_model_text">Скачать модели Whisper из Hugging Face</string>
     <string name="status">Состояние:</string>
     <string name="append">Добавить:</string>
     <string name="copy_to_clipboard">Копировать</string>
@@ -23,12 +20,9 @@
     <string name="model_output">Выход модели</string>
     <string name="processing_done">Обработка выполненная за </string>
     <string name="language">Язык:</string>
-    <string name="english_only_fast">Только английский, быстро</string>
-    <string name="multi_lingual_fast">Многоязычный, быстро</string>
     <string name="mode_transcription">транскрипция</string>
     <string name="mode_translation">перевод</string>
     <string name="translate">Перевести на английский:</string>
-    <string name="update">ОБНОВИТЬ</string>
     <string name="auto_button">автоматический режим</string>
     <string name="tts_initialization_failed">TTS: Сбой инициализации</string>
     <string name="error_no_input">Не получено ввода голоса</string>

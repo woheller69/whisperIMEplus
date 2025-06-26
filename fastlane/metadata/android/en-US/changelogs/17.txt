@@ -1,2 +1,0 @@
-Show detected language and task
-Change from MIC to Voice_Recognition audio source

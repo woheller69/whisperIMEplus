@@ -2,10 +2,8 @@
 <resources>
     <string name="voice_input">Entrée vocale Whisper</string>
     <string name="need_record_audio_permission">"L\'autorisation ENREGISTREMENT AUDIO n\'est pas accordée"</string>
-    <string name="error_download">Erreur de téléchargement</string>
     <string name="download_model">Téléchargement de Modèle</string>
-    <string name="download_model_text">\nTélécharger les modèles Whisper à partir de Hugging Face (~435 MB)</string>
-    <string name="select_model">Modèle:</string>
+    <string name="download_model_text">Télécharger les modèles Whisper à partir de Hugging Face</string>
     <string name="status">Statut:</string>
     <string name="append">Ajouter:</string>
     <string name="translate">Traduire en Anglais:</string>
@@ -23,13 +21,9 @@
     <string name="model_output">Résultats du modèle</string>
     <string name="processing_done">Traitement réalisé en\u2009</string>
     <string name="language">Langue:</string>
-    <string name="multi_lingual_slow">Multilingue, lent</string>
-    <string name="english_only_fast">Anglais uniquement, rapide</string>
-    <string name="multi_lingual_fast">Multilingue, rapide</string>
     <string name="mode_transcription">transcription</string>
     <string name="mode_translation">traduction</string>
     <string name="instructions">Appuyez et maintenez activé le bouton du microphone tout en parlant.</string>
-    <string name="update">MISE À JOUR</string>
     <string name="simple_chinese">Sinogrammes simplifiés:</string>
     <string name="text_to_speech">Synthèse vocale:</string>
     <string name="tts_language_not_supported">SV: Langue non prise en charge</string>

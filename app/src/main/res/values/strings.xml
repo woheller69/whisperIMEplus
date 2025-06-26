@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Whisper</string>
+    <string name="app_name" translatable="false">Whisper+</string>
     <string name="voice_input">Whisper Voice Input</string>
     <string name="need_record_audio_permission">"RECORD_AUDIO permission is not granted"</string>
-    <string name="error_download">Download error</string>
     <string name="download_model">Download Model</string>
-    <string name="download_model_text">\nDownload Whisper models from Hugging Face (~435 MB)</string>
-    <string name="select_model">Model:</string>
+    <string name="download_model_text">Download Whisper models from Hugging Face</string>
     <string name="status">Status:</string>
     <string name="append">Append:</string>
     <string name="translate">Translate to English:</string>
@@ -24,13 +22,9 @@
     <string name="model_output">Model output</string>
     <string name="processing_done">Processing done in\u2009</string>
     <string name="language">Language:</string>
-    <string name="multi_lingual_slow">Multi-lingual, slow</string>
-    <string name="english_only_fast">English only, fast</string>
-    <string name="multi_lingual_fast">Multi-lingual, fast</string>
     <string name="mode_transcription">transcription</string>
     <string name="mode_translation">translation</string>
     <string name="instructions">Press and hold the microphone button while speaking.</string>
-    <string name="update">UPDATE</string>
     <string name="simple_chinese">Simplified Chinese:</string>
     <string name="text_to_speech">Text-to-speech:</string>
     <string name="tts_language_not_supported">TTS: Language not supported</string>

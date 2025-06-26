@@ -1,16 +1,15 @@
-Whisper este o metodă de intrare (IME) cu recunoaștere vocală bazată pe Whisper
+Whisper+ este o metodă de intrare (IME) cu recunoaștere vocală bazată pe Whisper
 
 Poate funcționa ca o aplicație autonomă și oferă, de asemenea, un IME care poate, de ex. să fie activat
 prin butonul microfon din <a href="https://f-droid.org/packages/helium314.keyboard/">HeliBoard</a>.
 
 La început, trebuie să descarce modelele Whisper de la Hugging Face.
-Aceasta este singura utilizare a permisiunii de internet.
 
 Recunoașterea vocală funcționează complet offline.
 
-Ca aplicație autonomă Whisper poate traduce, de asemenea, orice limbă acceptată în engleză.
+Ca aplicație autonomă Whisper+ poate traduce, de asemenea, orice limbă acceptată în engleză.
 
-Pentru a obține maximum de la Whisper:
+Pentru a obține maximum de la Whisper+:
 <ul>
 <li>Apasă și ține apăsat butonul în timp ce vorbești</li>
 <li>Întrerupere scurtă înainte de a începe să vorbești</li>

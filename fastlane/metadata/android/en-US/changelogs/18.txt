@@ -1,3 +1,0 @@
-ATTENTION: THIS VERSION NEEDS TO DOWNLOAD NEW MODELS
-New models which support transcribe and translate
-New translate (ANY -> ENG) feature

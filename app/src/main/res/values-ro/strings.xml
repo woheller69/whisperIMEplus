@@ -3,9 +3,7 @@
     <string name="instructions">Apasă și menține apăsat butonul microfonului în timp ce vorbești.</string>
     <string name="simple_chinese">Chineză simplificată:</string>
     <string name="need_record_audio_permission">Permisiunea RECORD_AUDIO nu este acordată</string>
-    <string name="error_download">Eroare la descărcare</string>
     <string name="download_model">Descarcă modelul</string>
-    <string name="select_model">Model:</string>
     <string name="status">Stare:</string>
     <string name="append">Adaugă:</string>
     <string name="translate">Tradu în engleză:</string>
@@ -22,15 +20,11 @@
     <string name="model_output">Ieșire model</string>
     <string name="processing_done">Procesare efectuată în </string>
     <string name="language">Limbă:</string>
-    <string name="multi_lingual_slow">Multilingv, lent</string>
-    <string name="english_only_fast">Numai engleză, repede</string>
-    <string name="multi_lingual_fast">Multilingv, rapid</string>
     <string name="mode_transcription">transcriere</string>
     <string name="mode_translation">traducere</string>
-    <string name="update">ACTUALIZARE</string>
     <string name="dialog_StarOnGitHub">Îți place această aplicație? Dă o stea pe Github sau cumpără dezvoltatorului o cafea prin PayPal.</string>
     <string name="voice_input">Intrare vocală Whisper</string>
-    <string name="download_model_text">\nDescarcă modelele Whisper de pe Hugging Face (~435 MB)</string>
+    <string name="download_model_text">Descarcă modelele Whisper de pe Hugging Face</string>
     <string name="text_to_speech">Text-în-voce:</string>
     <string name="tts_language_not_supported">TTS: Limba nu este acceptată</string>
     <string name="tts_initialization_failed">TTS: Inițializarea eșuată</string>

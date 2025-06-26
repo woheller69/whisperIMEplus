@@ -1,3 +1,0 @@
-Show 30s countdown on progress bar
-Option to translate to English in input method
-Translations for Russian and Hungarian

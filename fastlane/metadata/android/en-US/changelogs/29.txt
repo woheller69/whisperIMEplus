@@ -1,4 +1,0 @@
-Reduced app size
-Speech-to-speech translation any->English via TTS
-Preference for simplified or traditional Chinese
-Translations

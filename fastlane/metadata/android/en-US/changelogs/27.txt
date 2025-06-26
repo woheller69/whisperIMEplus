@@ -1,1 +1,0 @@
-Bugfix for Chinese, Korean
