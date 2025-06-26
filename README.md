@@ -44,7 +44,7 @@ This work is licensed under MIT license, © woheller69
 - It uses [OpenAI Whisper](https://github.com/openai/whisper) published under MIT license. Details on Whisper are found [here](https://arxiv.org/abs/2212.04356).
 - It uses [Android VAD](https://github.com/gkonovalov/android-vad), which is published under MIT license
 - It uses [Opencc4j](https://github.com/houbb/opencc4j), for Chinese conversions, published under Apache-2.0 license
-- At first start you need to download the Whisper model from HuggingFace, which is published under MIT license
+- At first start you need to download the Whisper model from [HuggingFace](https://huggingface.co/DocWolle/whisperOnnx), which is published under MIT license
 
 # OTHER APPS
 
