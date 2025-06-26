@@ -23,7 +23,6 @@ Voice recognition works entirely offline, ensuring your privacy and convenience.
 
 Please note that for use as voice input (not as IME) there is a separate settings activity which can be accessed from Android settings 
 (System > Languages > Speech > Voice Input). There you can activate the app as voice input and then click the settings button.
-In settings you can then select the model for voice input and the maximum recording time (default: 30s).
 
 ## Using Whisper+
 
