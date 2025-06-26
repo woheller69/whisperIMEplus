@@ -38,7 +38,7 @@ By following these guidelines, you'll be able to enjoy accurate and efficient vo
 
 # License
 This work is licensed under MIT license, © woheller69
-- This app is based on [whisperIME](https://github.com/woheller69/whisperIME), which is published under GPL v3
+- This app is based on [whisperIME](https://github.com/woheller69/whisperIME), which is published under MIT license
 - It uses code and the Whisper ONNX models from [RTranslator](https://github.com/niedev/RTranslator)
 - It uses code from [Whisper-Android project](https://github.com/vilassn/whisper_android), published under MIT license
 - It uses [OpenAI Whisper](https://github.com/openai/whisper) published under MIT license. Details on Whisper are found [here](https://arxiv.org/abs/2212.04356).
