@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         setContentView(R.layout.activity_main);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         checkInputMethodEnabled();
         processingBar = findViewById(R.id.processing_bar);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         initModel();
 
         btnInfo = findViewById(R.id.btnInfo);
-        btnInfo.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whisperIME#Donate"))));
+        btnInfo.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whisperIMEplus#Donate"))));
 
         spinnerLanguage = findViewById(R.id.spnrLanguage);
         String[] supported_languages = new String[Recognizer.LANGUAGES.length + 1];
@@ -246,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this, "https://github.com/woheller69/whisperIME");
+        if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this, "https://github.com/woheller69/whisperIMEplus");
         // Assume this Activity is the current activity, check record permission
         checkPermissions();
 
