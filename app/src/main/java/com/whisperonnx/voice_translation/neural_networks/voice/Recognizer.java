@@ -499,7 +499,7 @@ public class Recognizer extends NeuralNetworkApi {
                         String finalText = UNDEFINED_TEXT;
                         if(!execution1HitMaxLength) {
                             int[] sequences = completeOutput.stream().mapToInt(i -> i).toArray();
-                            language = getLanguageCode(sequences);
+                            if (language.equals("auto")) language = getLanguageCode(sequences);
                             detokenizerInputs.put("sequences", TensorUtils.createInt32Tensor(onnxEnv, sequences, new long[]{1, 1, sequences.length}));
                             OrtSession.Result detokenizerOutputs = this.detokenizerSession.run(detokenizerInputs);
                             Object finalTextResult = detokenizerOutputs.get(0).getValue();
@@ -518,7 +518,7 @@ public class Recognizer extends NeuralNetworkApi {
                         String firstText = UNDEFINED_TEXT;
                         if(!execution1HitMaxLength) {
                             int[] sequence1 = completeOutput.stream().mapToInt(i -> i).toArray();
-                            language = getLanguageCode(sequence1);
+                            if (language.equals("auto")) language = getLanguageCode(sequence1);
                             detokenizerInputs.put("sequences", OnnxTensor.createTensor(onnxEnv, IntBuffer.wrap(sequence1), TensorUtils.tensorShape(1, 1, sequence1.length)));
                             OrtSession.Result detokenizerOutputs = this.detokenizerSession.run(detokenizerInputs);
                             Object firstTextResult = detokenizerOutputs.get(0).getValue();
@@ -529,7 +529,7 @@ public class Recognizer extends NeuralNetworkApi {
                         String secondText = UNDEFINED_TEXT;
                         if(!execution2HitMaxLength) {
                             int[] sequence2 = completeOutput2.stream().mapToInt(i -> i).toArray();
-                            language2 = getLanguageCode(sequence2);
+                            if (language.equals("auto")) language2 = getLanguageCode(sequence2);
                             detokenizerInputs = (Map) (new LinkedHashMap());
                             detokenizerInputs.put("sequences", OnnxTensor.createTensor(onnxEnv, IntBuffer.wrap(sequence2), TensorUtils.tensorShape(1, 1, sequence2.length)));
                             OrtSession.Result detokenizerOutputs2 = this.detokenizerSession.run(detokenizerInputs);
@@ -610,7 +610,7 @@ public class Recognizer extends NeuralNetworkApi {
             return LANGUAGES[index];
         } else {
             Log.e("error", "Error detecting language");
-            return "??";  //otherwise return the default language
+            return "??";  //otherwise return "??"
         }
     }
 
