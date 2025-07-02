@@ -36,7 +36,7 @@ To get the most out of Whisper+, follow these simple tips:
 By following these guidelines, you'll be able to enjoy accurate and efficient voice recognition with Whisper.
 
 # License
-This work is licensed under MIT license, © woheller69
+This work is licensed under GPLv3 license, © woheller69
 - This app is based on [whisperIME](https://github.com/woheller69/whisperIME), which is published under MIT license
 - It uses code and the Whisper ONNX models from [RTranslator](https://github.com/niedev/RTranslator)
 - It uses code from [Whisper-Android project](https://github.com/vilassn/whisper_android), published under MIT license
