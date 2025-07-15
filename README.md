@@ -6,7 +6,7 @@ woheller69@t-online.de
   
 Or via this link (with fees)
 <a href="https://www.paypal.com/donate?hosted_button_id=XVXQ54LBLZ4AA"><img  align="left" src="https://img.shields.io/badge/Donate%20with%20Debit%20or%20Credit%20Card-002991?style=plastic"></a></pre>
-# Voice recognition based on Whisper
+# Fast Voice recognition based on Whisper
 
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="150"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="150"/>
 
@@ -34,6 +34,8 @@ To get the most out of Whisper+, follow these simple tips:
 - Please note that there is a limit of 30s for each recording
 
 By following these guidelines, you'll be able to enjoy accurate and efficient voice recognition with Whisper.
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75">](https://f-droid.org/de/packages/org.woheller69.whisperplus/)
 
 # License
 This work is licensed under GPLv3 license, © woheller69
