@@ -41,20 +41,18 @@ public class WhisperRecognitionService extends RecognitionService {
         String targetLang = recognizerIntent.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String langCode = sp.getString("recognitionServiceLanguage", "auto");
-        String langToken = langCode;
-        Log.d(TAG,"default langToken " + langToken);
+        Log.d(TAG,"default langCode " + langCode);
 
         if (targetLang != null) {
             Log.d(TAG,"StartListening in " + targetLang);
             langCode = targetLang.split("[-_]")[0].toLowerCase();   //support both de_DE and de-DE
-            langToken = langCode;
         } else {
             Log.d(TAG,"StartListening, no language specified");
         }
 
         checkRecordPermission(callback);
 
-        initModel(callback, langToken);
+        initModel(callback, langCode);
 
         mRecorder = new Recorder(this);
         mRecorder.setListener(message -> {
@@ -115,12 +113,12 @@ public class WhisperRecognitionService extends RecognitionService {
     }
 
     // Model initialization
-    private void initModel(Callback callback, String langToken) {
+    private void initModel(Callback callback, String langCode) {
 
         mWhisper = new Whisper(this);
         mWhisper.loadModel();
-        mWhisper.setLanguage(langToken);
-        Log.d(TAG, "Language token " + langToken);
+        mWhisper.setLanguage(langCode);
+        Log.d(TAG, "Language token " + langCode);
         mWhisper.setListener(new Whisper.WhisperListener() {
             @Override
             public void onUpdateReceived(String message) { }

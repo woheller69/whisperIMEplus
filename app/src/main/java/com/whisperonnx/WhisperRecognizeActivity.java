@@ -53,18 +53,16 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
 
         String targetLang = getIntent().getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
         String langCode = sp.getString("language", "auto");
-        String langToken = langCode;
-        Log.d("WhisperRecognition","default langToken " + langToken);
+        Log.d("WhisperRecognition","default langCode " + langCode);
 
         if (targetLang != null) {
             Log.d("WhisperRecognition","StartListening in " + targetLang);
             langCode = targetLang.split("[-_]")[0].toLowerCase();  //support both de_DE and de-DE
-            langToken = langCode;
         } else {
             Log.d("WhisperRecognition","StartListening, no language specified");
         }
 
-        initModel(langToken);
+        initModel(langCode);
 
         setContentView(R.layout.activity_recognize);
 
@@ -179,12 +177,12 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     }
 
     // Model initialization
-    private void initModel(String langToken) {
+    private void initModel(String langCode) {
 
         mWhisper = new Whisper(this);
         mWhisper.loadModel();
-        mWhisper.setLanguage(langToken);
-        Log.d(TAG, "Language token " + langToken);
+        mWhisper.setLanguage(langCode);
+        Log.d(TAG, "Language token " + langCode);
         mWhisper.setListener(new Whisper.WhisperListener() {
             @Override
             public void onUpdateReceived(String message) { }

@@ -24,6 +24,7 @@ import androidx.preference.PreferenceManager;
 import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity {
@@ -50,6 +51,8 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
         System.arraycopy(Recognizer.LANGUAGES, 0, supported_languages, 1, Recognizer.LANGUAGES.length);
         ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, supported_languages);
         spinnerLanguage.setAdapter(lang);
+        String langCode = sp.getString("recognitionServiceLanguage", "auto");
+        spinnerLanguage.setSelection(Arrays.asList(supported_languages).indexOf(langCode));
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

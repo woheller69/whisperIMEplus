@@ -299,9 +299,8 @@ public class WhisperInputMethodService extends InputMethodService {
             else mWhisper.setAction(ACTION_TRANSCRIBE);
 
             String langCode = sp.getString("language", "auto");
-            String langToken = langCode;
-            Log.d("WhisperIME","default langToken " + langToken);
-            mWhisper.setLanguage(langToken);
+            Log.d("WhisperIME","default langCode " + langCode);
+            mWhisper.setLanguage(langCode);
             mWhisper.start();
         }
     }

@@ -31,7 +31,7 @@ public class Whisper {
     private final AtomicBoolean mInProgress = new AtomicBoolean(false);
 
     private Recognizer.Action mAction;
-    private String mLangToken = "";
+    private String mLangCode = "";
     private WhisperListener mUpdateListener;
 
     private final Lock taskLock = new ReentrantLock();
@@ -116,7 +116,7 @@ public class Whisper {
     }
 
     public void setLanguage(String language){
-        this.mLangToken = language;
+        this.mLangCode = language;
     }
 
     public void start() {
@@ -163,7 +163,7 @@ public class Whisper {
             if (RecordBuffer.getOutputBuffer() != null) {
                 startTime = System.currentTimeMillis();
                 sendUpdate(MSG_PROCESSING);
-                recognizer.recognize(RecordBuffer.getSamples(),1, mLangToken, mAction );
+                recognizer.recognize(RecordBuffer.getSamples(),1, mLangCode, mAction );
             } else {
                 sendUpdate("Engine not initialized or file path not set");
             }
