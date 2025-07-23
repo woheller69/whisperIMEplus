@@ -7,10 +7,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -21,10 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
-
+import com.whisperonnx.utils.LanguagePairAdapter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity {
@@ -46,18 +44,19 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
         sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         spinnerLanguage = findViewById(R.id.spnrLanguage);
-        String[] supported_languages = new String[Recognizer.LANGUAGES.length + 1];
-        supported_languages[0] = "auto";
-        System.arraycopy(Recognizer.LANGUAGES, 0, supported_languages, 1, Recognizer.LANGUAGES.length);
-        ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, supported_languages);
-        spinnerLanguage.setAdapter(lang);
+
+        List<Pair<String, String>> languagePairs = LanguagePairAdapter.getLanguagePairs(this);
+        LanguagePairAdapter languagePairAdapter = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
+        languagePairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLanguage.setAdapter(languagePairAdapter);
+
         String langCode = sp.getString("recognitionServiceLanguage", "auto");
-        spinnerLanguage.setSelection(Arrays.asList(supported_languages).indexOf(langCode));
+        spinnerLanguage.setSelection(languagePairAdapter.getIndexByCode(langCode));
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putString("recognitionServiceLanguage",supported_languages[i]);
+                editor.putString("recognitionServiceLanguage", languagePairs.get(i).first);
                 editor.apply();
             }
 

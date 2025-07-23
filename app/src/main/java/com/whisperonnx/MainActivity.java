@@ -20,12 +20,12 @@ import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -43,11 +43,9 @@ import com.whisperonnx.asr.Recorder;
 import com.whisperonnx.asr.Whisper;
 import com.whisperonnx.asr.WhisperResult;
 import com.whisperonnx.utils.HapticFeedback;
+import com.whisperonnx.utils.LanguagePairAdapter;
 import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
-
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -141,19 +139,20 @@ public class MainActivity extends AppCompatActivity {
         btnInfo.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whisperIMEplus#Donate"))));
 
         spinnerLanguage = findViewById(R.id.spnrLanguage);
-        String[] supported_languages = new String[Recognizer.LANGUAGES.length + 1];
-        supported_languages[0] = "auto";
-        System.arraycopy(Recognizer.LANGUAGES, 0, supported_languages, 1, Recognizer.LANGUAGES.length);
-        ArrayAdapter<String> lang = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, supported_languages);
-        spinnerLanguage.setAdapter(lang);
+
+        List<Pair<String, String>> languagePairs = LanguagePairAdapter.getLanguagePairs(this);
+        LanguagePairAdapter languagePairAdapter = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
+        languagePairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLanguage.setAdapter(languagePairAdapter);
         langCode = sp.getString("language", "auto");
-        spinnerLanguage.setSelection(Arrays.asList(supported_languages).indexOf(langCode));
+        spinnerLanguage.setSelection(languagePairAdapter.getIndexByCode(langCode));
+
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                langCode = supported_languages[i];
+                langCode = languagePairs.get(i).first;
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putString("language",supported_languages[i]);
+                editor.putString("language",languagePairs.get(i).first);
                 editor.apply();
             }
 

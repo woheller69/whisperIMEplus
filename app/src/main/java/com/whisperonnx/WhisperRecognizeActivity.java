@@ -182,7 +182,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
         mWhisper = new Whisper(this);
         mWhisper.loadModel();
         mWhisper.setLanguage(langCode);
-        Log.d(TAG, "Language token " + langCode);
+        Log.d(TAG, "Language code " + langCode);
         mWhisper.setListener(new Whisper.WhisperListener() {
             @Override
             public void onUpdateReceived(String message) { }
