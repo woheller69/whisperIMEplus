@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Whisper+</string>
-    <string name="voice_input">Whisper Voice Input</string>
+    <string name="voice_input">Whisper+ Voice Input</string>
     <string name="need_record_audio_permission">"RECORD_AUDIO permission is not granted"</string>
     <string name="download_model">Download Model</string>
     <string name="status">Status:</string>

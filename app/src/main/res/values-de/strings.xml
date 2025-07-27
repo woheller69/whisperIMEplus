@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="voice_input">Whisper Spracheingabe</string>
+    <string name="voice_input">Whisper+ Spracheingabe</string>
     <string name="need_record_audio_permission">"RECORD_AUDIO Berechtigung fehlt"</string>
     <string name="download_model">Modell herunterladen</string>
     <string name="status">Status:</string>

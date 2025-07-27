@@ -22,7 +22,7 @@
     <string name="mode_translation">fordítás</string>
     <string name="instructions">Beszéd közben nyomja meg és tartsa lenyomva a mikrofon gombot.</string>
     <string name="processing_done">Feldolgozva ennyi idő alatt </string>
-    <string name="voice_input">Whisper hangbevitel</string>
+    <string name="voice_input">Whisper+ hangbevitel</string>
     <string name="error_no_input">Nincs hangbevitel</string>
     <string name="simple_chinese">Egyszerűsített kínai:</string>
     <string name="auto_button">automatikus üzemmód</string>

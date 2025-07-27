@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="voice_input">קלט קולי לחישה</string>
+    <string name="voice_input">קלט קולי Whisper+</string>
     <string name="need_record_audio_permission">הרשאת RECORD_AUDIO לא ניתנה</string>
     <string name="download_model">מודל הורדה</string>
     <string name="status">סטטוס:</string>

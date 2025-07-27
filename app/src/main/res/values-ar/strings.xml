@@ -23,7 +23,7 @@
     <string name="dialog_StarOnGitHub">هل أعجبك هذا التطبيق؟ الرجاء منح نجمة على GitHub أو شراء قهوة للمطور عبر PayPal.</string>
     <string name="instructions">اضغط مع الاستمرار على زر الميكروفون أثناء التحدث.</string>
     <string name="simple_chinese">الصينية المبسطة:</string>
-    <string name="voice_input">الإدخال الصوتي لويسبر</string>
+    <string name="voice_input">الإدخال الصوتي Whisper+</string>
     <string name="text_to_speech">تحويل النص إلى كلام:</string>
     <string name="tts_language_not_supported">تحويل النص إلى كلام: اللغة غير مدعومة</string>
     <string name="tts_initialization_failed">تحويل النص إلى كلام: فشلت التهيئة</string>

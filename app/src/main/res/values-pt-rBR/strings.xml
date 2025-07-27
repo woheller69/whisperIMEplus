@@ -22,7 +22,7 @@
     <string name="mode_translation">tradução</string>
     <string name="translate">Traduzir para inglês:</string>
     <string name="processing_done">Processamento concluído em </string>
-    <string name="voice_input">Entrada de Voz Whisper</string>
+    <string name="voice_input">Entrada de Voz Whisper+</string>
     <string name="simple_chinese">Chinês Simplificado:</string>
     <string name="text_to_speech">Texto-para-fala:</string>
     <string name="tts_language_not_supported">Texto para fala: O idioma não é suportado</string>

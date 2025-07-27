@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Whisper</string>
     <string name="need_record_audio_permission">Разрешение Запись аудио (RECORD_AUDIO) не предоставлено</string>
     <string name="download_model">Скачать модель</string>
     <string name="status">Состояние:</string>
@@ -28,6 +27,6 @@
     <string name="simple_chinese">Китайский (упрощённый):</string>
     <string name="text_to_speech">Синтез речи:</string>
     <string name="tts_language_not_supported">TTS: Язык не поддерживается</string>
-    <string name="voice_input">Источник голоса для Whisper</string>
+    <string name="voice_input">Источник голоса для Whisper+</string>
     <string name="instructions">Нажмите и удерживайте микрофон пока говорите.</string>
 </resources>
