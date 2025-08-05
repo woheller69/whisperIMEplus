@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.whisperonnx.utils.LanguagePairAdapter;
+import com.whisperonnx.utils.ThemeUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recognition_service_settings);
-
+        ThemeUtils.setStatusBarAppearance(this);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
