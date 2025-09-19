@@ -46,6 +46,9 @@ import com.whisperonnx.utils.HapticFeedback;
 import com.whisperonnx.utils.LanguagePairAdapter;
 import com.whisperonnx.utils.ThemeUtils;
 import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
+
+import org.woheller69.freeDroidWarn.FreeDroidWarn;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -249,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-
+        FreeDroidWarn.showWarningOnUpgrade(this, BuildConfig.VERSION_CODE);
         if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this, "https://github.com/woheller69/whisperIMEplus");
         // Assume this Activity is the current activity, check record permission
         checkPermissions();
