@@ -32,6 +32,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.EditText;
+import androidx.activity.OnBackPressedCallback;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private TextView tvStatus;
-    private TextView tvResult;
+    private EditText tvResult;
     private FloatingActionButton fabCopy;
     private ImageButton btnRecord;
     private LinearLayout layoutModeChinese;
@@ -213,6 +215,14 @@ public class MainActivity extends AppCompatActivity {
 
         tvStatus = findViewById(R.id.tvStatus);
         tvResult = findViewById(R.id.tvResult);
+        tvResult.setOnClickListener(view -> tvResult.setCursorVisible(true));
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (tvResult.isCursorVisible()) tvResult.setCursorVisible(false);
+                else finish();
+            }
+        });
         fabCopy = findViewById(R.id.fabCopy);
         fabCopy.setOnClickListener(v -> {
             // Get the text from tvResult

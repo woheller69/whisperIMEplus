@@ -162,10 +162,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
+                <EditText
                     android:id="@+id/tvResult"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:background="@null"
                     android:text = "@string/instructions"
                     android:textSize="16sp" />
             </ScrollView>
