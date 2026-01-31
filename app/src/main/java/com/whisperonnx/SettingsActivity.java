@@ -29,7 +29,7 @@ import com.whisperonnx.utils.ThemeUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
 
     private SharedPreferences sp = null;
@@ -44,7 +44,7 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recognition_service_settings);
+        setContentView(R.layout.activity_settings);
         ThemeUtils.setStatusBarAppearance(this);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

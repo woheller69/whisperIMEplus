@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(final MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_settings){
-            startActivity(new Intent(this, WhisperRecognitionServiceSettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

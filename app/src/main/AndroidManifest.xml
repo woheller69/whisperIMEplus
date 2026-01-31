@@ -87,7 +87,7 @@
                 android:resource="@xml/whisper_recognition_service_metadata" />
         </service>
 
-        <activity android:name="com.whisperonnx.WhisperRecognitionServiceSettingsActivity"
+        <activity android:name="com.whisperonnx.SettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/Theme.Whisper.ActionBar"
             android:label="@string/settings"
