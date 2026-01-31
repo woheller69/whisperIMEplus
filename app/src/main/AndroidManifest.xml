@@ -25,9 +25,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:largeHeap="true"
-        android:theme="@style/Theme.Whisper.NoActionBar">
+        android:theme="@style/Theme.Whisper.ActionBar">
         <activity android:name="com.whisperonnx.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:label="@string/whisper_test"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -89,7 +90,7 @@
         <activity android:name="com.whisperonnx.WhisperRecognitionServiceSettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/Theme.Whisper.ActionBar"
-            android:label="@string/voice_input"
+            android:label="@string/settings"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

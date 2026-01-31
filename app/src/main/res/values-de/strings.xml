@@ -29,4 +29,11 @@
     <string name="tts_initialization_failed">Sprachausgabe: Initialisierung fehlgeschlagen</string>
     <string name="error_no_input">Keine Sprache detektiert</string>
     <string name="auto_lang">Sprache erkennen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="settings_voice_input">Spracheingabe</string>
+    <string name="settings_ime">Eingabemethode (IME) &amp; Test</string>
+    <string name="settings_general">Allgemein</string>
+    <string name="whisper_test">Whisper+ Test</string>
+    <string name="settings_minimum_silence">Mindeststille im Automatikmodus (ms)</string>
+
 </resources>

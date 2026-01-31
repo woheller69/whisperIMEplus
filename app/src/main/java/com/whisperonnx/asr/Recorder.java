@@ -2,6 +2,7 @@ package com.whisperonnx.asr;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -10,6 +11,7 @@ import android.media.MediaRecorder;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
 
 import com.konovalov.vad.webrtc.Vad;
 import com.konovalov.vad.webrtc.VadWebRTC;
@@ -50,12 +52,13 @@ public class Recorder {
     private boolean useVAD = false;
     private VadWebRTC vad = null;
     private static final int VAD_FRAME_SIZE = 480;
+    private SharedPreferences sp;
 
     private final Thread workerThread;
 
     public Recorder(Context context) {
         this.mContext = context;
-
+        sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         // Initialize and start the worker thread
         workerThread = new Thread(this::recordLoop);
         workerThread.start();
@@ -82,11 +85,12 @@ public class Recorder {
     }
 
     public void initVad(){
+        int silenceDurationMs = sp.getInt("silenceDurationMs", 800);
         vad = Vad.builder()
                 .setSampleRate(SampleRate.SAMPLE_RATE_16K)
                 .setFrameSize(FrameSize.FRAME_SIZE_480)
                 .setMode(Mode.VERY_AGGRESSIVE)
-                .setSilenceDurationMs(800)
+                .setSilenceDurationMs(silenceDurationMs)
                 .setSpeechDurationMs(200)
                 .build();
         useVAD = true;

@@ -32,4 +32,11 @@
     <string name="error_no_input">No voice input received</string>
     <string name="install_model">Install model</string>
     <string name="auto_lang">Detect language</string>
+    <string name="settings">Settings</string>
+    <string name="settings_voice_input">Voice Input</string>
+    <string name="settings_ime">Input Method (IME) &amp; Test</string>
+    <string name="settings_general">General</string>
+    <string name="whisper_test">Whisper+ Test</string>
+    <string name="settings_minimum_silence">Minimum silence in automatic mode (ms)</string>
+
 </resources>

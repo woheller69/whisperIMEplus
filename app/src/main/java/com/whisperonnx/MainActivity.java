@@ -20,17 +20,16 @@ import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.util.Pair;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.EditText;
 import androidx.activity.OnBackPressedCallback;
@@ -45,7 +44,6 @@ import com.whisperonnx.asr.Recorder;
 import com.whisperonnx.asr.Whisper;
 import com.whisperonnx.asr.WhisperResult;
 import com.whisperonnx.utils.HapticFeedback;
-import com.whisperonnx.utils.LanguagePairAdapter;
 import com.whisperonnx.utils.ThemeUtils;
 import com.whisperonnx.voice_translation.neural_networks.voice.Recognizer;
 
@@ -63,11 +61,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText tvResult;
     private FloatingActionButton fabCopy;
     private ImageButton btnRecord;
-    private LinearLayout layoutModeChinese;
     private LinearLayout layoutTTS;
     private CheckBox append;
     private CheckBox translate;
-    private CheckBox modeSimpleChinese;
     private CheckBox modeTTS;
     private ProgressBar processingBar;
     private ImageButton btnInfo;
@@ -78,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sp = null;
 
     private CountDownTimer countDownTimer;
-    private Spinner spinnerLanguage;
-    private String langCode = "";
     private long startTime = 0;
     private TextToSpeech tts;
 
@@ -94,6 +88,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         stopProcessing();
         super.onPause();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_settings){
+            startActivity(new Intent(this, WhisperRecognitionServiceSettingsActivity.class));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -145,29 +157,7 @@ public class MainActivity extends AppCompatActivity {
         btnInfo = findViewById(R.id.btnInfo);
         btnInfo.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/whisperIMEplus#Donate"))));
 
-        spinnerLanguage = findViewById(R.id.spnrLanguage);
 
-        List<Pair<String, String>> languagePairs = LanguagePairAdapter.getLanguagePairs(this);
-        LanguagePairAdapter languagePairAdapter = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
-        languagePairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLanguage.setAdapter(languagePairAdapter);
-        langCode = sp.getString("language", "auto");
-        spinnerLanguage.setSelection(languagePairAdapter.getIndexByCode(langCode));
-
-        spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                langCode = languagePairs.get(i).first;
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("language",languagePairs.get(i).first);
-                editor.apply();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
         // Implementation of record button functionality
         btnRecord = findViewById(R.id.btnRecord);
@@ -201,16 +191,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return true;
-        });
-
-        layoutModeChinese = findViewById(R.id.layout_mode_chinese);
-        modeSimpleChinese = findViewById(R.id.mode_simple_chinese);
-        modeSimpleChinese.setChecked(sp.getBoolean("simpleChinese",false));  //default to traditional Chinese
-        modeSimpleChinese.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("simpleChinese", isChecked);
-            editor.apply();
-            tvResult.setText("");
         });
 
         tvStatus = findViewById(R.id.tvStatus);
@@ -309,12 +289,10 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> processingBar.setIndeterminate(false));
                 Log.d(TAG, "Result: " + whisperResult.getResult() + " " + whisperResult.getLanguage() + " " + (whisperResult.getTask() == ACTION_TRANSCRIBE ? "transcribing" : "translating"));
                 if ((whisperResult.getLanguage().equals("zh")) && (whisperResult.getTask() == ACTION_TRANSCRIBE)){
-                    runOnUiThread(() -> layoutModeChinese.setVisibility(View.VISIBLE));
                     boolean simpleChinese = sp.getBoolean("simpleChinese",false);  //convert to desired Chinese mode
                     String result = simpleChinese ? ZhConverterUtil.toSimple(whisperResult.getResult()) : ZhConverterUtil.toTraditional(whisperResult.getResult());
                     runOnUiThread(() -> tvResult.append(result));
                 } else {
-                    runOnUiThread(() -> layoutModeChinese.setVisibility(View.GONE));
                     runOnUiThread(() -> tvResult.append(whisperResult.getResult()));
                 }
                 if (modeTTS.isChecked()){
@@ -380,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
             processingBar.setIndeterminate(true);
         });
         mWhisper.setAction(action);
+        String langCode = sp.getString("language", "auto");
         mWhisper.setLanguage(langCode);
         mWhisper.start();
     }

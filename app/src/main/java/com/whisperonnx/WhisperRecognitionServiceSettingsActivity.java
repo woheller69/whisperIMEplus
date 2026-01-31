@@ -16,11 +16,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.slider.RangeSlider;
 import com.whisperonnx.utils.LanguagePairAdapter;
 import com.whisperonnx.utils.ThemeUtils;
 
@@ -28,11 +30,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "SettingsActivity";
 
     private SharedPreferences sp = null;
     private Spinner spinnerLanguage;
+    private Spinner spinnerLanguageIME;
     private CheckBox modeSimpleChinese;
+    private CheckBox modeSimpleChineseIME;
+    private String langCodeIME = "";
+    private RangeSlider minSilence;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -45,9 +51,44 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
 
-        spinnerLanguage = findViewById(R.id.spnrLanguage);
+
+        spinnerLanguageIME = findViewById(R.id.spnrLanguage_ime);
 
         List<Pair<String, String>> languagePairs = LanguagePairAdapter.getLanguagePairs(this);
+
+        LanguagePairAdapter languagePairAdapterIME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
+        languagePairAdapterIME.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLanguageIME.setAdapter(languagePairAdapterIME);
+        langCodeIME = sp.getString("language", "auto");
+        spinnerLanguageIME.setSelection(languagePairAdapterIME.getIndexByCode(langCodeIME));
+
+        spinnerLanguageIME.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                langCodeIME = languagePairs.get(i).first;
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("language",languagePairs.get(i).first);
+                editor.apply();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        modeSimpleChineseIME = findViewById(R.id.mode_simple_chinese_ime);
+        modeSimpleChineseIME.setChecked(sp.getBoolean("simpleChinese",false));  //default to traditional Chinese
+        modeSimpleChineseIME.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("simpleChinese", isChecked);
+            editor.apply();
+        });
+
+
+
+        spinnerLanguage = findViewById(R.id.spnrLanguage);
+
         LanguagePairAdapter languagePairAdapter = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
         languagePairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLanguage.setAdapter(languagePairAdapter);
@@ -74,6 +115,18 @@ public class WhisperRecognitionServiceSettingsActivity extends AppCompatActivity
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("RecognitionServiceSimpleChinese", isChecked);
             editor.apply();
+        });
+
+        minSilence = findViewById(R.id.settings_min_silence);
+        float silence = sp.getInt("silenceDurationMs", 800);
+        minSilence.setValues(silence);
+        minSilence.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putInt("silenceDurationMs", (int) value);
+                editor.apply();
+            }
         });
 
         checkPermissions();

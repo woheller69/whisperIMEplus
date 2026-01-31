@@ -8,26 +8,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
-        <LinearLayout
-            android:id="@+id/layout_language"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@color/colorAccent"
-                android:text="@string/language" />
-
-            <Spinner
-                android:id="@+id/spnrLanguage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,30 +103,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_mode_chinese"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:gravity="start">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:textColor="@color/colorAccent"
-                android:text="@string/simple_chinese" />
-
-            <CheckBox
-                android:id="@+id/mode_simple_chinese"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:contentDescription="@string/simple_chinese"/>
-
-        </LinearLayout>
         <!-- Use ProgressBar as "Space" with same look -->
         <ProgressBar
             android:layout_width="match_parent"
