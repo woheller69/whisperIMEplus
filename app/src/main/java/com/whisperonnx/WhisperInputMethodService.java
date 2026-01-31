@@ -20,7 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -50,7 +50,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private CountDownTimer countDownTimer;
     private static boolean translate = false;
     private boolean modeAuto = false;
-    private LinearLayout layoutButtons;
+    private RelativeLayout layoutButtons;
 
     @Override
     public void onCreate() {

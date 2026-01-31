@@ -20,8 +20,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:orientation="horizontal">
+        android:layout_marginBottom="5dp">
 
         <ImageButton
             android:id="@+id/btnKeyboard"
@@ -62,30 +61,29 @@
         android:paddingHorizontal="10dp"
         android:textSize="20dp"
         android:textColor="@android:color/holo_red_dark" />
-    <LinearLayout
-        android:id="@+id/layout_buttons"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:id="@+id/layout_buttons"
+        android:layout_marginBottom="10dp">
 
         <ImageButton
             android:id="@+id/btnRecord"
             android:layout_width="96dp"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="3dp"
+            android:layout_marginHorizontal="5dp"
             android:background="@drawable/rounded_button_background"
             android:src="@drawable/ic_mic_48dp"
             android:contentDescription="@string/record_button"/>
-
         <ImageButton
             android:id="@+id/btnDel"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
+            android:layout_marginVertical="3dp"
+            android:layout_marginHorizontal="3dp"
+            android:layout_toStartOf="@id/btnEnter"
             android:background="@drawable/rounded_button_background"
             android:src="@drawable/ic_keyboard_del_48dp"
             android:contentDescription="@string/delete_button"/>
@@ -94,12 +92,13 @@
             android:id="@+id/btnEnter"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
+            android:layout_marginVertical="3dp"
+            android:layout_marginHorizontal="3dp"
+            android:layout_alignParentEnd="true"
             android:background="@drawable/rounded_button_background"
             android:src="@drawable/ic_keyboard_return_48dp"
             android:contentDescription="@string/return_button"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
