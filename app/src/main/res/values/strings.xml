@@ -38,5 +38,7 @@
     <string name="settings_general">General</string>
     <string name="whisper_test">Whisper+ Test</string>
     <string name="settings_minimum_silence">Minimum silence in automatic mode (ms)</string>
+    <string name="lang1">Language 1</string>
+    <string name="lang2">Language 2</string>
 
 </resources>

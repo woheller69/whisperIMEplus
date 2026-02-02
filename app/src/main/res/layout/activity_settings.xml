@@ -19,26 +19,65 @@
                 android:text="@string/settings_ime"
                 />
             <LinearLayout
-                android:id="@+id/layout_language_ime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/btnLang1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_counter_1_off_36dp"
+                    android:contentDescription="@string/lang1"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
                     android:textSize="16sp"
                     android:textColor="@color/colorAccent"
                     android:text="@string/language" />
 
                 <Spinner
-                    android:id="@+id/spnrLanguage_ime"
+                    android:id="@+id/spnrLanguage1_ime"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/btnLang2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_counter_2_off_36dp"
+                    android:contentDescription="@string/lang1"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:text="@string/language" />
+
+                <Spinner
+                    android:id="@+id/spnrLanguage2_ime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1" />
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/layout_mode_chinese_ime"
                 android:layout_width="match_parent"

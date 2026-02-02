@@ -40,6 +40,8 @@ public class WhisperInputMethodService extends InputMethodService {
     private ImageButton btnModeAuto;
     private ImageButton btnEnter;
     private ImageButton btnDel;
+    private ImageButton btnLang1;
+    private ImageButton btnLang2;
     private TextView tvStatus;
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
@@ -90,6 +92,17 @@ public class WhisperInputMethodService extends InputMethodService {
     @Override
     public View onCreateInputView() {  //runs before onStartInputView
         sp = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String langCodeIME = sp.getString("language", "auto");
+
+        if (!sp.contains("langSelected")){
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("langSelected",1);
+            editor.putString("language1",langCodeIME);
+            editor.putString("language2","auto");
+            editor.commit();
+        }
+
         View view = getLayoutInflater().inflate(R.layout.voice_service, null);
         btnRecord = view.findViewById(R.id.btnRecord);
         btnKeyboard = view.findViewById(R.id.btnKeyboard);
@@ -97,6 +110,17 @@ public class WhisperInputMethodService extends InputMethodService {
         btnModeAuto = view.findViewById(R.id.btnModeAuto);
         btnEnter = view.findViewById(R.id.btnEnter);
         btnDel = view.findViewById(R.id.btnDel);
+        btnLang1 = view.findViewById(R.id.btnLang1);
+        btnLang2 = view.findViewById(R.id.btnLang2);
+        int langSelected = sp.getInt("langSelected", 1);
+        if (langSelected == 1) {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+        } else {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+        }
+
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
         btnTranslate.setImageResource(translate ? R.drawable.ic_english_on_36dp : R.drawable.ic_english_off_36dp);
@@ -252,6 +276,27 @@ public class WhisperInputMethodService extends InputMethodService {
             btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
             switchToPreviousInputMethod();
         });
+
+        btnLang1.setOnClickListener(v -> {
+            String lang = sp.getString("language1", "auto");
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("langSelected", 1);
+            editor.putString("language", lang);
+            editor.apply();
+            btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+        });
+
+        btnLang2.setOnClickListener(v -> {
+            String lang = sp.getString("language2", "auto");
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("langSelected", 2);
+            editor.putString("language", lang);
+            editor.apply();
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+        });
+
         return view;
     }
 
