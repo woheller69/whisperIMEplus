@@ -46,7 +46,11 @@ public class Whisper {
 
         //check if model is installed
         File sdcardDataFolder = mContext.getExternalFilesDir(null);
-        if (sdcardDataFolder == null) sdcardDataFolder.mkdir();
+
+        if (sdcardDataFolder != null && !sdcardDataFolder.exists() && !sdcardDataFolder.mkdirs()) {
+            Log.e(TAG, "Failed to make directory: " + sdcardDataFolder);
+            return;
+        }
 
         File[] files = sdcardDataFolder.listFiles();
 

@@ -31,6 +31,10 @@ Voice recognition works entirely offline, ensuring your privacy and convenience.
 Please note that for use as voice input (not as IME) there is a separate settings activity which can be accessed from Android settings 
 (System > Languages > Speech > Voice Input). There you can activate the app as voice input and then click the settings button.
 
+If after installation you do not find Whisper+ as voice input or only see a limited list (hard-coded ones like Google/Samsung)
+- enable USB debugging
+- type adb shell settings put secure voice_recognition_service org.woheller69.whisperplus/com.whisperonnx.WhisperRecognitionService
+
 ## Using Whisper+
 
 To get the most out of Whisper+, follow these simple tips:
