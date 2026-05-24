@@ -42,6 +42,8 @@ public class WhisperInputMethodService extends InputMethodService {
     private ImageButton btnDel;
     private ImageButton btnLang1;
     private ImageButton btnLang2;
+    private ImageButton btnLang3;
+    private ImageButton btnLang4;
     private TextView tvStatus;
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
@@ -99,7 +101,9 @@ public class WhisperInputMethodService extends InputMethodService {
             SharedPreferences.Editor editor = sp.edit();
             editor.putInt("langSelected",1);
             editor.putString("language1",langCodeIME);
-            editor.putString("language2","auto");
+            editor.putString("language2","");
+            editor.putString("language3","");
+            editor.putString("language4","");
             editor.commit();
         }
 
@@ -112,14 +116,35 @@ public class WhisperInputMethodService extends InputMethodService {
         btnDel = view.findViewById(R.id.btnDel);
         btnLang1 = view.findViewById(R.id.btnLang1);
         btnLang2 = view.findViewById(R.id.btnLang2);
+        btnLang3 = view.findViewById(R.id.btnLang3);
+        btnLang4 = view.findViewById(R.id.btnLang4);
         int langSelected = sp.getInt("langSelected", 1);
         if (langSelected == 1) {
             btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
-        } else {
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        } else if (langSelected == 2) {
             btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        } else if (langSelected == 3) {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_on_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        } else {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_on_36dp);
         }
+
+        // Only show buttons for configured languages (hide unset ones)
+        btnLang2.setVisibility(sp.getString("language2", "").isEmpty() ? View.GONE : View.VISIBLE);
+        btnLang3.setVisibility(sp.getString("language3", "").isEmpty() ? View.GONE : View.VISIBLE);
+        btnLang4.setVisibility(sp.getString("language4", "").isEmpty() ? View.GONE : View.VISIBLE);
 
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
@@ -278,23 +303,55 @@ public class WhisperInputMethodService extends InputMethodService {
         });
 
         btnLang1.setOnClickListener(v -> {
-            String lang = sp.getString("language1", "auto");
+            String lang = sp.getString("language1", "");
+            if (lang.isEmpty()) lang = "auto";
             SharedPreferences.Editor editor = sp.edit();
             editor.putInt("langSelected", 1);
             editor.putString("language", lang);
             editor.apply();
             btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
         });
 
         btnLang2.setOnClickListener(v -> {
-            String lang = sp.getString("language2", "auto");
+            String lang = sp.getString("language2", "");
+            if (lang.isEmpty()) lang = "auto";
             SharedPreferences.Editor editor = sp.edit();
             editor.putInt("langSelected", 2);
             editor.putString("language", lang);
             editor.apply();
             btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        });
+
+        btnLang3.setOnClickListener(v -> {
+            String lang = sp.getString("language3", "");
+            if (lang.isEmpty()) lang = "auto";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("langSelected", 3);
+            editor.putString("language", lang);
+            editor.apply();
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_on_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        });
+
+        btnLang4.setOnClickListener(v -> {
+            String lang = sp.getString("language4", "");
+            if (lang.isEmpty()) lang = "auto";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("langSelected", 4);
+            editor.putString("language", lang);
+            editor.apply();
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_on_36dp);
         });
 
         return view;
@@ -344,6 +401,7 @@ public class WhisperInputMethodService extends InputMethodService {
             else mWhisper.setAction(ACTION_TRANSCRIBE);
 
             String langCode = sp.getString("language", "auto");
+            if (langCode.isEmpty()) langCode = "auto";
             Log.d("WhisperIME","default langCode " + langCode);
             mWhisper.setLanguage(langCode);
             mWhisper.start();

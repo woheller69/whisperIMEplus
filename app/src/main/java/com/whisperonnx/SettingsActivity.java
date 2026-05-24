@@ -37,6 +37,8 @@ public class SettingsActivity extends AppCompatActivity {
     private Spinner spinnerLanguage;
     private Spinner spinnerLanguage1IME;
     private Spinner spinnerLanguage2IME;
+    private Spinner spinnerLanguage3IME;
+    private Spinner spinnerLanguage4IME;
     private CheckBox modeSimpleChinese;
     private CheckBox modeSimpleChineseIME;
     private CheckBox modeBluetooth;
@@ -60,24 +62,43 @@ public class SettingsActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sp.edit();
             editor.putInt("langSelected",1);
             editor.putString("language1",langCodeIME);
-            editor.putString("language2","auto");
+            editor.putString("language2","");
+            editor.putString("language3","");
+            editor.putString("language4","");
             editor.commit();
         }
 
         ImageButton btnLang1 = findViewById(R.id.btnLang1);
         ImageButton btnLang2 = findViewById(R.id.btnLang2);
+        ImageButton btnLang3 = findViewById(R.id.btnLang3);
+        ImageButton btnLang4 = findViewById(R.id.btnLang4);
 
         langSelected = sp.getInt("langSelected", 1);
         if (langSelected == 1) {
             btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
-        } else {
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        } else if (langSelected == 2) {
             btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        } else if (langSelected == 3) {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_on_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        } else {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_on_36dp);
         }
 
         btnLang1.setOnClickListener(v -> {
-            String lang = sp.getString("language1", "auto");
+            String lang = sp.getString("language1", "");
+            if (lang.isEmpty()) lang = "auto";
             SharedPreferences.Editor editor = sp.edit();
             editor.putInt("langSelected", 1);
             editor.putString("language", lang);
@@ -85,10 +106,13 @@ public class SettingsActivity extends AppCompatActivity {
             langSelected = 1;
             btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
         });
 
         btnLang2.setOnClickListener(v -> {
-            String lang = sp.getString("language2", "auto");
+            String lang = sp.getString("language2", "");
+            if (lang.isEmpty()) lang = "auto";
             SharedPreferences.Editor editor = sp.edit();
             editor.putInt("langSelected", 2);
             editor.putString("language", lang);
@@ -96,23 +120,63 @@ public class SettingsActivity extends AppCompatActivity {
             langSelected = 2;
             btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
             btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        });
+
+        btnLang3.setOnClickListener(v -> {
+            String lang = sp.getString("language3", "");
+            if (lang.isEmpty()) lang = "auto";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("langSelected", 3);
+            editor.putString("language", lang);
+            editor.apply();
+            langSelected = 3;
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_on_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_off_36dp);
+        });
+
+        btnLang4.setOnClickListener(v -> {
+            String lang = sp.getString("language4", "");
+            if (lang.isEmpty()) lang = "auto";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("langSelected", 4);
+            editor.putString("language", lang);
+            editor.apply();
+            langSelected = 4;
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+            btnLang3.setImageResource(R.drawable.ic_counter_3_off_36dp);
+            btnLang4.setImageResource(R.drawable.ic_counter_4_on_36dp);
         });
 
         spinnerLanguage1IME = findViewById(R.id.spnrLanguage1_ime);
         spinnerLanguage2IME = findViewById(R.id.spnrLanguage2_ime);
+        spinnerLanguage3IME = findViewById(R.id.spnrLanguage3_ime);
+        spinnerLanguage4IME = findViewById(R.id.spnrLanguage4_ime);
 
         List<Pair<String, String>> languagePairs = LanguagePairAdapter.getLanguagePairs(this);
 
         LanguagePairAdapter languagePairAdapter1IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
         LanguagePairAdapter languagePairAdapter2IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
+        LanguagePairAdapter languagePairAdapter3IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
+        LanguagePairAdapter languagePairAdapter4IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
         languagePairAdapter1IME.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLanguage1IME.setAdapter(languagePairAdapter1IME);
         spinnerLanguage2IME.setAdapter(languagePairAdapter2IME);
+        spinnerLanguage3IME.setAdapter(languagePairAdapter3IME);
+        spinnerLanguage4IME.setAdapter(languagePairAdapter4IME);
         String langCode1IME = sp.getString("language1", "auto");
         String langCode2IME = sp.getString("language2", "auto");
+        String langCode3IME = sp.getString("language3", "auto");
+        String langCode4IME = sp.getString("language4", "auto");
 
         spinnerLanguage1IME.setSelection(languagePairAdapter1IME.getIndexByCode(langCode1IME));
         spinnerLanguage2IME.setSelection(languagePairAdapter2IME.getIndexByCode(langCode2IME));
+        spinnerLanguage3IME.setSelection(languagePairAdapter3IME.getIndexByCode(langCode3IME));
+        spinnerLanguage4IME.setSelection(languagePairAdapter4IME.getIndexByCode(langCode4IME));
 
         spinnerLanguage1IME.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -120,8 +184,9 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("language1",languagePairs.get(i).first);
                 if (langSelected == 1) {
-                    langCodeIME = languagePairs.get(i).first;
-                    editor.putString("language",languagePairs.get(i).first);
+                    String selected = languagePairs.get(i).first;
+                    langCodeIME = selected.isEmpty() ? "auto" : selected;
+                    editor.putString("language",langCodeIME);
                 }
                 editor.apply();
             }
@@ -138,11 +203,50 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("language2",languagePairs.get(i).first);
                 if (langSelected == 2) {
-                    langCodeIME = languagePairs.get(i).first;
-                    editor.putString("language",languagePairs.get(i).first);
+                    String selected = languagePairs.get(i).first;
+                    langCodeIME = selected.isEmpty() ? "auto" : selected;
+                    editor.putString("language",langCodeIME);
                 }
                 editor.apply();
 
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        spinnerLanguage3IME.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("language3",languagePairs.get(i).first);
+                if (langSelected == 3) {
+                    String selected = languagePairs.get(i).first;
+                    langCodeIME = selected.isEmpty() ? "auto" : selected;
+                    editor.putString("language",langCodeIME);
+                }
+                editor.apply();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        spinnerLanguage4IME.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("language4",languagePairs.get(i).first);
+                if (langSelected == 4) {
+                    String selected = languagePairs.get(i).first;
+                    langCodeIME = selected.isEmpty() ? "auto" : selected;
+                    editor.putString("language",langCodeIME);
+                }
+                editor.apply();
             }
 
             @Override

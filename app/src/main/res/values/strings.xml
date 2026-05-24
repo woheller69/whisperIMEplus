@@ -31,6 +31,7 @@
     <string name="auto_button">automatic mode</string>
     <string name="error_no_input">No voice input received</string>
     <string name="install_model">Install model</string>
+    <string name="none_lang">None</string>
     <string name="auto_lang">Detect language</string>
     <string name="settings">Settings</string>
     <string name="settings_voice_input">Voice Input</string>
@@ -40,6 +41,8 @@
     <string name="settings_minimum_silence">Minimum silence in automatic mode (ms)</string>
     <string name="lang1">Language 1</string>
     <string name="lang2">Language 2</string>
+    <string name="lang3">Language 3</string>
+    <string name="lang4">Language 4</string>
     <string name="setting_bluetooth">Use Bluetooth devices</string>
 
 </resources>

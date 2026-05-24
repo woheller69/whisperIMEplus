@@ -52,8 +52,9 @@ public class LanguagePairAdapter extends ArrayAdapter<Pair<String, String>> {
         // Sort by display name
         languagePairs.sort((pair1, pair2) -> pair1.second.compareToIgnoreCase(pair2.second));
 
-        // Add auto at first position
-        languagePairs.add(0, new Pair<>("auto", context.getString(R.string.auto_lang)));
+        // Add none and auto at the beginning
+        languagePairs.add(0, new Pair<>("", context.getString(R.string.none_lang)));
+        languagePairs.add(1, new Pair<>("auto", context.getString(R.string.auto_lang)));
         return languagePairs;
     }
 
@@ -64,6 +65,6 @@ public class LanguagePairAdapter extends ArrayAdapter<Pair<String, String>> {
                 return i;
             }
         }
-        return 0; // Default to first item
+        return 1; // Default to "auto" (Detect language) at index 1
     }
 }

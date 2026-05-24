@@ -62,6 +62,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
             Log.d("WhisperRecognition","StartListening, no language specified");
         }
 
+        if (langCode.isEmpty()) langCode = "auto";
         initModel(langCode);
 
         setContentView(R.layout.activity_recognize);

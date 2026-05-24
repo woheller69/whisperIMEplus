@@ -18,16 +18,35 @@
         style="?android:attr/progressBarStyleHorizontal"/>
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="5dp"
         android:layout_marginBottom="5dp">
 
         <ImageButton
-            android:id="@+id/btnModeAuto"
+            android:id="@+id/btnTranslate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@color/darkGrey"
+            android:src="@drawable/ic_english_off_36dp"
+            android:contentDescription="@string/translate"/>
+
+        <ImageButton
+            android:id="@+id/btnKeyboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:background="@color/darkGrey"
+            android:src="@drawable/ic_keyboard_36dp"
+            android:contentDescription="@string/exit_button"/>
+
+        <ImageButton
+            android:id="@+id/btnModeAuto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/btnKeyboard"
             android:background="@color/darkGrey"
             android:src="@drawable/ic_auto_off_36dp"
             android:contentDescription="@string/auto_button"/>
@@ -53,22 +72,24 @@
             android:contentDescription="@string/lang2"/>
 
         <ImageButton
-            android:id="@+id/btnKeyboard"
+            android:id="@+id/btnLang3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/btnLang2"
             android:background="@color/darkGrey"
-            android:src="@drawable/ic_keyboard_36dp"
-            android:contentDescription="@string/exit_button"/>
+            android:src="@drawable/ic_counter_3_off_36dp"
+            android:contentDescription="@string/lang3"/>
 
         <ImageButton
-            android:id="@+id/btnTranslate"
+            android:id="@+id/btnLang4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/btnLang3"
             android:background="@color/darkGrey"
-            android:src="@drawable/ic_english_off_36dp"
-            android:contentDescription="@string/translate"/>
+            android:src="@drawable/ic_counter_4_off_36dp"
+            android:contentDescription="@string/lang4"/>
 
     </RelativeLayout>
     <TextView
