@@ -48,12 +48,13 @@
             android:name=".WhisperRecognizeActivity"
             android:exported="true"
             android:clearTaskOnLaunch="true"
-            android:launchMode="singleInstance"
+            android:launchMode="standard"
             android:visibleToInstantApps="true"
             android:theme="@style/Theme.WhisperFloating"
             android:configChanges="orientation|screenLayout|screenSize|keyboardHidden|keyboard|uiMode|density">
             <intent-filter>
                 <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+                <action android:name="android.speech.action.WEB_SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
