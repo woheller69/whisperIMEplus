@@ -1,0 +1,2 @@
+Switch position of auto and keyboard buttons
+Fix for samsung one ui app drawer search box microphone

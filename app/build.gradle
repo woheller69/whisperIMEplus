@@ -15,8 +15,8 @@ android {
         applicationId "org.woheller69.whisperplus"
         minSdk 28
         targetSdk 35
-        versionCode 17
-        versionName "1.7"
+        versionCode 18
+        versionName "1.8"
 
     }
 
@@ -61,7 +61,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.1'
 
     implementation 'com.google.guava:guava:31.1-android'
-    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.9'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.10'
     implementation 'com.github.houbb:opencc4j:1.8.1'
 
     //ONNX Runtime
