@@ -58,6 +58,7 @@ public class WhisperRecognitionService extends RecognitionService {
         mRecorder.setListener(message -> {
             if (message.equals(Recorder.MSG_RECORDING)){
                 try {
+                    callback.beginningOfSpeech();
                     callback.rmsChanged(10);
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
@@ -83,7 +84,7 @@ public class WhisperRecognitionService extends RecognitionService {
             HapticFeedback.vibrate(this);
             startRecording();
             try {
-                callback.beginningOfSpeech();
+                callback.readyForSpeech(new Bundle());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
