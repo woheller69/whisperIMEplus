@@ -361,10 +361,19 @@ public class Recognizer extends NeuralNetworkApi {
                         timeInner = System.currentTimeMillis();
                         OnnxTensor outputEncoderBatched = TensorUtils.createFloatTensor(onnxEnv, outputEncoderFlatBatched, new long[]{2, outputEncoderValue.length, outputEncoderValue[0].length}, new long[]{0});
                         //Log.i("performance", "Encoder batch creation done in: " + (System.currentTimeMillis()-timeInner) + "ms");
-                        initInput.put("encoder_hidden_states", outputEncoderBatched);
-                        time = System.currentTimeMillis();
-                        initResult = cacheInitBatchSession.run(initInput);
-                        //Log.i("performance", "Cache initialization done in: " + (System.currentTimeMillis() - time) + "ms");
+
+                        try {
+                            initInput.put("encoder_hidden_states", outputEncoderBatched);
+                            time = System.currentTimeMillis();
+                            initResult = cacheInitBatchSession.run(initInput);
+                            //Log.i("performance", "Cache initialization done in: " + (System.currentTimeMillis() - time) + "ms");
+                        } finally {
+                            if (outputEncoderBatched != null && !outputEncoderBatched.isClosed()) {
+                                outputEncoderBatched.close();
+                            }
+                        }
+
+
                     }
 
                     //We start the iterative execution of the decoder
@@ -446,6 +455,10 @@ public class Recognizer extends NeuralNetworkApi {
                             }
                         }
                         //We prepare the inputs for the next iteration
+                        if (inputIDsTensor != null && !inputIDsTensor.isClosed()) {
+                            inputIDsTensor.close();
+                        }
+
                         if(batchSize == 1) {
                             inputIDsTensor = TensorUtils.convertIntArrayToTensor(onnxEnv, new int[]{max});
                         }else{
@@ -509,7 +522,6 @@ public class Recognizer extends NeuralNetworkApi {
                         //Log.i("result", "result: " + correctText(finalText));
                         //Log.i("score", "score: " + outputProbability1);
 
-                        outputs.close();
                         notifyResult(correctText(finalText), language, outputProbability1, true);
 
                     }else{
@@ -549,7 +561,7 @@ public class Recognizer extends NeuralNetworkApi {
                     outputs.close();
                     outputInit.close();
                     initResult.close();
-
+                    audioTensor.close();
                     Log.i("performance", "SPEECH RECOGNITION DONE IN: " + (SystemClock.elapsedRealtime() - startTimeInMs) + "ms");
 
                 } catch (OrtException e) {
@@ -590,7 +602,16 @@ public class Recognizer extends NeuralNetworkApi {
     }
 
     public void destroy() {
-        //eventually if in the future I decide to load Whisper only for WalkieTalkie and Conversation then all the resources will be released here
+        try {
+            initSession.close();
+            encoderSession.close();
+            cacheInitSession.close();
+            cacheInitBatchSession.close();
+            decoderSession.close();
+            detokenizerSession.close();
+        } catch (OrtException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int getLanguageID(String language){

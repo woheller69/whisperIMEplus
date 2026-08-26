@@ -112,6 +112,7 @@ public class Whisper {
     public void unloadModel() {
         if (recognizer != null) {
             recognizer.destroy();
+            recognizer = null;
         }
     }
 
