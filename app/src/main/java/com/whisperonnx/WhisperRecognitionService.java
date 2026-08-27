@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
@@ -39,6 +40,20 @@ public class WhisperRecognitionService extends RecognitionService {
     @Override
     protected void onStartListening(Intent recognizerIntent, Callback callback) {
         String targetLang = recognizerIntent.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
+        ParcelFileDescriptor audioExtra = recognizerIntent.getParcelableExtra(RecognizerIntent.EXTRA_AUDIO_SOURCE);
+        if (audioExtra != null) {
+            Log.w(TAG, "EXTRA_AUDIO_SOURCE not supported");
+            try {
+                callback.error(SpeechRecognizer.ERROR_CLIENT); // or define a custom error code
+                new Handler(Looper.getMainLooper()).post(() ->
+                        Toast.makeText(this, "EXTRA_AUDIO_SOURCE not supported", Toast.LENGTH_SHORT).show()
+                );
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+            return; // Stop further processing
+        }
+
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String langCode = sp.getString("recognitionServiceLanguage", "auto");
         Log.d(TAG,"default langCode " + langCode);
