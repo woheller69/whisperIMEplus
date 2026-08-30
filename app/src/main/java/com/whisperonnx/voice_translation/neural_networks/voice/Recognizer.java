@@ -603,15 +603,13 @@ public class Recognizer extends NeuralNetworkApi {
 
     public void destroy() {
         try {
-            initSession.close();
-            encoderSession.close();
-            cacheInitSession.close();
-            cacheInitBatchSession.close();
-            decoderSession.close();
-            detokenizerSession.close();
-        } catch (OrtException e) {
-            throw new RuntimeException(e);
-        }
+            if (initSession != null) initSession.close();
+            if (encoderSession != null) encoderSession.close();
+            if (cacheInitSession != null) cacheInitSession.close();
+            if (cacheInitBatchSession != null) cacheInitBatchSession.close();
+            if (decoderSession != null) decoderSession.close();
+            if (detokenizerSession != null) detokenizerSession.close();
+        } catch (OrtException ignored) {}
     }
 
     public int getLanguageID(String language){
