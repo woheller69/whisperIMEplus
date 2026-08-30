@@ -52,6 +52,7 @@ public class Recorder {
     private final Object fileSavedLock = new Object();
 
     private volatile boolean shouldStartRecording = false;
+    private volatile boolean requestStopVAD = false;
     private boolean useVAD = false;
     private VadWebRTC vad = null;
     private static final int VAD_FRAME_SIZE = 480;
@@ -97,9 +98,13 @@ public class Recorder {
                 .setSpeechDurationMs(200)
                 .build();
         useVAD = true;
+        requestStopVAD = false;
         Log.d(TAG, "VAD initialized");
     }
 
+    public void requestStopVad(){
+        requestStopVAD = true;
+    }
 
     public void stop() {
         Log.d(TAG, "Recording stopped");
@@ -216,14 +221,14 @@ public class Recorder {
                     System.arraycopy(outputBufferByteArray, outputBufferByteArray.length - VAD_FRAME_SIZE * 2, vadAudioBuffer, 0, VAD_FRAME_SIZE * 2);
 
                     isSpeech = vad.isSpeech(vadAudioBuffer);
-                    if (isSpeech) {
+                    if (isSpeech && !requestStopVAD) {
                         if (!isRecording) {
                             Log.d(TAG, "VAD Speech detected: recording starts");
                             sendUpdate(MSG_RECORDING);
                         }
                         isRecording = true;
                     } else {
-                        if (isRecording) {
+                        if (isRecording || requestStopVAD) {
                             isRecording = false;
                             mInProgress.set(false);
                         }

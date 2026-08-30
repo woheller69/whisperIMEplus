@@ -39,6 +39,7 @@ public class WhisperInputMethodService extends InputMethodService {
     private static final String TAG = "WhisperInputMethodService";
     private ImageButton btnRecord;
     private ImageButton btnKeyboard;
+    private ImageButton btnStop;
     private ImageButton btnTranslate;
     private ImageButton btnModeAuto;
     private ImageButton btnEnter;
@@ -121,6 +122,7 @@ public class WhisperInputMethodService extends InputMethodService {
 
         btnRecord = view.findViewById(R.id.btnRecord);
         btnKeyboard = view.findViewById(R.id.btnKeyboard);
+        btnStop = view.findViewById(R.id.btnStop);
         btnTranslate = view.findViewById(R.id.btnTranslate);
         btnModeAuto = view.findViewById(R.id.btnModeAuto);
         btnEnter = view.findViewById(R.id.btnEnter);
@@ -171,6 +173,7 @@ public class WhisperInputMethodService extends InputMethodService {
 
         if (modeAuto) {
             layoutButtons.setVisibility(View.GONE);
+            btnStop.setVisibility(View.VISIBLE);
             HapticFeedback.vibrate(this);
             startRecording();
             handler.post(() -> processingBar.setProgress(100));
@@ -273,6 +276,10 @@ public class WhisperInputMethodService extends InputMethodService {
             switchToPreviousInputMethod();
         });
 
+        btnStop.setOnClickListener(v -> {
+            if (mRecorder!=null) mRecorder.requestStopVad();
+        });
+
         btnTranslate.setOnClickListener(v -> {
             translate = !translate;
             btnTranslate.setImageResource(translate ? R.drawable.ic_english_on_36dp : R.drawable.ic_english_off_36dp);
@@ -288,6 +295,7 @@ public class WhisperInputMethodService extends InputMethodService {
             editor.putBoolean("imeModeAuto", modeAuto);
             editor.apply();
             layoutButtons.setVisibility(modeAuto ? View.GONE : View.VISIBLE);
+            btnStop.setVisibility(modeAuto ? View.VISIBLE : View.GONE);
             btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
             switchToPreviousInputMethod();
         });

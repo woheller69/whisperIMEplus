@@ -41,5 +41,6 @@
     <string name="lang1">Language 1</string>
     <string name="lang2">Language 2</string>
     <string name="setting_bluetooth">Use Bluetooth devices</string>
+    <string name="stop_button">Stop recording</string>
 
 </resources>

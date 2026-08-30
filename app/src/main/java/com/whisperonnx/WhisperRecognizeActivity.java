@@ -37,6 +37,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
     private static final String TAG = "WhisperRecognizeActivity";
     private ImageButton btnRecord;
     private ImageButton btnCancel;
+    private ImageButton btnStop;
     private ImageButton btnModeAuto;
     private ProgressBar processingBar = null;
     private Recorder mRecorder = null;
@@ -84,6 +85,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
         params.gravity = Gravity.BOTTOM; // Position at the bottom of the screen
 
         btnCancel = findViewById(R.id.btnCancel);
+        btnStop = findViewById(R.id.btnStop);
         btnRecord = findViewById(R.id.btnRecord);
         btnModeAuto = findViewById(R.id.btnModeAuto);
         processingBar = findViewById(R.id.processing_bar);
@@ -117,6 +119,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
 
         if (modeAuto) {
             btnRecord.setVisibility(View.GONE);
+            btnStop.setVisibility(View.VISIBLE);
             HapticFeedback.vibrate(this);
             startRecording();
             runOnUiThread(() -> processingBar.setProgress(100));
@@ -137,6 +140,7 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
             editor.putBoolean("imeModeAuto", modeAuto);
             editor.apply();
             btnRecord.setVisibility(modeAuto ? View.GONE : View.VISIBLE);
+            btnStop.setVisibility(modeAuto ? View.VISIBLE : View.GONE);
             btnModeAuto.setImageResource(modeAuto ? R.drawable.ic_auto_on_36dp : R.drawable.ic_auto_off_36dp);
             if (mWhisper != null) stopTranscription();
             setResult(RESULT_CANCELED, null);
@@ -179,6 +183,10 @@ public class WhisperRecognizeActivity extends AppCompatActivity {
             if (mWhisper != null) stopTranscription();
             setResult(RESULT_CANCELED, null);
             finish();
+        });
+
+        btnStop.setOnClickListener(v -> {
+            if (mRecorder != null) mRecorder.requestStopVad();
         });
 
     }

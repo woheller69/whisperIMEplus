@@ -37,6 +37,17 @@
                 android:contentDescription="@string/exit_button"/>
 
             <ImageButton
+                android:id="@+id/btnStop"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/darkGrey"
+                android:src="@drawable/ic_stop_recording_36dp"
+                android:contentDescription="@string/stop_button"/>
+
+            <ImageButton
                 android:id="@+id/btnModeAuto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

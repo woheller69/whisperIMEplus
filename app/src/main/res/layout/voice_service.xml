@@ -52,14 +52,31 @@
             android:src="@drawable/ic_counter_2_off_36dp"
             android:contentDescription="@string/lang2"/>
 
-        <ImageButton
-            android:id="@+id/btnKeyboard"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/darkGrey"
-            android:src="@drawable/ic_keyboard_36dp"
-            android:contentDescription="@string/exit_button"/>
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnKeyboard"
+                android:layout_marginHorizontal="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/darkGrey"
+                android:src="@drawable/ic_keyboard_36dp"
+                android:contentDescription="@string/exit_button"/>
+            <ImageButton
+                android:id="@+id/btnStop"
+                android:visibility="gone"
+                android:layout_marginHorizontal="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/darkGrey"
+                android:src="@drawable/ic_stop_recording_36dp"
+                android:contentDescription="@string/stop_button"/>
+
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/btnTranslate"

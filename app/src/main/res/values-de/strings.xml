@@ -40,5 +40,6 @@
     <string name="lang1">Sprache 1</string>
     <string name="lang2">Sprache 2</string>
     <string name="setting_bluetooth">Bluetoothgeräte verwenden</string>
+    <string name="stop_button">Aufnahme beenden</string>
 
 </resources>
