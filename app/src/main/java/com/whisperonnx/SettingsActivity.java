@@ -40,6 +40,8 @@ public class SettingsActivity extends AppCompatActivity {
     private CheckBox modeSimpleChinese;
     private CheckBox modeSimpleChineseIME;
     private CheckBox modeBluetooth;
+    private View layoutModeChineseIME;
+    private View layoutModeChinese;
     private String langCodeIME = "";
     private RangeSlider minSilence;
     private int langSelected;
@@ -55,6 +57,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         langCodeIME = sp.getString("language", "auto");
+
+        layoutModeChineseIME = findViewById(R.id.layout_mode_chinese_ime);
+        layoutModeChinese = findViewById(R.id.layout_mode_chinese);
 
         if (!sp.contains("langSelected")){
             SharedPreferences.Editor editor = sp.edit();
@@ -124,6 +129,7 @@ public class SettingsActivity extends AppCompatActivity {
                     editor.putString("language",languagePairs.get(i).first);
                 }
                 editor.apply();
+                updateChineseVisibility();
             }
 
             @Override
@@ -142,6 +148,7 @@ public class SettingsActivity extends AppCompatActivity {
                     editor.putString("language",languagePairs.get(i).first);
                 }
                 editor.apply();
+                updateChineseVisibility();
 
             }
 
@@ -185,6 +192,7 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("recognitionServiceLanguage", languagePairs.get(i).first);
                 editor.apply();
+                updateChineseVisibility();
             }
 
             @Override
@@ -213,8 +221,25 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        updateChineseVisibility();
+
         checkPermissions();
 
+    }
+
+    private boolean isAutoOrChinese(String langCode) {
+        return "auto".equals(langCode) || "zh".equals(langCode);
+    }
+
+    private void updateChineseVisibility() {
+        String lang1 = sp.getString("language1", "auto");
+        String lang2 = sp.getString("language2", "auto");
+        layoutModeChineseIME.setVisibility(
+                (isAutoOrChinese(lang1) || isAutoOrChinese(lang2)) ? View.VISIBLE : View.GONE);
+
+        String recLang = sp.getString("recognitionServiceLanguage", "auto");
+        layoutModeChinese.setVisibility(
+                isAutoOrChinese(recLang) ? View.VISIBLE : View.GONE);
     }
 
     private void checkPermissions() {
