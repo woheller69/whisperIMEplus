@@ -110,7 +110,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         LanguagePairAdapter languagePairAdapter1IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
         LanguagePairAdapter languagePairAdapter2IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
-        languagePairAdapter1IME.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLanguage1IME.setAdapter(languagePairAdapter1IME);
         spinnerLanguage2IME.setAdapter(languagePairAdapter2IME);
         String langCode1IME = sp.getString("language1", "auto");
@@ -181,7 +180,6 @@ public class SettingsActivity extends AppCompatActivity {
         spinnerLanguage = findViewById(R.id.spnrLanguage);
 
         LanguagePairAdapter languagePairAdapter = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
-        languagePairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLanguage.setAdapter(languagePairAdapter);
 
         String langCode = sp.getString("recognitionServiceLanguage", "auto");
