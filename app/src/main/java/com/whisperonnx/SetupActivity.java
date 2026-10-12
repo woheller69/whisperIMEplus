@@ -45,6 +45,10 @@ public class SetupActivity extends AppCompatActivity {
         startButton = findViewById(R.id.button_start);
 
         File sdcardDataFolder = getExternalFilesDir(null);
+        if (sdcardDataFolder != null && !sdcardDataFolder.exists() && !sdcardDataFolder.mkdirs()) {
+            Log.d("Whisper+", "Failed to make directory: " + sdcardDataFolder);
+            return;
+        }
 
         install = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
