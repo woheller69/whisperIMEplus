@@ -129,6 +129,9 @@ public class WhisperInputMethodService extends InputMethodService {
         btnDel = view.findViewById(R.id.btnDel);
         btnLang1 = view.findViewById(R.id.btnLang1);
         btnLang2 = view.findViewById(R.id.btnLang2);
+        if ("none".equals(sp.getString("language2", "auto"))) {
+            btnLang2.setVisibility(View.GONE);
+        }
         int langSelected = sp.getInt("langSelected", 1);
         if (langSelected == 1) {
             btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);

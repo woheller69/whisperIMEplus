@@ -42,6 +42,8 @@ public class SettingsActivity extends AppCompatActivity {
     private CheckBox modeBluetooth;
     private View layoutModeChineseIME;
     private View layoutModeChinese;
+    private ImageButton btnLang1;
+    private ImageButton btnLang2;
     private String langCodeIME = "";
     private RangeSlider minSilence;
     private int langSelected;
@@ -69,8 +71,8 @@ public class SettingsActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        ImageButton btnLang1 = findViewById(R.id.btnLang1);
-        ImageButton btnLang2 = findViewById(R.id.btnLang2);
+        btnLang1 = findViewById(R.id.btnLang1);
+        btnLang2 = findViewById(R.id.btnLang2);
 
         langSelected = sp.getInt("langSelected", 1);
         if (langSelected == 1) {
@@ -94,22 +96,26 @@ public class SettingsActivity extends AppCompatActivity {
 
         btnLang2.setOnClickListener(v -> {
             String lang = sp.getString("language2", "auto");
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putInt("langSelected", 2);
-            editor.putString("language", lang);
-            editor.apply();
-            langSelected = 2;
-            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
-            btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+            if (!"none".equals(lang)) {
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putInt("langSelected", 2);
+                editor.putString("language", lang);
+                editor.apply();
+                langSelected = 2;
+                btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+                btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+            }
         });
 
         spinnerLanguage1IME = findViewById(R.id.spnrLanguage1_ime);
         spinnerLanguage2IME = findViewById(R.id.spnrLanguage2_ime);
 
         List<Pair<String, String>> languagePairs = LanguagePairAdapter.getLanguagePairs(this);
+        List<Pair<String, String>> languagePairs2 = new ArrayList<>(languagePairs);
+        languagePairs2.add(1, new Pair<>("none", getString(R.string.none_lang)));
 
         LanguagePairAdapter languagePairAdapter1IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
-        LanguagePairAdapter languagePairAdapter2IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs);
+        LanguagePairAdapter languagePairAdapter2IME = new LanguagePairAdapter(this, android.R.layout.simple_spinner_item, languagePairs2);
         spinnerLanguage1IME.setAdapter(languagePairAdapter1IME);
         spinnerLanguage2IME.setAdapter(languagePairAdapter2IME);
         String langCode1IME = sp.getString("language1", "auto");
@@ -141,12 +147,13 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putString("language2",languagePairs.get(i).first);
-                if (langSelected == 2) {
-                    langCodeIME = languagePairs.get(i).first;
-                    editor.putString("language",languagePairs.get(i).first);
+                editor.putString("language2",languagePairs2.get(i).first);
+                if (!"none".equals(languagePairs2.get(i).first) && langSelected == 2) {
+                    langCodeIME = languagePairs2.get(i).first;
+                    editor.putString("language",languagePairs2.get(i).first);
                 }
                 editor.apply();
+                updateSecondLanguageState();
                 updateChineseVisibility();
 
             }
@@ -219,6 +226,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        updateSecondLanguageState();
         updateChineseVisibility();
 
         checkPermissions();
@@ -227,6 +235,22 @@ public class SettingsActivity extends AppCompatActivity {
 
     private boolean isAutoOrChinese(String langCode) {
         return "auto".equals(langCode) || "zh".equals(langCode);
+    }
+
+    private void updateSecondLanguageState() {
+        boolean none = "none".equals(sp.getString("language2", "auto"));
+        if (none) {
+            if (langSelected == 2) {
+                String lang1 = sp.getString("language1", "auto");
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putInt("langSelected", 1);
+                editor.putString("language", lang1);
+                editor.apply();
+                langSelected = 1;
+            }
+            btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+        }
     }
 
     private void updateChineseVisibility() {
