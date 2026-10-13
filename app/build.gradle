@@ -62,7 +62,7 @@ dependencies {
 
     implementation 'com.google.guava:guava:31.1-android'
     implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.10'
-    implementation 'com.github.houbb:opencc4j:1.8.1'
+    implementation 'com.github.houbb:opencc4j:1.14.0'
 
     //ONNX Runtime
     implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.19.0'  //latest.release
