@@ -130,7 +130,7 @@ public class WhisperInputMethodService extends InputMethodService {
         btnLang1 = view.findViewById(R.id.btnLang1);
         btnLang2 = view.findViewById(R.id.btnLang2);
         if ("none".equals(sp.getString("language2", "auto"))) {
-            btnLang2.setVisibility(View.GONE);
+            btnLang2.setVisibility(View.INVISIBLE);
         }
         int langSelected = sp.getInt("langSelected", 1);
         if (langSelected == 1) {
