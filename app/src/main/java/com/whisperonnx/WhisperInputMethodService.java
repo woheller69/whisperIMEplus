@@ -88,6 +88,7 @@ public class WhisperInputMethodService extends InputMethodService {
     public void onStartInputView(EditorInfo attribute, boolean restarting){
 
         if (mWhisper == null)  initModel();
+        if (btnLang1 != null) updateLanguageUi();
 
     }
 
@@ -129,15 +130,7 @@ public class WhisperInputMethodService extends InputMethodService {
         btnDel = view.findViewById(R.id.btnDel);
         btnLang1 = view.findViewById(R.id.btnLang1);
         btnLang2 = view.findViewById(R.id.btnLang2);
-        int langSelected = sp.getInt("langSelected", 1);
-        if (langSelected == 1) {
-            btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
-            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
-        } else {
-            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
-            btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
-        }
-
+        updateLanguageUi();
         processingBar = view.findViewById(R.id.processing_bar);
         tvStatus = view.findViewById(R.id.tv_status);
         btnTranslate.setImageResource(translate ? R.drawable.ic_english_on_36dp : R.drawable.ic_english_off_36dp);
@@ -321,6 +314,22 @@ public class WhisperInputMethodService extends InputMethodService {
         });
 
         return view;
+    }
+
+    private void updateLanguageUi() {
+        int langSelected = sp.getInt("langSelected", 1);
+        if (langSelected == 1) {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_on_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_off_36dp);
+        } else {
+            btnLang1.setImageResource(R.drawable.ic_counter_1_off_36dp);
+            btnLang2.setImageResource(R.drawable.ic_counter_2_on_36dp);
+        }
+        String language1 = sp.getString("language1", "auto");
+        String language2 = sp.getString("language2", "auto");
+        boolean isSameLang = language1.equals(language2);
+        btnLang1.setVisibility(langSelected == 2 && isSameLang ? View.INVISIBLE : View.VISIBLE);
+        btnLang2.setVisibility(langSelected == 1 && isSameLang ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void startRecording() {
