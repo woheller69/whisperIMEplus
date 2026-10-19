@@ -328,8 +328,8 @@ public class WhisperInputMethodService extends InputMethodService {
         String language1 = sp.getString("language1", "auto");
         String language2 = sp.getString("language2", "auto");
         boolean isSameLang = language1.equals(language2);
-        btnLang1.setVisibility(langSelected == 2 && isSameLang ? View.INVISIBLE : View.VISIBLE);
-        btnLang2.setVisibility(langSelected == 1 && isSameLang ? View.INVISIBLE : View.VISIBLE);
+        btnLang1.setVisibility(isSameLang ? View.INVISIBLE : View.VISIBLE);
+        btnLang2.setVisibility(isSameLang ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void startRecording() {
