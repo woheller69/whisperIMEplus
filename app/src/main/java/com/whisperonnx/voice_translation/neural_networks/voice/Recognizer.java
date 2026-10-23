@@ -603,12 +603,12 @@ public class Recognizer extends NeuralNetworkApi {
 
     public void destroy() {
         try {
-            if (initSession != null) initSession.close();
-            if (encoderSession != null) encoderSession.close();
-            if (cacheInitSession != null) cacheInitSession.close();
-            if (cacheInitBatchSession != null) cacheInitBatchSession.close();
-            if (decoderSession != null) decoderSession.close();
-            if (detokenizerSession != null) detokenizerSession.close();
+            if (initSession != null) { initSession.close(); initSession = null; }
+            if (encoderSession != null) { encoderSession.close(); encoderSession = null; }
+            if (cacheInitSession != null) { cacheInitSession.close(); cacheInitSession = null; }
+            if (cacheInitBatchSession != null) { cacheInitBatchSession.close(); cacheInitBatchSession = null; }
+            if (decoderSession != null) { decoderSession.close(); decoderSession = null; }
+            if (detokenizerSession != null) { detokenizerSession.close(); detokenizerSession = null; }
         } catch (OrtException ignored) {}
     }
 

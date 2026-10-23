@@ -2,6 +2,8 @@ package com.whisperonnx;
 
 import static android.speech.SpeechRecognizer.ERROR_CLIENT;
 import static android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS;
+import static android.speech.SpeechRecognizer.ERROR_RECOGNIZER_BUSY;
+import static android.speech.SpeechRecognizer.ERROR_SPEECH_TIMEOUT;
 
 import static com.whisperonnx.voice_translation.neural_networks.voice.Recognizer.ACTION_TRANSCRIBE;
 
@@ -35,10 +37,21 @@ public class WhisperRecognitionService extends RecognitionService {
     private Recorder mRecorder = null;
     private Whisper mWhisper = null;
     private boolean recognitionCancelled = false;
+
+    private boolean speechStarted;
     private SharedPreferences sp = null;
 
     @Override
     protected void onStartListening(Intent recognizerIntent, Callback callback) {
+        if (mWhisper != null) {
+            try {
+                callback.error(ERROR_RECOGNIZER_BUSY);
+                return;
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        speechStarted = false;
         String targetLang = recognizerIntent.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
         ParcelFileDescriptor audioExtra = recognizerIntent.getParcelableExtra(RecognizerIntent.EXTRA_AUDIO_SOURCE);
         if (audioExtra != null) {
@@ -72,6 +85,7 @@ public class WhisperRecognitionService extends RecognitionService {
         mRecorder = new Recorder(this);
         mRecorder.setListener(message -> {
             if (message.equals(Recorder.MSG_RECORDING)){
+                speechStarted = true;
                 try {
                     callback.beginningOfSpeech();
                     callback.rmsChanged(10);
@@ -82,6 +96,10 @@ public class WhisperRecognitionService extends RecognitionService {
                 HapticFeedback.vibrate(this);
                 try {
                     callback.rmsChanged(-20.0f);
+                    if (!speechStarted && !recognitionCancelled) {
+                        callback.error(ERROR_SPEECH_TIMEOUT);
+                        return;
+                    }
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
@@ -116,10 +134,10 @@ public class WhisperRecognitionService extends RecognitionService {
 
     @Override
     protected void onCancel(Callback callback) {
+        recognitionCancelled = true;
         Log.d(TAG,"cancel");
         stopRecording();
         deinitModel();
-        recognitionCancelled = true;
     }
 
     @Override
