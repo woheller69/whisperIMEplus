@@ -43,14 +43,6 @@ public class WhisperRecognitionService extends RecognitionService {
 
     @Override
     protected void onStartListening(Intent recognizerIntent, Callback callback) {
-        if (mWhisper != null) {
-            try {
-                callback.error(ERROR_RECOGNIZER_BUSY);
-                return;
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        }
         speechStarted = false;
         String targetLang = recognizerIntent.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
         ParcelFileDescriptor audioExtra = recognizerIntent.getParcelableExtra(RecognizerIntent.EXTRA_AUDIO_SOURCE);
