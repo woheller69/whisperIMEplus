@@ -151,7 +151,6 @@ public class WhisperRecognitionService extends RecognitionService {
             @Override
             public void onResultReceived(WhisperResult whisperResult) {
                 if (whisperResult.getResult().trim().length() > 0){
-                    Log.d(TAG, whisperResult.getResult().trim());
                     try {
                         callback.endOfSpeech();
                         deinitModel();
@@ -167,6 +166,14 @@ public class WhisperRecognitionService extends RecognitionService {
                         resultList.add(result.trim());
                         results.putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, resultList);
                         callback.results(results);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    // Nothing was recognized: the client must still get an answer
+                    deinitModel();
+                    try {
+                        callback.error(SpeechRecognizer.ERROR_NO_MATCH);
                     } catch (RemoteException e) {
                         throw new RuntimeException(e);
                     }

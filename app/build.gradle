@@ -12,7 +12,7 @@ android {
     }
     
     defaultConfig {
-        applicationId "org.woheller69.whisperplus"
+        applicationId "io.github.nellon86.sussurro"
         minSdk 28
         targetSdk 35
         versionCode 20
@@ -25,9 +25,22 @@ android {
         viewBinding = true
     }
 
+    signingConfigs {
+        // Stable key from CI secrets, so that updates install over the previous version
+        if (System.getenv("SIGNING_KEYSTORE_PATH")) {
+            sussurro {
+                storeFile file(System.getenv("SIGNING_KEYSTORE_PATH"))
+                storePassword System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig System.getenv("SIGNING_KEYSTORE_PATH") ? signingConfigs.sussurro : signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
                 abiFilters "arm64-v8a"

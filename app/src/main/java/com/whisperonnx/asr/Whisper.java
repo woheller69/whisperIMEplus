@@ -92,7 +92,6 @@ public class Whisper {
         recognizer.addCallback(new RecognizerListener() {
             @Override
             public void onSpeechRecognizedResult(String text, String languageCode, double confidenceScore, boolean isFinal) {
-                Log.d(TAG, languageCode + " " + text);
                 WhisperResult whisperResult = new WhisperResult(text,languageCode, mAction);
 
                 sendResult(whisperResult);

@@ -50,6 +50,8 @@ public class Recorder {
 
     // Used by stop() to wait until recordAudio() finishes and notifies here
     private final Object fileSavedLock = new Object();
+    private boolean recordingFinished = true; // guarded by fileSavedLock
+    private static final long STOP_TIMEOUT_MS = 2000;
 
     private volatile boolean shouldStartRecording = false;
     private volatile boolean requestStopVAD = false;
@@ -77,6 +79,9 @@ public class Recorder {
         if (!mInProgress.compareAndSet(false, true)) {
             Log.d(TAG, "Recording is already in progress...");
             return;
+        }
+        synchronized (fileSavedLock) {
+            recordingFinished = false;
         }
         lock.lock();
         try {
@@ -111,9 +116,18 @@ public class Recorder {
         mInProgress.set(false);
 
         // Wait for the recording thread to finish
+        // Bounded, because this is called from the UI thread
         synchronized (fileSavedLock) {
+            long deadline = System.currentTimeMillis() + STOP_TIMEOUT_MS;
             try {
-                fileSavedLock.wait(); // Wait until notified by the recording thread
+                while (!recordingFinished) {
+                    long remaining = deadline - System.currentTimeMillis();
+                    if (remaining <= 0) {
+                        Log.w(TAG, "Timed out waiting for the recording to finish");
+                        break;
+                    }
+                    fileSavedLock.wait(remaining);
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
             }
@@ -150,9 +164,14 @@ public class Recorder {
                 recordAudio();
             } catch (Exception e) {
                 Log.e(TAG, "Recording error...", e);
-                sendUpdate(e.getMessage());
+                sendUpdate(MSG_RECORDING_ERROR);
             } finally {
                 mInProgress.set(false);
+                // Every exit path must release a pending stop()
+                synchronized (fileSavedLock) {
+                    recordingFinished = true;
+                    fileSavedLock.notifyAll();
+                }
             }
         }
     }
@@ -262,11 +281,6 @@ public class Recorder {
             sendUpdate(MSG_RECORDING_DONE);
         } else {
             sendUpdate(MSG_RECORDING_ERROR);
-        }
-
-        // Notify the waiting thread that recording is complete
-        synchronized (fileSavedLock) {
-            fileSavedLock.notify(); // Notify that recording is finished
         }
 
     }

@@ -40,6 +40,7 @@ import ai.onnxruntime.extensions.OrtxPackage;
 
 public class Recognizer extends NeuralNetworkApi {
     private static final int MAX_TOKENS_PER_SECOND = 30;
+    private static final int MIN_TOKENS = 30;   //recordings shorter than 1s must still be decoded
     private static final int MAX_TOKENS = 445;   //if we generate more than this quantity of tokens for a transcription we have an error
     public static final String UNDEFINED_TEXT = "[(und)]";
     private ArrayList<RecognizerListener> callbacks = new ArrayList<>();
@@ -154,8 +155,7 @@ public class Recognizer extends NeuralNetworkApi {
             "ha",
             "ba",
             "jw",
-            "su",
-            "yue"
+            "su"
     };
 
     private final int START_TOKEN_ID = 50258;
@@ -298,7 +298,7 @@ public class Recognizer extends NeuralNetworkApi {
                     OnnxTensor audioTensor = OnnxTensor.createTensor(onnxEnv, floatAudioDataBuffer, TensorUtils.tensorShape(1L, (long) data.data.length));
 
                     // if we generate more than this number of tokens it means that we have an infinite loop due to the fact that the sound cannot be transcribed with the language selected
-                    int maxTokens = (data.data.length / 16000) * MAX_TOKENS_PER_SECOND;
+                    int maxTokens = Math.max(MIN_TOKENS, (data.data.length / 16000) * MAX_TOKENS_PER_SECOND);
                     if(maxTokens > MAX_TOKENS){
                         maxTokens = MAX_TOKENS;
                     }
@@ -499,6 +499,14 @@ public class Recognizer extends NeuralNetworkApi {
                         j++;
                     }
 
+                    //the last decoder result and input are not released inside the loop
+                    if (result != null) {
+                        result.close();
+                    }
+                    if (inputIDsTensor != null && !inputIDsTensor.isClosed()) {
+                        inputIDsTensor.close();
+                    }
+
                     if(batchSize == 2) {
                         //we normalize the scores based on the number of tokens of the respective sequence
                         outputProbability1 = outputProbability1 / completeOutput.size();
@@ -509,7 +517,7 @@ public class Recognizer extends NeuralNetworkApi {
                     Map detokenizerInputs = (Map) (new LinkedHashMap());
                     if(batchSize == 1) {
                         String language = data.languageCode;
-                        String finalText = UNDEFINED_TEXT;
+                        String finalText = "";  //an empty result is reported to the user instead of a placeholder
                         if(!execution1HitMaxLength) {
                             int[] sequences = completeOutput.stream().mapToInt(i -> i).toArray();
                             if (language.equals("auto")) language = getLanguageCode(sequences);
