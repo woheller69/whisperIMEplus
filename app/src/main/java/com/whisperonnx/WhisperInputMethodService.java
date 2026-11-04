@@ -35,6 +35,7 @@ import com.whisperonnx.asr.Recorder;
 import com.whisperonnx.asr.Whisper;
 import com.whisperonnx.asr.WhisperResult;
 import com.whisperonnx.utils.HapticFeedback;
+import com.whisperonnx.utils.PersonalDictionary;
 
 public class WhisperInputMethodService extends InputMethodService {
     private static final String TAG = "WhisperInputMethodService";
@@ -354,6 +355,7 @@ public class WhisperInputMethodService extends InputMethodService {
                     boolean simpleChinese = sp.getBoolean("simpleChinese",false);
                     result = simpleChinese ? ZhConverterUtil.toSimple(result) : ZhConverterUtil.toTraditional(result);
                 }
+                result = PersonalDictionary.apply(mContext, result);
                 boolean commitSuccess = false;
                 InputConnection inputConnection = getCurrentInputConnection();
                 if (inputConnection != null && result.trim().length() > 0) commitSuccess = inputConnection.commitText(result.trim() + " ",1);

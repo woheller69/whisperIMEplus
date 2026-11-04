@@ -30,9 +30,9 @@ android {
         if (System.getenv("SIGNING_KEYSTORE_PATH")) {
             sussurro {
                 storeFile file(System.getenv("SIGNING_KEYSTORE_PATH"))
-                storePassword System.getenv("SIGNING_STORE_PASSWORD")
-                keyAlias System.getenv("SIGNING_KEY_ALIAS")
-                keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+                storePassword System.getenv("SIGNING_PASSWORD")
+                keyAlias "sussurro"
+                keyPassword System.getenv("SIGNING_PASSWORD")
             }
         }
     }

@@ -42,5 +42,14 @@
     <string name="lang2">Language 2</string>
     <string name="setting_bluetooth">Use Bluetooth devices</string>
     <string name="stop_button">Stop recording</string>
+    <string name="dictionary_title">Personal dictionary</string>
+    <string name="dictionary_help">When you dictate, what the app mishears is replaced with what is correct. Add one row per variant. Tap a row to delete it.</string>
+    <string name="dictionary_heard_hint">What it hears (e.g. Pupito)</string>
+    <string name="dictionary_correct_hint">What is correct (e.g. Popito)</string>
+    <string name="dictionary_add">Add</string>
+    <string name="dictionary_empty">No words yet.</string>
+    <string name="dictionary_required">Required field</string>
+    <string name="dictionary_delete">Delete</string>
+    <string name="dictionary_delete_question">Delete \"%1$s\"?</string>
 
 </resources>

@@ -5,11 +5,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+      ENCRYPTED_KEY: signing/sussurro.p12.enc
     steps:
       - uses: actions/checkout@v4
 
@@ -22,22 +25,34 @@ jobs:
         with:
           gradle-version: "8.14.5"
 
-      - name: Restore signing key (optional)
-        env:
-          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+      - name: Prepare signing key
         run: |
-          if [ -n "$SIGNING_KEYSTORE_BASE64" ]; then
-            echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/sussurro.jks"
-            echo "SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/sussurro.jks" >> "$GITHUB_ENV"
-          else
-            echo "::warning::No signing key configured: each build uses a temporary key and will not update over the previous one."
+          if [ -z "$SIGNING_PASSWORD" ]; then
+            echo "::warning::SIGNING_PASSWORD is not set: this build uses a temporary key and will not update over the previous one."
+            exit 0
           fi
+          if [ "${#SIGNING_PASSWORD}" -lt 20 ]; then
+            echo "::error::SIGNING_PASSWORD must have at least 20 characters."
+            exit 1
+          fi
+          KEY="$RUNNER_TEMP/sussurro.p12"
+          if [ -f "$ENCRYPTED_KEY" ]; then
+            openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:SIGNING_PASSWORD -in "$ENCRYPTED_KEY" -out "$KEY"
+          else
+            keytool -genkeypair -keystore "$KEY" -storetype PKCS12 -alias sussurro \
+              -keyalg RSA -keysize 4096 -validity 36500 -dname "CN=Sussurro" \
+              -storepass:env SIGNING_PASSWORD
+            mkdir -p signing
+            openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -pass env:SIGNING_PASSWORD -in "$KEY" -out "$ENCRYPTED_KEY"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add "$ENCRYPTED_KEY"
+            git commit -m "Add encrypted signing key [skip ci]"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+          echo "SIGNING_KEYSTORE_PATH=$KEY" >> "$GITHUB_ENV"
 
       - name: Build
-        env:
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           rm -f local.properties
           gradle --no-daemon assembleRelease

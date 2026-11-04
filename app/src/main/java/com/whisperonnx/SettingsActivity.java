@@ -2,6 +2,7 @@ package com.whisperonnx;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -220,6 +221,9 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         updateChineseVisibility();
+
+        findViewById(R.id.btn_dictionary).setOnClickListener(v ->
+                startActivity(new Intent(this, DictionaryActivity.class)));
 
         checkPermissions();
 

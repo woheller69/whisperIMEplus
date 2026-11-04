@@ -88,6 +88,12 @@
                 android:resource="@xml/whisper_recognition_service_metadata" />
         </service>
 
+        <activity android:name=".DictionaryActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/Theme.Whisper.ActionBar"
+            android:label="@string/dictionary_title"
+            android:exported="false" />
+
         <activity android:name="com.whisperonnx.SettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/Theme.Whisper.ActionBar"

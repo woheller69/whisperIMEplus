@@ -202,6 +202,13 @@
                     android:minHeight="0dp"
                     android:contentDescription="@string/setting_bluetooth"/>
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_dictionary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/dictionary_title" />
         </LinearLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
