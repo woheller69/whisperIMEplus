@@ -62,3 +62,11 @@ jobs:
           name: sussurroIME-apk
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Publish to the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/release/*.apk "$RUNNER_TEMP/sussurroIME.apk"
+          gh release view latest >/dev/null 2>&1 || gh release create latest --prerelease --title "Latest build" --notes "APK from the most recent build." --target "$GITHUB_SHA"
+          gh release upload latest "$RUNNER_TEMP/sussurroIME.apk" --clobber
