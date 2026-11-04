@@ -43,9 +43,9 @@
     <string name="setting_bluetooth">Use Bluetooth devices</string>
     <string name="stop_button">Stop recording</string>
     <string name="dictionary_title">Personal dictionary</string>
-    <string name="dictionary_help">When you dictate, what the app mishears is replaced with what is correct. Add one row per variant. Tap a row to delete it.</string>
-    <string name="dictionary_heard_hint">What it hears (e.g. Pupito)</string>
-    <string name="dictionary_correct_hint">What is correct (e.g. Popito)</string>
+    <string name="dictionary_help">Add names and words the app should expect. Keep the list short: only the first ones fit, about 30. If it still mishears a word, add how it writes it. Tap a row to delete it.</string>
+    <string name="dictionary_word_hint">Word (e.g. Popito)</string>
+    <string name="dictionary_variants_hint">Optional: how it mishears it (e.g. Pupito, Pepito)</string>
     <string name="dictionary_add">Add</string>
     <string name="dictionary_empty">No words yet.</string>
     <string name="dictionary_required">Required field</string>

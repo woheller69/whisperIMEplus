@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DictionaryActivity extends AppCompatActivity {
-    private final List<String> heardPhrases = new ArrayList<>();
+    private final List<String> words = new ArrayList<>();
     private final List<String> rows = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private TextView emptyView;
@@ -34,8 +34,8 @@ public class DictionaryActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
-        EditText heardInput = findViewById(R.id.dictionary_heard);
-        EditText correctInput = findViewById(R.id.dictionary_correct);
+        EditText wordInput = findViewById(R.id.dictionary_word);
+        EditText variantsInput = findViewById(R.id.dictionary_variants);
         Button addButton = findViewById(R.id.dictionary_add);
         ListView list = findViewById(R.id.dictionary_list);
         emptyView = findViewById(R.id.dictionary_empty);
@@ -45,28 +45,28 @@ public class DictionaryActivity extends AppCompatActivity {
         refresh();
 
         addButton.setOnClickListener(v -> {
-            String heard = heardInput.getText().toString().trim();
-            String correct = correctInput.getText().toString().trim();
-            if (heard.isEmpty()) {
-                heardInput.setError(getString(R.string.dictionary_required));
+            String word = wordInput.getText().toString().trim();
+            if (word.isEmpty()) {
+                wordInput.setError(getString(R.string.dictionary_required));
                 return;
             }
-            if (correct.isEmpty()) {
-                correctInput.setError(getString(R.string.dictionary_required));
-                return;
+            List<String> variants = new ArrayList<>();
+            for (String variant : variantsInput.getText().toString().split(",")) {
+                if (!variant.trim().isEmpty()) variants.add(variant.trim());
             }
-            PersonalDictionary.put(this, heard, correct);
-            heardInput.setText("");
-            heardInput.requestFocus();
+            PersonalDictionary.add(this, word, variants);
+            wordInput.setText("");
+            variantsInput.setText("");
+            wordInput.requestFocus();
             refresh();
         });
 
         list.setOnItemClickListener((parent, view, position, id) -> {
-            String heard = heardPhrases.get(position);
+            String word = words.get(position);
             new AlertDialog.Builder(this)
-                    .setMessage(getString(R.string.dictionary_delete_question, rows.get(position)))
+                    .setMessage(getString(R.string.dictionary_delete_question, word))
                     .setPositiveButton(R.string.dictionary_delete, (dialog, which) -> {
-                        PersonalDictionary.remove(this, heard);
+                        PersonalDictionary.remove(this, word);
                         refresh();
                     })
                     .setNegativeButton(android.R.string.cancel, null)
@@ -75,11 +75,13 @@ public class DictionaryActivity extends AppCompatActivity {
     }
 
     private void refresh() {
-        heardPhrases.clear();
+        words.clear();
         rows.clear();
-        for (Map.Entry<String, String> entry : PersonalDictionary.load(this).entrySet()) {
-            heardPhrases.add(entry.getKey());
-            rows.add(entry.getKey() + " → " + entry.getValue());
+        for (Map.Entry<String, List<String>> entry : PersonalDictionary.load(this).entrySet()) {
+            words.add(entry.getKey());
+            rows.add(entry.getValue().isEmpty()
+                    ? entry.getKey()
+                    : entry.getKey() + " ← " + String.join(", ", entry.getValue()));
         }
         adapter.notifyDataSetChanged();
         emptyView.setVisibility(rows.isEmpty() ? View.VISIBLE : View.GONE);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dictionary_title">Diccionario personal</string>
-    <string name="dictionary_help">Cuando dictes, lo que la app entienda mal se cambiará por lo correcto. Añade una fila por cada variante. Toca una fila para borrarla.</string>
-    <string name="dictionary_heard_hint">Lo que entiende (ej.: Pupito)</string>
-    <string name="dictionary_correct_hint">Lo correcto (ej.: Popito)</string>
+    <string name="dictionary_help">Añade nombres y palabras que la app deba esperar. Mantén la lista corta: solo caben las primeras, unas 30. Si aun así la entiende mal, añade cómo la escribe. Toca una fila para borrarla.</string>
+    <string name="dictionary_word_hint">Palabra (ej.: Popito)</string>
+    <string name="dictionary_variants_hint">Opcional: cómo la entiende mal (ej.: Pupito, Pepito)</string>
     <string name="dictionary_add">Añadir</string>
     <string name="dictionary_empty">Aún no hay palabras.</string>
     <string name="dictionary_required">Campo obligatorio</string>

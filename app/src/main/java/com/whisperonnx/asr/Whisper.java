@@ -32,6 +32,7 @@ public class Whisper {
 
     private Recognizer.Action mAction;
     private String mLangCode = "";
+    private volatile int[] mPromptTokens = new int[0];
     private WhisperListener mUpdateListener;
 
     private final Lock taskLock = new ReentrantLock();
@@ -123,6 +124,10 @@ public class Whisper {
         this.mLangCode = language;
     }
 
+    public void setPromptTokens(int[] promptTokens) {
+        this.mPromptTokens = promptTokens;
+    }
+
     public void start() {
         if (!mInProgress.compareAndSet(false, true)) {
             Log.d(TAG, "Execution is already in progress...");
@@ -167,6 +172,7 @@ public class Whisper {
             if (RecordBuffer.getOutputBuffer() != null) {
                 startTime = System.currentTimeMillis();
                 sendUpdate(MSG_PROCESSING);
+                recognizer.setPromptTokens(mPromptTokens);
                 recognizer.recognize(RecordBuffer.getSamples(),1, mLangCode, mAction );
             } else {
                 sendUpdate("Engine not initialized or file path not set");

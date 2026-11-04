@@ -355,7 +355,7 @@ public class WhisperInputMethodService extends InputMethodService {
                     boolean simpleChinese = sp.getBoolean("simpleChinese",false);
                     result = simpleChinese ? ZhConverterUtil.toSimple(result) : ZhConverterUtil.toTraditional(result);
                 }
-                result = PersonalDictionary.apply(mContext, result);
+                result = PersonalDictionary.applyCorrections(mContext, result);
                 boolean commitSuccess = false;
                 InputConnection inputConnection = getCurrentInputConnection();
                 if (inputConnection != null && result.trim().length() > 0) commitSuccess = inputConnection.commitText(result.trim() + " ",1);
@@ -375,6 +375,7 @@ public class WhisperInputMethodService extends InputMethodService {
             String langCode = sp.getString("language", "auto");
             Log.d("WhisperIME","default langCode " + langCode);
             mWhisper.setLanguage(langCode);
+            mWhisper.setPromptTokens(translate ? new int[0] : PersonalDictionary.promptTokens(this));
             mWhisper.start();
         }
     }

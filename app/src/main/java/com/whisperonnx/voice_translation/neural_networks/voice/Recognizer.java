@@ -162,6 +162,8 @@ public class Recognizer extends NeuralNetworkApi {
     private final int TRANSLATE_TOKEN_ID = 50358;
     private final int TRANSCRIBE_TOKEN_ID = 50359;
     private final int NO_TIMESTAMPS_TOKEN_ID = 50363;
+    private final int START_OF_PREV_TOKEN_ID = 50361;
+    private volatile int[] promptTokens = new int[0];
 
     private OrtSession session;
     private OrtSession initSession;
@@ -251,6 +253,11 @@ public class Recognizer extends NeuralNetworkApi {
      *
      * @param data The audio data.
      */
+    /** Words the decoder should expect in the next recognitions; empty for none. */
+    public void setPromptTokens(int[] promptTokens) {
+        this.promptTokens = promptTokens;
+    }
+
     public void recognize(final float[] data, int beamSize, final String languageCode, final Action action) {
         new Thread("recognizer"){
             @Override
@@ -299,8 +306,11 @@ public class Recognizer extends NeuralNetworkApi {
 
                     // if we generate more than this number of tokens it means that we have an infinite loop due to the fact that the sound cannot be transcribed with the language selected
                     int maxTokens = Math.max(MIN_TOKENS, (data.data.length / 16000) * MAX_TOKENS_PER_SECOND);
-                    if(maxTokens > MAX_TOKENS){
-                        maxTokens = MAX_TOKENS;
+                    //the prompt is fed to the decoder first, as <|startofprev|> tokens, and shares its context
+                    int[] currentPrompt = promptTokens;
+                    int promptLength = (data.languageCode2 == null && currentPrompt.length > 0) ? currentPrompt.length + 1 : 0;
+                    if(maxTokens > MAX_TOKENS - promptLength){
+                        maxTokens = MAX_TOKENS - promptLength;
                     }
                     boolean execution1HitMaxLength = false;
                     boolean execution2HitMaxLength = false;
@@ -395,12 +405,21 @@ public class Recognizer extends NeuralNetworkApi {
                     while (!(max == eos && max2 == eos)) {
                         initialTime = System.currentTimeMillis();
                         time = System.currentTimeMillis();
-                        if (j <= 4) {
+                        if (j <= promptLength + 4) {
                             if(batchSize == 1) {
-                                if (languageID == -1 && j == 2) {  //In case of just one language allow "auto" detection
+                                if (languageID == -1 && j == promptLength + 2) {  //In case of just one language allow "auto" detection
                                     Log.d("decoderInitialInputIDs", "language auto dectect");
                                 } else {
-                                    inputIDsTensor = TensorUtils.convertIntArrayToTensor(onnxEnv, new int[]{decoderInitialInputIDs[j-1]});
+                                    int forcedToken;
+                                    if (j > promptLength) {
+                                        forcedToken = decoderInitialInputIDs[j - promptLength - 1];
+                                    } else {
+                                        forcedToken = (j == 1) ? START_OF_PREV_TOKEN_ID : currentPrompt[j - 2];
+                                    }
+                                    if (inputIDsTensor != null && !inputIDsTensor.isClosed()) {
+                                        inputIDsTensor.close();
+                                    }
+                                    inputIDsTensor = TensorUtils.convertIntArrayToTensor(onnxEnv, new int[]{forcedToken});
                                 }
                             }else{
                                 inputIDsTensor = TensorUtils.convertIntArrayToTensor(onnxEnv, new int[]{decoderInitialInputIDs[j-1], decoderInitialInputIDs2[j-1]}, new long[]{2,1});
@@ -439,6 +458,10 @@ public class Recognizer extends NeuralNetworkApi {
                             oldResult.close(); //serve a rilasciare la memoria occupata dal risultato (altrimenti di accumula e aumenta molto)
                             //Log.i("performance", "release RAM of" + j + "th word done in: " + (System.currentTimeMillis() - time) + "ms");
                         }
+                        if (j <= promptLength) {  //the prompt only fills the cache: its outputs are not part of the text
+                            j++;
+                            continue;
+                        }
                         //we extract the logits and the highest value
                         decoderOutput = (OnnxTensor) result.get("logits").get();
                         value = (float[][][]) decoderOutput.getValue();
@@ -476,7 +499,7 @@ public class Recognizer extends NeuralNetworkApi {
                             }
                         }
 
-                        if(j >= maxTokens) {
+                        if(j - promptLength >= maxTokens) {
                             if (!finished1) {
                                 execution1HitMaxLength = true;
                                 max = eos;

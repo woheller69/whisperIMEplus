@@ -13,19 +13,19 @@
         android:text="@string/dictionary_help" />
 
     <EditText
-        android:id="@+id/dictionary_heard"
+        android:id="@+id/dictionary_word"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/dictionary_heard_hint"
+        android:hint="@string/dictionary_word_hint"
         android:importantForAutofill="no"
         android:inputType="text"
         android:minHeight="48dp" />
 
     <EditText
-        android:id="@+id/dictionary_correct"
+        android:id="@+id/dictionary_variants"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/dictionary_correct_hint"
+        android:hint="@string/dictionary_variants_hint"
         android:importantForAutofill="no"
         android:inputType="text"
         android:minHeight="48dp" />
