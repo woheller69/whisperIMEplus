@@ -116,6 +116,7 @@ public class WhisperInputMethodService extends InputMethodService {
             mlp.bottomMargin = insets.bottom;
             mlp.rightMargin = insets.right;
             v.setLayoutParams(mlp);
+            v.post(v::requestLayout);
 
             return WindowInsetsCompat.CONSUMED;
         });
