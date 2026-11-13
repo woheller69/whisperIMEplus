@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -109,13 +108,18 @@ public class WhisperInputMethodService extends InputMethodService {
 
         View view = getLayoutInflater().inflate(R.layout.voice_service, null);
 
+        int basePaddingLeft = view.getPaddingLeft();
+        int basePaddingTop = view.getPaddingTop();
+        int basePaddingRight = view.getPaddingRight();
+        int basePaddingBottom = view.getPaddingBottom();
         ViewCompat.setOnApplyWindowInsetsListener(view, (v, windowInsets) -> {
             androidx.core.graphics.Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-            mlp.leftMargin = insets.left;
-            mlp.bottomMargin = insets.bottom;
-            mlp.rightMargin = insets.right;
-            v.setLayoutParams(mlp);
+            v.setPadding(
+                    basePaddingLeft + insets.left,
+                    basePaddingTop,
+                    basePaddingRight + insets.right,
+                    basePaddingBottom + insets.bottom);
+            v.post(v::requestLayout);
 
             return WindowInsetsCompat.CONSUMED;
         });
